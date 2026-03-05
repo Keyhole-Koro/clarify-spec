@@ -89,6 +89,7 @@
 2. `act/specs/quality/act-e2e-test-plan.md`
 3. `act/specs/quality/llm-api-test-spec.md`
 4. `act/specs/quality/operations-config-observability.md`
+5. `act/specs/quality/backend-spec-gaps.md`
 
 ## 5. ルール
 
