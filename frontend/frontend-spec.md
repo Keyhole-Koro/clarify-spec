@@ -245,6 +245,31 @@ frontend/
 * Markdown表示：`features/nodeMarkdown/components/MarkdownPane.tsx`（sanitize必須）
 * Factory/Mockは `src/mocks/*` 配下に閉じ込め、本体featuresに混ぜない
 
+## Patch責務分離（MUST）
+
+`applyPatch` に責務を集中させない。以下の4層へ分離する。
+
+1. Stream Adapter
+* 役割: stream購読、`request_id` 再送、終端制御
+* 推奨配置: `features/actExplore/hooks/useActStream.ts`
+
+2. Patch Reducer
+* 役割: `PatchOp` 適用のみ（純粋関数）
+* 推奨配置: `features/knowledgeTree/patch/reducer.ts`
+
+3. Graph Projection
+* 役割: state -> ReactFlow `nodes/edges` 変換
+* 推奨配置: `features/graph/selectors/toReactFlow.ts`
+
+4. UI Store
+* 役割: 選択、右ペイン、表示トグルなどUI状態のみ
+* 推奨配置: `features/knowledgeTree/store.ts`
+
+禁止:
+
+* reducer内でUI副作用（toast, routing, focus制御）を行わない
+* projection内でstateを書き換えない
+
 ---
 
 ## 設計成果物

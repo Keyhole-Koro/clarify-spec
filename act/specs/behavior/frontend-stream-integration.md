@@ -6,9 +6,9 @@
 
 ## 対象
 
-* `useActStream`（購読制御）
-* `applyPatch`（state適用）
-* Graph描画更新
+* Stream Adapter（購読制御）
+* Patch Reducer（state適用）
+* Graph Projection（描画変換）
 * Thinkthrough表示（thought stream）
 
 ## 前提仕様
@@ -36,6 +36,8 @@
 * request単位の識別子を持ち、古いstream更新を無視できる設計
 * 部分結果は失敗時も保持
 * thought buffer と answer buffer を別Stateで保持
+* reducerは純粋関数として実装し、副作用を持たない
+* graph projectionは読み取り専用でstate更新を行わない
 
 ## UX要件
 
