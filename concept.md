@@ -19,6 +19,7 @@
 * 構造と表示を分離する（契約 = `act/specs/contracts`、表示 = frontend）
 * at-least-once前提で冪等に処理する（重複受信で壊れない）
 * DraftとCommitを分離する（Actは提案、永続化はApplyPatch）
+* 認証は Firebase Auth の Googleアカウント（`google.com`）に限定する
 * 根拠参照を保持する（URL / deep link / generation / sha256）
 
 ## Act の位置づけ

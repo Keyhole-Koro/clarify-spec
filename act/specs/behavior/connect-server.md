@@ -35,6 +35,7 @@
 ## セキュリティ
 
 * 認証情報（uid/workspace）を必ず検証
+* Firebase ID Token の `firebase.sign_in_provider` は `google.com` のみ許可
 * workspace越境は `FAILED_PRECONDITION` か `PERMISSION_DENIED` 相当で拒否
 * ログへ機微情報本文を直接出さない
 
