@@ -51,9 +51,11 @@
 
 ## リリース設定（SHOULD）
 
-* concurrency上限
-* request timeout
-* memory/cpu固定
+* concurrency上限: 40
+* request timeout: 120秒
+* memory: 2Gi
+* min instances: 0
+* max instances: 20
 * rollback条件の事前定義
 
 ## 障害時オペレーション
@@ -68,3 +70,4 @@
 * 環境差分が文書化済み
 * 成功率・遅延を可視化できる
 * 当日運用手順を担当者が共有済み
+* 数値正本 `act/specs/quality/backend-parameter-index.md` と整合している

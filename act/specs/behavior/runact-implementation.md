@@ -17,6 +17,7 @@
 * `act/specs/contracts/gemini-vertex-response-schemas.md`
 * `act/specs/behavior/act-langgraph-runtime.md`
 * `act/specs/behavior/act-flow.md`
+* `act/specs/quality/backend-parameter-index.md`
 
 ## モデル方針（Vertex AI）
 
@@ -52,13 +53,13 @@
 
 ## 制限値（MUST）
 
-* request timeout: 45s
-* model retry: 1回
-* 推論ループ上限: 3
-* patch_ops上限: 200/run
-* anchor_node_ids: <= 20
-* context_node_ids: <= 50
-* thought stream flush interval: <= 300ms
+* request timeout: 90s
+* model retry: 2回
+* 推論ループ上限: 5
+* patch_ops上限: 400/run
+* anchor_node_ids: <= 40
+* context_node_ids: <= 120
+* thought stream flush interval: <= 500ms
 
 ## エラーハンドリング
 

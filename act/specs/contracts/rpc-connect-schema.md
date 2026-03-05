@@ -124,6 +124,8 @@ message Block {
   string content_md = 5;
   repeated Action actions = 6;
   map<string, string> props = 7;
+  // For structured data not suitable for props (e.g. grounding sources)
+  google.protobuf.Struct metadata = 8;
 }
 
 message Action {

@@ -94,9 +94,9 @@ ActState {
 
 検証ルール:
 
-* `user_message` は trim 後 1〜4000 文字
-* `anchor_node_ids` は最大 20
-* `context_node_ids` は最大 50
+* `user_message` は trim 後 1〜6000 文字
+* `anchor_node_ids` は最大 40
+* `context_node_ids` は最大 120
 
 失敗時:
 
@@ -107,7 +107,7 @@ ActState {
 
 * Firestoreから anchor 周辺の nodes/edges/evidence を読み込み
 * 既定探索範囲: 2-hop
-* 取得上限: nodes 200 / edges 400 / evidence 400
+* 取得上限: nodes 500 / edges 1000 / evidence 1000
 
 失敗時コード:
 
@@ -125,10 +125,10 @@ ActState {
 
 固定値:
 
-* Node timeout: 30秒
-* Run全体 timeout: 45秒
-* モデル再試行: 最大1回（`UNAVAILABLE` / `DEADLINE_EXCEEDED` のみ）
-* 推論ループ上限: 3サイクル
+* Node timeout: 60秒
+* Run全体 timeout: 90秒
+* モデル再試行: 最大2回（`UNAVAILABLE` / `DEADLINE_EXCEEDED` のみ）
+* 推論ループ上限: 5サイクル
 * `GEMINI_DEEP_RESEARCH` 利用時は timeout超過を優先監視
 * `thinking_config.include_thoughts=true` 時は thought増分を収集
 * Deep Research 利用時は Interactions API を background 実行で扱う
@@ -139,7 +139,7 @@ ActState {
 * 禁止opは破棄し `warnings` に記録
 * `append_md` 対象 block 未作成時は補完 `upsert` を先行追加
 * 親子循環検出時は該当edgeを破棄
-* 1 Run あたり上限: `patch_ops <= 200`
+* 1 Run あたり上限: `patch_ops <= 400`
 
 ### 7.6 EmitStream
 
@@ -147,9 +147,9 @@ ActState {
 
 * 1イベントに `patch_ops` と `text_delta` の同居を許可
 * 送信順序は親 -> 子
-* `patch_ops` バッチ: 1〜20件
-* `text_delta` バッチ: 50〜400文字
-* `text_delta` 総量上限: 20,000 文字
+* `patch_ops` バッチ: 1〜40件
+* `text_delta` バッチ: 50〜800文字
+* `text_delta` 総量上限: 50,000 文字
 * thought増分は `stream_parts[].thought=true` で送出
 
 ID生成規則（固定）:
@@ -228,3 +228,4 @@ Mock `ActService` は本番と同一契約で返す。
 * `PatchOp` は `upsert` / `append_md` のみ
 * レイアウト固定はユーザー操作経由のみ
 * 永続化は `OrganizeService.ApplyPatch` のみ
+* 細かい数値は `act/specs/quality/backend-parameter-index.md` を正本とする

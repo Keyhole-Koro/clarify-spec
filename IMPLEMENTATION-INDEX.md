@@ -33,6 +33,8 @@
 20. `act/specs/quality/llm-api-test-spec.md`
 21. `act/specs/quality/operations-config-observability.md`
 22. `act/specs/quality/frontend-stream-acceptance.md`
+23. `act/specs/quality/backend-parameter-index.md`
+24. `act/specs/quality/backend-spec-gaps.md`
 
 ## 3. Organize 仕様索引（Source of Truth）
 
@@ -89,7 +91,8 @@
 2. `act/specs/quality/act-e2e-test-plan.md`
 3. `act/specs/quality/llm-api-test-spec.md`
 4. `act/specs/quality/operations-config-observability.md`
-5. `act/specs/quality/backend-spec-gaps.md`
+5. `act/specs/quality/backend-parameter-index.md`
+6. `act/specs/quality/backend-spec-gaps.md`
 
 ## 5. ルール
 
