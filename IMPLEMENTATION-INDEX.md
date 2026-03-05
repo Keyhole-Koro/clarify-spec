@@ -53,6 +53,7 @@
 7. `organize/agents/a0/specs/ingest-extract-spec-v0.3.md`
 8. `organize/agents/a1/specs/a0-a1-boundary.md`
 9. `organize/data/firestore-schema.md`
+10. `organize/data/firestore-er-detailed.md`
 
 ## 4. 実装手順（MDの順番）
 

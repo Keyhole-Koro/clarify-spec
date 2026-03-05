@@ -1,5 +1,7 @@
 # RPC/Firestore スキーマ仕様（edge方式）
 
+詳細ER図と論理モデルは `organize/data/firestore-er-detailed.md` を参照。
+
 * `users/{uid}/trees/{treeId}`
 * `users/{uid}/trees/{treeId}/nodes/{nodeId}`
 * `users/{uid}/trees/{treeId}/edges/{edgeId}`
