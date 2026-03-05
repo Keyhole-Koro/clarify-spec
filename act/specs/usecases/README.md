@@ -6,6 +6,7 @@
 ## Usecase List
 
 * `act/specs/usecases/usecase-er-diagrams.md`（usecase別ER図）
+* `act/specs/usecases/usecase-logical-model.md`（論理モデル）
 * `act/specs/usecases/ask-from-empty-canvas.md` (`UC-ASK-EMPTY-01`)
 * `act/specs/usecases/ask-with-selected-context.md` (`UC-ASK-CONTEXT-01`)
 * `act/specs/usecases/run-act-from-node-action.md` (`UC-RUNACT-NODE-01`)
