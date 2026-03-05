@@ -142,7 +142,7 @@ flowchart LR
 
 ## 6. Backend実行仕様（LangGraph）
 
-`RunAct` の内部状態遷移は `act/backend/act-langgraph-spec.md` を正本とする。
-テスト観点は `act/backend/act-e2e-test-plan.md` を参照する。
-RPC契約は `act/specs/rpc-connect-schema.md` を正本とする。
-実装準備仕様は `act/specs/readiness/` 配下を参照する。
+`RunAct` の内部状態遷移は `act/specs/behavior/act-langgraph-runtime.md` を正本とする。
+テスト観点は `act/specs/quality/act-e2e-test-plan.md` を参照する。
+RPC契約は `act/specs/contracts/rpc-connect-schema.md` を正本とする。
+実装準備仕様は `act/specs/` 配下を参照する。

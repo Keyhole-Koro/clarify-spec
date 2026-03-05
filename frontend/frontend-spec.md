@@ -223,6 +223,6 @@ frontend/
 
 実装時は以下を参照する。
 
-* `act/frontend/canvas-phases.md`（Phase 1〜3 の要件と受け入れ条件）
+* `act/specs/behavior/frontend-canvas-phases.md`（Phase 1〜3 の要件と受け入れ条件）
 * `act/frontend/ai-implementation-prompts.md`（AI実装指示テンプレート）
 * `rpc/connect-rpc.md`（Connect RPCの生成と接続方針）

@@ -1,7 +1,7 @@
 # キャンバス実装フェーズ（Phase 1〜3）
 
 本資料は、ReactFlowベースの単一画面SPAで「思考の生成・接続・深掘り」を段階実装するための要件定義である。
-前提仕様は `frontend/frontend-spec.md` と `act/specs/act-flow.md` を正本とする。
+前提仕様は `frontend/frontend-spec.md` と `act/specs/behavior/act-flow.md` を正本とする。
 
 ## 共通前提
 
@@ -87,4 +87,4 @@
 
 ## 実装チェック参照
 
-* `act/frontend/act-stream-acceptance.md`
+* `act/specs/quality/frontend-stream-acceptance.md`

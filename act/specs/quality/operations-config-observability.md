@@ -7,8 +7,14 @@
 ## 環境変数（MUST）
 
 * `RPC_BASE_URL`
+* `VERTEX_PROJECT_ID`
+* `VERTEX_LOCATION`
 * `LLM_PROVIDER`
 * `LLM_MODEL`
+* `LLM_MODEL_FLASH`
+* `LLM_MODEL_DEEP_RESEARCH`
+* `VERTEX_USE_GROUNDING`
+* `VERTEX_INTERACTIONS_AGENT`
 * `ACT_TIMEOUT_MS`
 * `ACT_MAX_RETRIES`
 * `LOG_LEVEL`
@@ -32,6 +38,10 @@
 * `run_act_latency_ms`
 * `emitted_patch_ops_total`
 * `emitted_text_chars_total`
+* `run_act_grounded_total`
+* `run_act_profile_total{profile}`
+* `run_act_thought_tokens_total`
+* `run_act_deep_research_total`
 
 ## アラート指標（SHOULD）
 

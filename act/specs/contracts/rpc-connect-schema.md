@@ -30,6 +30,10 @@ message RunActRequest {
   repeated string context_node_ids = 6;
   string workspace_id = 7;
   string uid = 8;
+  LlmConfig llm_config = 9;
+  GroundingConfig grounding_config = 10;
+  ThinkingConfig thinking_config = 11;
+  ResearchConfig research_config = 12;
 }
 
 message ErrorInfo {
@@ -41,11 +45,50 @@ message RunActEvent {
   // Optional plain text stream for progressive UX.
   string text_delta = 1;
   repeated PatchOp patch_ops = 2;
+  repeated StreamTextPart stream_parts = 3;
 
   oneof terminal {
     bool done = 10;
     ErrorInfo error = 11;
   }
+}
+```
+
+## 2.1 LLM / Grounding Config
+
+```proto
+enum LlmProfile {
+  LLM_PROFILE_UNSPECIFIED = 0;
+  LLM_PROFILE_GEMINI_3_FLASH = 1;
+  LLM_PROFILE_GEMINI_DEEP_RESEARCH = 2;
+}
+
+message LlmConfig {
+  LlmProfile profile = 1;
+  string model = 2;
+  float temperature = 3;
+  int32 max_output_tokens = 4;
+}
+
+message GroundingConfig {
+  bool use_web_grounding = 1;
+  int32 max_sources = 2;
+}
+
+message ThinkingConfig {
+  // Maps to Gemini includeThoughts.
+  bool include_thoughts = 1;
+}
+
+message ResearchConfig {
+  // Deep Research execution intent.
+  bool use_deep_research = 1;
+  bool background = 2;
+}
+
+message StreamTextPart {
+  string text = 1;
+  bool thought = 2;
 }
 ```
 
@@ -124,16 +167,23 @@ message AppendMdPatch {
 * `patch_ops` は `upsert` / `append_md` のみ
 * `done` と `error` は排他
 * `done=true` または `error` を最後に1回返して終了
+* 既定LLMは `GEMINI_3_FLASH`、重探索時は `GEMINI_DEEP_RESEARCH` を許可
+* Web Groundingは `grounding_config.use_web_grounding=true` で有効化
+* thoughtストリームは `stream_parts[].thought=true` で返す
+* 既存互換のため通常テキストは `text_delta` でも返してよい
 
 ## 5. Frontend Acceptance Mapping
 
 * `upsert` -> storeへ block追加/更新
 * `append_md` -> `contentMd` 追記
+* `stream_parts[].thought=true` -> Thinkthroughパネルへ追記
+* `stream_parts[].thought=false` -> 通常回答として追記
 * `error` -> UIに失敗表示、loading解除
 * `done=true` -> loading解除
 
 ## 6. References
 
-* `act/specs/act-flow.md`
-* `act/backend/act-langgraph-spec.md`
-* `act/frontend/act-stream-acceptance.md`
+* `act/specs/behavior/act-flow.md`
+* `act/specs/behavior/act-langgraph-runtime.md`
+* `act/specs/quality/frontend-stream-acceptance.md`
+* `act/specs/contracts/gemini-vertex-response-schemas.md`

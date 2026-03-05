@@ -1,9 +1,9 @@
-# Act LangGraph 実行仕様（Backend）
+# Act LangGraph Runtime 仕様
 
 Version: 1.1
 
 本仕様は `ActService.RunAct` の内部挙動を LangGraph ベースで定義する。
-外部契約は `rpc/specs/proto-contracts.md`（act/v1節）を正本とする。
+外部契約は `act/specs/contracts/rpc-connect-schema.md` を正本とする。
 
 ## 1. 目的
 
@@ -22,6 +22,18 @@ Version: 1.1
 * 本実装対象: `ACT_TYPE_EXPLORE`
 * `ACT_TYPE_CONSULT` / `ACT_TYPE_INVESTIGATE` は当面 `EXPLORE` と同じ実装にフォールバック
 * `ACT_TYPE_UNSPECIFIED` は `INVALID_ARGUMENT`
+
+## 3.1 Vertex AI モデル方針（MUST）
+
+* 既定モデル: Gemini 3 Flash（低レイテンシ）
+* 深掘りモード: Deep Research 相当プロファイルを使用
+* Web根拠が必要な問い合わせは Web Grounding を有効化
+* 実際の model ID は環境変数で切替し、仕様上はプロファイル名で扱う
+
+## 3.2 実装言語（MUST）
+
+* バックエンド実装は Go を前提とする
+* Connect streaming は Go の goroutine/chan で実装する
 
 ## 4. LangGraph State
 
@@ -107,6 +119,7 @@ ActState {
 * 入力: `act_type`, `user_message`, `anchor`, `context_node_ids`, snapshot
 * モデル命令は「`PatchOp(upsert/append_md)` 以外を生成しない」制約を強制
 * 文脈が空の場合でも `ACT_ROOT` を最低1つ生成する方針を指示
+* `llm_config.profile` と `grounding_config.use_web_grounding` をプロンプト方針へ反映
 
 ### 7.4 GenerateWithModel
 
@@ -116,6 +129,9 @@ ActState {
 * Run全体 timeout: 45秒
 * モデル再試行: 最大1回（`UNAVAILABLE` / `DEADLINE_EXCEEDED` のみ）
 * 推論ループ上限: 3サイクル
+* `GEMINI_DEEP_RESEARCH` 利用時は timeout超過を優先監視
+* `thinking_config.include_thoughts=true` 時は thought増分を収集
+* Deep Research 利用時は Interactions API を background 実行で扱う
 
 ### 7.5 NormalizePatchOps
 
@@ -134,6 +150,7 @@ ActState {
 * `patch_ops` バッチ: 1〜20件
 * `text_delta` バッチ: 50〜400文字
 * `text_delta` 総量上限: 20,000 文字
+* thought増分は `stream_parts[].thought=true` で送出
 
 ID生成規則（固定）:
 

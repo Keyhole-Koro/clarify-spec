@@ -17,6 +17,19 @@
 * 最終イベントは `done=true`
 * `error` は発生しない
 
+## 1.1 thought stream: 増分思考表示
+
+入力:
+
+* `thinking_config.include_thoughts=true`
+* `act_type=ACT_TYPE_EXPLORE`
+
+期待:
+
+* `stream_parts[].thought=true` を1件以上受信
+* `stream_parts[].thought=false`（回答）も受信
+* 最終イベントは `done=true`
+
 ## 2. 異常系: モデル途中失敗
 
 入力:
@@ -29,6 +42,18 @@
 * 途中まで `patch_ops` を受信していてもよい
 * 最終イベントは `error`（`UNAVAILABLE` or `DEADLINE_EXCEEDED`）
 * `done=true` は返らない
+
+## 2.1 Vertex API エラーマッピング
+
+入力:
+
+* Vertex API 側で 429 / 503 / timeout を注入
+
+期待:
+
+* 429/503 は `UNAVAILABLE` 相当で返却
+* timeout は `DEADLINE_EXCEEDED` 相当で返却
+* 返却ログに `traceId` が出る
 
 ## 3. 異常系: バリデーション失敗
 
@@ -47,3 +72,4 @@
 * `done` と `error` が同時に来ない
 * `PatchOp` が `upsert` / `append_md` のみ
 * イベント終了後に追撃イベントが来ない
+* thoughtの有無が `thinking_config` と整合する

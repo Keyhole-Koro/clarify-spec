@@ -8,12 +8,17 @@
 
 * `ActService.RunAct`
 * フロントのstream購読ロジック（最小）
+* Vertex AI API 呼び出し層（Gemini）
+
+詳細なLLM API試験は `act/specs/quality/llm-api-test-spec.md` を参照。
 
 ## 必須シナリオ
 
 1. 正常系: patchが流れ `done` 終端
 2. 途中失敗: patch途中で `error` 終端
 3. 入力不正: 初手 `INVALID_ARGUMENT`
+4. thought有効: `stream_parts[].thought=true` が返る
+5. grounding有効: groundingメタデータを内部に保持し応答へ反映できる
 
 ## 検証観点（MUST）
 
@@ -21,12 +26,14 @@
 * `done/error` 排他
 * 終端後イベントが来ない
 * traceIdが全ケースで取得できる
+* Vertex API失敗時に期待コードへマッピングされる
 
 ## 実行方針
 
 * CIで軽量3本を毎回実行
 * 重い回帰（長文・高負荷）は手動回帰に分離
 * 失敗時はシナリオ名とtraceIdを必ず出力
+* LLM API呼び出しは本番/スタブの2レイヤでテストする
 
 ## 完了条件（DoD）
 

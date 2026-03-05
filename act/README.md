@@ -4,15 +4,17 @@
 
 ## Structure
 
-* `act/specs/`
-  * Actの外部仕様（UI状態遷移、Patch適用方針）
-* `act/specs/rpc-connect-schema.md`
-  * ActのConnect RPC契約（Markdown）
-* `act/specs/readiness/`
-  * 実装準備仕様（RunAct実装、Connect公開、Frontend統合、E2E、運用設定）
+* `act/specs/README.md`
+  * 仕様の粒度ルールと命名ルール
+* `act/specs/overview/`
+  * 全体像・文書構成ガイド
+* `act/specs/contracts/`
+  * RPC契約・Gemini/Vertexレスポンス契約
+* `act/specs/behavior/`
+  * 実行挙動仕様（RunAct、Connect公開、Frontend統合、flow）
+* `act/specs/quality/`
+  * テスト戦略・LLM API試験・運用設定
 * `act/backend/`
-  * LangGraph実行仕様、E2Eテスト計画
+  * バックエンド実装ルート（Goコードとテスト）
 * `act/frontend/`
-  * フロント受け入れ基準、実装フェーズ資料、AI実装プロンプト
-* `act/frontend/specs/`
-  * フロント統合実装仕様（RunAct stream受信など）
+  * フロント実装ルート（UIコード、実装補助資料）
