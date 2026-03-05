@@ -6,13 +6,13 @@
 stateDiagram-v2
   [*] --> Idle
 
-  Idle --> Configure: Act起動\n種類とアンカー選択
-  Configure --> Running: RunAct開始\nstream
-  Running --> DraftReady: patch適用\nドラフト生成
-  DraftReady --> Running: 追加の指示\n続けて質問
+  Idle --> Configure: Act起動<br>種類とアンカー選択
+  Configure --> Running: RunAct開始<br>stream
+  Running --> DraftReady: patch適用<br>ドラフト生成
+  DraftReady --> Running: 追加の指示<br>続けて質問
   DraftReady --> Review: 提案の比較と選別
-  Review --> Commit: ApplyPatch\n選択分だけ永続化
-  Commit --> Done: Firestore反映\nsnapshot更新
+  Review --> Commit: ApplyPatch<br>選択分だけ永続化
+  Commit --> Done: Firestore反映<br>snapshot更新
   Done --> Idle: 閉じる 次のAct
 
   Running --> Error: 失敗 キャンセル
@@ -39,35 +39,35 @@ sequenceDiagram
   participant L as LLM Geminiなど
 
   %% prepare
-  U->>F: Act起動\nactType anchors message
-  F->>A: RunAct treeId actType anchorNodeIds userMessage\nplus auth
+  U->>F: Act起動<br>actType anchors message
+  F->>A: RunAct treeId actType anchorNodeIds userMessage<br>plus auth
 
   %% context build
-  A->>FS: read nodes edges around anchors\nk hop evidence optional
+  A->>FS: read nodes edges around anchors<br>k hop evidence optional
   FS-->>A: context snapshot
 
   %% generation
-  A->>L: prompt context userMessage constraints\nedge schema layout policy etc
+  A->>L: prompt context userMessage constraints<br>edge schema layout policy etc
   L-->>A: streaming output
 
   %% streaming back
   loop stream
     A-->>F: RunActEvent.text_delta 任意
-    A-->>F: RunActEvent.patch_ops\nUpsertNode UpsertEdge UpdateNodeFields AddEvidence
+    A-->>F: RunActEvent.patch_ops<br>UpsertNode UpsertEdge UpdateNodeFields AddEvidence
     F-->>F: apply patch to DraftGraph in-memory
   end
 
   %% review
-  U->>F: 提案を選ぶ\n全部 一部
-  F->>O: ApplyPatch treeId selected_ops\nplus mutation_id
+  U->>F: 提案を選ぶ<br>全部 一部
+  F->>O: ApplyPatch treeId selected_ops<br>plus mutation_id
 
   %% persist
-  O->>FS: batch write\nnodes edges evidence\norderKey採番
+  O->>FS: batch write<br>nodes edges evidence<br>orderKey採番
   FS-->>O: ok
   O-->>F: ApplyPatchResponse changed ids
 
   %% layout
-  F-->>F: ELKレイアウト\nlayoutLocked trueは固定\n新規ノードは未lockedで自動配置
+  F-->>F: ELKレイアウト<br>layoutLocked trueは固定<br>新規ノードは未lockedで自動配置
   F-->>U: organize反映完了
 ```
 
@@ -84,10 +84,10 @@ sequenceDiagram
 ```mermaid id="act_patch_ops_01"
 flowchart TB
   subgraph Draft[Draft in-memory]
-    N1[UpsertNode\ntitle contentMd]
-    E1[UpsertEdge\nparentId childId orderKey optional]
-    U1[UpdateNodeFields\nlayoutLocked layout\n基本Actは触らない]
-    V1[AddEvidence\nnodeId type url or ref excerpt]
+    N1[UpsertNode<br>title contentMd]
+    E1[UpsertEdge<br>parentId childId orderKey optional]
+    U1[UpdateNodeFields<br>layoutLocked layout<br>基本Actは触らない]
+    V1[AddEvidence<br>nodeId type url or ref excerpt]
   end
 
   subgraph Commit[Commit ApplyPatch to Firestore]
@@ -101,7 +101,7 @@ flowchart TB
   U1 --> CN
   V1 --> CV
 
-  note1[orderKeyはCommit時に決める\n親配下max plus 1024 など]
+  note1[orderKeyはCommit時に決める<br>親配下max plus 1024 など]
   E1 -.-> note1
 ```
 
@@ -118,8 +118,8 @@ flowchart TB
 
 ```mermaid id="act_followup_01"
 flowchart LR
-  A[Firestore Snapshot\n現在のorganize] --> P[Act Prompt Context]
-  D[DraftGraph\n未commitの提案] --> P
+  A[Firestore Snapshot<br>現在のorganize] --> P[Act Prompt Context]
+  D[DraftGraph<br>未commitの提案] --> P
   U[User message] --> P
   P --> L[LLM]
   L --> R[patch_ops stream]
@@ -144,3 +144,5 @@ flowchart LR
 
 `RunAct` の内部状態遷移は `act/backend/act-langgraph-spec.md` を正本とする。
 テスト観点は `act/backend/act-e2e-test-plan.md` を参照する。
+RPC契約は `act/specs/rpc-connect-schema.md` を正本とする。
+実装準備仕様は `act/specs/readiness/` 配下を参照する。

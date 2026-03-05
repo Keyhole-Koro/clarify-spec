@@ -107,7 +107,7 @@ sequenceDiagram
   FS-->>O: docs
   O-->>F: nodes + edges
 
-  F-->>F: ELKレイアウト計算\n(※layoutLocked=trueのnodeは固定アンカー)
+  F-->>F: ELKレイアウト計算<br>(※layoutLocked=trueのnodeは固定アンカー)
 
   Note over F: ユーザーがノードAをドラッグして「確定（lock）」した場合のみ保存
   F->>O: UpdateNodeFields(nodeId=A, layoutLocked=true, layout={x,y})
