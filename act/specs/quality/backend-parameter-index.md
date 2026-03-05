@@ -6,6 +6,7 @@
 ## Runtime Limits
 
 * `request_timeout_ms`: 90000
+* `idempotency_key_ttl_ms`: 900000
 * `node_timeout_ms`: 60000
 * `model_max_retries`: 2
 * `reasoning_loop_max`: 5

@@ -44,6 +44,9 @@
 * `PatchOp` は `upsert` / `append_md` のみ許可
 * `done` と `error` は同一Runで排他
 * stream終端は最後に1回だけ
+* `RunAct` handler 直前に access-control middleware を必ず通す
+* `request_id` を必須として検証する
+* 冪等キー `(uid, workspace_id, request_id)` を重複判定に使う
 * `ACT_TYPE_UNSPECIFIED` は `INVALID_ARGUMENT`
 * 親 -> 子の順序で patch を送る
 * `append_md` の対象未存在時は `upsert` 補完を先行
@@ -64,6 +67,7 @@
 ## エラーハンドリング
 
 * 入力不正: 即 `error` 終端
+* 重複 `request_id`: `ALREADY_EXISTS` で終端
 * 外部依存障害: 再試行後 `error` 終端
 * 部分送信後の破綻: `error` で終端（`done` は返さない）
 * Deep Research timeout時は通常Flashへフォールバック可能（設定で制御）

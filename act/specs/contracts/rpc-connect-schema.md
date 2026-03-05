@@ -34,11 +34,17 @@ message RunActRequest {
   GroundingConfig grounding_config = 10;
   ThinkingConfig thinking_config = 11;
   ResearchConfig research_config = 12;
+  // Client-generated UUID for idempotency.
+  string request_id = 13;
 }
 
 message ErrorInfo {
   string code = 1;
   string message = 2;
+  bool retryable = 3;
+  ErrorStage stage = 4;
+  string trace_id = 5;
+  int32 retry_after_ms = 6;
 }
 
 message RunActEvent {
@@ -51,6 +57,21 @@ message RunActEvent {
     bool done = 10;
     ErrorInfo error = 11;
   }
+}
+```
+
+```proto
+enum ErrorStage {
+  ERROR_STAGE_UNSPECIFIED = 0;
+  ERROR_STAGE_AUTHN = 1;
+  ERROR_STAGE_AUTHZ = 2;
+  ERROR_STAGE_VALIDATE_REQUEST = 3;
+  ERROR_STAGE_LOAD_CONTEXT = 4;
+  ERROR_STAGE_BUILD_PROMPT = 5;
+  ERROR_STAGE_GENERATE_WITH_MODEL = 6;
+  ERROR_STAGE_NORMALIZE_PATCH_OPS = 7;
+  ERROR_STAGE_EMIT_STREAM = 8;
+  ERROR_STAGE_FINALIZE = 9;
 }
 ```
 
@@ -169,6 +190,9 @@ message AppendMdPatch {
 * `patch_ops` は `upsert` / `append_md` のみ
 * `done` と `error` は排他
 * `done=true` または `error` を最後に1回返して終了
+* `request_id` は必須（UUID v4 推奨）
+* 冪等キーは `(uid, workspace_id, request_id)` で扱う
+* `error` 返却時は `retryable`, `stage`, `trace_id` を必ず埋める
 * 既定LLMは `GEMINI_3_FLASH`、重探索時は `GEMINI_DEEP_RESEARCH` を許可
 * Web Groundingは `grounding_config.use_web_grounding=true` で有効化
 * thoughtストリームは `stream_parts[].thought=true` で返す
@@ -180,7 +204,7 @@ message AppendMdPatch {
 * `append_md` -> `contentMd` 追記
 * `stream_parts[].thought=true` -> Thinkthroughパネルへ追記
 * `stream_parts[].thought=false` -> 通常回答として追記
-* `error` -> UIに失敗表示、loading解除
+* `error` -> `stage/retryable` を使って失敗表示、loading解除
 * `done=true` -> loading解除
 
 ## 6. References

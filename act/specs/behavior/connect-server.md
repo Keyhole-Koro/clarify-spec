@@ -14,12 +14,14 @@
 
 * `act/specs/contracts/rpc-connect-schema.md`
 * `act/specs/behavior/runact-implementation.md`
+* `act/specs/behavior/access-control-middleware.md`
 
 ## サーバ要件（MUST）
 
 * streaming応答を途中切断なく返せる
 * deadline/timeout超過時に明示エラーを返す
 * requestごとに traceId を付与
+* `request_id`（UUID）を受け取り、冪等キー重複を判定できる
 * workspace/uid の認可チェックを行う
 * Vertex AI 認証情報を解決し、Gemini呼び出し可能であること
 * `thinking_config` / `research_config` を解釈できること
@@ -36,13 +38,16 @@
 
 * 認証情報（uid/workspace）を必ず検証
 * Firebase ID Token の `firebase.sign_in_provider` は `google.com` のみ許可
-* workspace越境は `FAILED_PRECONDITION` か `PERMISSION_DENIED` 相当で拒否
+* middleware で `uid一致 -> workspace所属 -> tree所属` を共通検証する
+* workspace越境は `PERMISSION_DENIED` で拒否
+* tree不存在は `FAILED_PRECONDITION` で返す
 * ログへ機微情報本文を直接出さない
 
 ## 障害時挙動
 
 * upstream障害時は `UNAVAILABLE` / `DEADLINE_EXCEEDED`
 * 内部例外は `INTERNAL`
+* `ErrorInfo.stage` と `ErrorInfo.retryable` を付与して返す
 * 失敗ログに `traceId` を必須出力
 
 ## 完了条件（DoD）

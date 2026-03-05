@@ -11,12 +11,30 @@
 * `RunActRequest.uid` / `workspace_id` は照合用途のみ
 * claim と不一致は `UNAUTHENTICATED`
 
+## 1.1 冪等キー（request_id）
+
+決定:
+
+* `RunActRequest.request_id` を必須化
+* 形式は UUID（v4推奨）
+* 冪等キーは `(uid, workspace_id, request_id)`
+* 同一キーの重複実行は `ALREADY_EXISTS`
+
 ## 2. 認可境界（workspace/tree）
 
 決定:
 
 * `tree.workspace_id == token.workspace_id` を必須化
 * 越境時は `PERMISSION_DENIED`
+* 認可は共通 middleware に集約し、各handlerで重複実装しない
+
+## 2.1 Workspace作成・招待URL
+
+決定:
+
+* ユーザーは workspace を複数作成可能（当面上限なし）
+* 招待URLで workspace 参加可能
+* 招待URLは期限付きトークン（短寿命）を利用
 
 ## 3. ストリーム切断時挙動
 
@@ -47,6 +65,7 @@
 
 * 外部/内部例外を `ErrorInfo.code` へ正規化する
 * 詳細内部情報はレスポンスへ出さず、ログへ出す
+* `ErrorInfo.retryable` と `ErrorInfo.stage` を必須化する
 
 ## 7. Cloud Runデプロイ固定値（緩和済み）
 

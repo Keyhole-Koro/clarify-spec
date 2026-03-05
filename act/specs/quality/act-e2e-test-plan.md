@@ -67,9 +67,22 @@
 * `patch_ops` は空
 * `done=true` は返らない
 
+## 3.1 異常系: 重複 request_id
+
+入力:
+
+* 同一 `uid/workspace_id/request_id` で同じ RunAct を二重送信
+
+期待:
+
+* 2本目は `error=ALREADY_EXISTS`
+* 2本目で新しい `patch_ops` は流れない
+* 1本目の stream は継続または終端まで完了する
+
 ## 4. 追加チェック（全ケース共通）
 
 * `done` と `error` が同時に来ない
 * `PatchOp` が `upsert` / `append_md` のみ
 * イベント終了後に追撃イベントが来ない
 * thoughtの有無が `thinking_config` と整合する
+* `error` 時は `retryable` / `stage` / `trace_id` が設定される

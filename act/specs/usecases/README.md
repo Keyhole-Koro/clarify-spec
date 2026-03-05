@@ -5,11 +5,14 @@
 
 ## Usecase List
 
-* `ask-from-empty-canvas.md` (`UC-ASK-EMPTY-01`)
-* `ask-with-selected-context.md` (`UC-ASK-CONTEXT-01`)
-* `run-act-from-node-action.md` (`UC-RUNACT-NODE-01`)
-* `thinking-stream-visible.md` (`UC-THINK-STREAM-01`)
-* `deep-research-fallback.md` (`UC-DEEP-FALLBACK-01`)
+* `act/specs/usecases/ask-from-empty-canvas.md` (`UC-ASK-EMPTY-01`)
+* `act/specs/usecases/ask-with-selected-context.md` (`UC-ASK-CONTEXT-01`)
+* `act/specs/usecases/run-act-from-node-action.md` (`UC-RUNACT-NODE-01`)
+* `act/specs/usecases/thinking-stream-visible.md` (`UC-THINK-STREAM-01`)
+* `act/specs/usecases/deep-research-fallback.md` (`UC-DEEP-FALLBACK-01`)
+* `act/specs/usecases/create-workspace.md` (`UC-WORKSPACE-CREATE-01`)
+* `act/specs/usecases/join-workspace-by-invite-url.md` (`UC-WORKSPACE-INVITE-01`)
+* `act/specs/usecases/runact-without-workspace-access.md` (`UC-WORKSPACE-AUTHZ-01`)
 
 ## Rules
 

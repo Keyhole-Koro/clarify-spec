@@ -9,6 +9,7 @@
 * Askフォームで `user_message` を送信
 * `anchor_node_ids=[]`
 * `context_node_ids=[]`
+* `request_id`（UUID）
 
 ## 前提条件
 

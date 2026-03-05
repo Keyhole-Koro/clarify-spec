@@ -16,6 +16,7 @@
 
 * `done=true` 受信で loading が解除される
 * `error` 受信で loading が解除され、通知が表示される
+* `error.stage` と `error.retryable` をUI文言へ反映できる
 * `done` と `error` の二重終端を許可しない
 
 ## 3. 描画

@@ -21,7 +21,9 @@
 
 * `upsert`: block 追加/更新
 * `append_md`: `contentMd` 追記（置換禁止）
-* `error` 受信時: loading解除 + エラー表示
+* `request_id`（UUID）をリクエストごとに付与する
+* 同一論理リクエストの再送時は同じ `request_id` を使う
+* `error` 受信時: loading解除 + `error.stage/retryable` を表示へ反映
 * `done` 受信時: loading解除
 * `done/error` 二重終端でもUIが壊れない
 * `llm_config` / `grounding_config` は送信時に明示設定できる

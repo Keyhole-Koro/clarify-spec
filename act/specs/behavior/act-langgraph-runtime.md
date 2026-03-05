@@ -57,6 +57,7 @@ ActState {
 
 * `draft_graph` はメモリ上のみ保持
 * follow-up時は未commit提案も prompt context に含める
+* `request_id` は `(uid, workspace_id, request_id)` の冪等キーで扱う
 
 ## 5. Graph Nodes（固定）
 
@@ -91,17 +92,20 @@ ActState {
 * `user_message`
 * `workspace_id`
 * `uid`
+* `request_id`
 
 検証ルール:
 
 * `user_message` は trim 後 1〜6000 文字
 * `anchor_node_ids` は最大 40
 * `context_node_ids` は最大 120
+* `request_id` は UUID 形式
 
 失敗時:
 
 * `RunActEvent.error` を1回返して終了
 * `done=true` は返さない
+* 重複 `request_id` は `ALREADY_EXISTS`
 
 ### 7.2 LoadContext
 
@@ -168,6 +172,9 @@ ID生成規則（固定）:
 * `RunActEvent.error` を1回返す
 * `done=true` は返さない
 * 可能なら `warnings` をログへ残す
+* `ErrorInfo.stage` は失敗ノードに対応した値を設定
+* `ErrorInfo.retryable` は再試行可否を設定
+* `ErrorInfo.trace_id` は必ず設定
 
 ## 8. ストリーミング規約（RunActEvent）
 
@@ -180,10 +187,17 @@ ID生成規則（固定）:
 返却コード（`ErrorInfo.code`）:
 
 * `INVALID_ARGUMENT`
+* `ALREADY_EXISTS`
 * `FAILED_PRECONDITION`
 * `UNAVAILABLE`
 * `DEADLINE_EXCEEDED`
 * `INTERNAL`
+
+返却メタ（`ErrorInfo`）:
+
+* `retryable=true`: `UNAVAILABLE`, `DEADLINE_EXCEEDED`（一時障害）
+* `retryable=false`: `INVALID_ARGUMENT`, `ALREADY_EXISTS`, `FAILED_PRECONDITION`
+* `stage`: 失敗地点（`AUTHN`, `AUTHZ`, `LOAD_CONTEXT`, `GENERATE_WITH_MODEL` など）
 
 運用方針:
 
