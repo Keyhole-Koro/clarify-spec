@@ -11,6 +11,7 @@
 * Vertex AI API 呼び出し層（Gemini）
 
 詳細なLLM API試験は `act/specs/quality/llm-api-test-spec.md` を参照。
+ユースケース導線は `act/specs/usecases/README.md` を参照。
 
 ## 必須シナリオ
 
@@ -34,6 +35,14 @@
 * 重い回帰（長文・高負荷）は手動回帰に分離
 * 失敗時はシナリオ名とtraceIdを必ず出力
 * LLM API呼び出しは本番/スタブの2レイヤでテストする
+
+## Usecase対応
+
+* `UC-ASK-EMPTY-01` -> `E2E-STREAM-SUCCESS`
+* `UC-ASK-CONTEXT-01` -> `E2E-CONTEXT-EDGE-LINK`
+* `UC-RUNACT-NODE-01` -> `E2E-RUNACT-ANCHOR-LINK`
+* `UC-THINK-STREAM-01` -> `E2E-THOUGHT-STREAM`
+* `UC-DEEP-FALLBACK-01` -> `E2E-DEEPRESEARCH-FALLBACK`
 
 ## 完了条件（DoD）
 
