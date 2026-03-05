@@ -1,4 +1,4 @@
-# Firestore ER Detailed (Act + Organize)
+# Firestore スキーマ仕様（統合版）
 
 目的: DB周りの論理モデルとFirestore物理配置を、実装に使える粒度で固定する。
 
@@ -38,6 +38,7 @@ erDiagram
     string tree_id PK
     string workspace_id FK
     string title
+    string[] entry_node_ids "optional"
     timestamp created_at
     timestamp updated_at
   }
@@ -179,10 +180,14 @@ workspaces/{workspaceId}/leases/{resourceKey}
 workspaces/{workspaceId}/versions/{resourceKey}
 ```
 
-補足:
+互換パス（旧）:
 
-* 既存の `users/{uid}/trees/{treeId}` 方式は互換運用可
-* 新規は workspace スコープを正本とする
+```txt
+users/{uid}/trees/{treeId}
+users/{uid}/trees/{treeId}/nodes/{nodeId}
+users/{uid}/trees/{treeId}/edges/{edgeId}
+users/{uid}/trees/{treeId}/nodes/{nodeId}/evidence/{evidenceId}
+```
 
 ## 6. 主要制約（MUST）
 
@@ -191,6 +196,7 @@ workspaces/{workspaceId}/versions/{resourceKey}
 * `ACT_REQUEST (uid, workspace_id, request_id)` は一意
 * `EDGE` の `source_id/target_id` は同一 `tree_id` 内に限定
 * `RUN_EVENT.terminal=error` のとき `ERROR_INFO` 必須
+* `layout` は `layout_locked=true` のノードのみ保存
 
 ## 7. 推奨インデックス
 
@@ -208,7 +214,30 @@ workspaces/{workspaceId}/versions/{resourceKey}
 * ApplyPatch: `nodes/edges/evidence` を一括バッチ（CAS版数確認）
 * Lease取得: `leases/{resourceKey}` を compare-and-set
 
-## 9. 監査/保持
+## 9. レイアウト保存フロー
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant F as Frontend (ReactFlow)
+  participant O as OrganizeService (Connect RPC)
+  participant FS as Firestore
+
+  F->>O: GetTree(treeId) + ListNodes/ListEdges
+  O->>FS: read trees/nodes/edges
+  FS-->>O: docs
+  O-->>F: nodes + edges
+
+  F-->>F: ELKレイアウト計算<br>(layoutLocked=trueは固定)
+
+  Note over F: ユーザーがノードAをドラッグしてlock
+  F->>O: UpdateNodeFields(A, layoutLocked=true, layout={x,y})
+  O->>FS: update nodes/{A}
+  FS-->>O: ok
+  O-->>F: Node(updated)
+```
+
+## 10. 監査/保持
 
 * `actRuns/events`: TTLで短期保持（デバッグ用途）
 * `eventLedger`: 冪等性期間に合わせて保持

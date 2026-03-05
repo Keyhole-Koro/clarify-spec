@@ -52,8 +52,7 @@
 6. `organize/agents/README.md`
 7. `organize/agents/a0/specs/ingest-extract-spec-v0.3.md`
 8. `organize/agents/a1/specs/a0-a1-boundary.md`
-9. `organize/data/firestore-schema.md`
-10. `organize/data/firestore-er-detailed.md`
+9. `firestore/schema.md`
 
 ## 4. 実装手順（MDの順番）
 
@@ -61,7 +60,7 @@
 
 1. `act/specs/contracts/rpc-connect-schema.md`
 2. `act/specs/contracts/gemini-vertex-response-schemas.md`
-3. `organize/data/firestore-schema.md`
+3. `firestore/schema.md`
 
 ### 手順2: Act Backend骨格
 
