@@ -24,21 +24,22 @@
 11. `act/specs/behavior/frontend-stream-integration.md`
 12. `act/specs/behavior/frontend-canvas-phases.md`
 13. `act/specs/usecases/README.md`
-14. `act/specs/usecases/ask-from-empty-canvas.md`
-15. `act/specs/usecases/ask-with-selected-context.md`
-16. `act/specs/usecases/run-act-from-node-action.md`
-17. `act/specs/usecases/thinking-stream-visible.md`
-18. `act/specs/usecases/deep-research-fallback.md`
-19. `act/specs/usecases/create-workspace.md`
-20. `act/specs/usecases/join-workspace-by-invite-url.md`
-21. `act/specs/usecases/runact-without-workspace-access.md`
-22. `act/specs/quality/e2e-test-strategy.md`
-23. `act/specs/quality/act-e2e-test-plan.md`
-24. `act/specs/quality/llm-api-test-spec.md`
-25. `act/specs/quality/operations-config-observability.md`
-26. `act/specs/quality/frontend-stream-acceptance.md`
-27. `act/specs/quality/backend-parameter-index.md`
-28. `act/specs/quality/backend-spec-gaps.md`
+14. `act/specs/usecases/usecase-er-diagrams.md`
+15. `act/specs/usecases/ask-from-empty-canvas.md`
+16. `act/specs/usecases/ask-with-selected-context.md`
+17. `act/specs/usecases/run-act-from-node-action.md`
+18. `act/specs/usecases/thinking-stream-visible.md`
+19. `act/specs/usecases/deep-research-fallback.md`
+20. `act/specs/usecases/create-workspace.md`
+21. `act/specs/usecases/join-workspace-by-invite-url.md`
+22. `act/specs/usecases/runact-without-workspace-access.md`
+23. `act/specs/quality/e2e-test-strategy.md`
+24. `act/specs/quality/act-e2e-test-plan.md`
+25. `act/specs/quality/llm-api-test-spec.md`
+26. `act/specs/quality/operations-config-observability.md`
+27. `act/specs/quality/frontend-stream-acceptance.md`
+28. `act/specs/quality/backend-parameter-index.md`
+29. `act/specs/quality/backend-spec-gaps.md`
 
 ## 3. Organize 仕様索引（Source of Truth）
 
@@ -79,13 +80,14 @@
 ### 手順4: Usecase成立確認
 
 1. `act/specs/usecases/ask-from-empty-canvas.md`
-2. `act/specs/usecases/ask-with-selected-context.md`
-3. `act/specs/usecases/run-act-from-node-action.md`
-4. `act/specs/usecases/thinking-stream-visible.md`
-5. `act/specs/usecases/deep-research-fallback.md`
-6. `act/specs/usecases/create-workspace.md`
-7. `act/specs/usecases/join-workspace-by-invite-url.md`
-8. `act/specs/usecases/runact-without-workspace-access.md`
+2. `act/specs/usecases/usecase-er-diagrams.md`
+3. `act/specs/usecases/ask-with-selected-context.md`
+4. `act/specs/usecases/run-act-from-node-action.md`
+5. `act/specs/usecases/thinking-stream-visible.md`
+6. `act/specs/usecases/deep-research-fallback.md`
+7. `act/specs/usecases/create-workspace.md`
+8. `act/specs/usecases/join-workspace-by-invite-url.md`
+9. `act/specs/usecases/runact-without-workspace-access.md`
 
 ### 手順5: Organize接続
 
