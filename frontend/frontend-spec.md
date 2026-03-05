@@ -34,6 +34,42 @@
 
 ---
 
+## UIリソース（デザイン実装で積極利用）
+
+アイコン・アニメーション・UI部品は以下を優先的に参照して実装する。
+MVPでは「独自SVGを最小化し、既存ライブラリ資産を多用する」。
+
+### アイコン
+
+* Lucide Icons: https://lucide.dev/icons/
+* Lucide static SVG: https://app.unpkg.com/lucide-static@0.563.0/files/icons
+* Tabler Icons: https://tabler.io/icons
+* Tabler 個別アイコン例: https://tabler.io/icons/icon/copy
+* Tabler Icons viewer: https://tablericons.com/
+
+### アニメーション
+
+* LottieFiles（free animations）: https://lottiefiles.com/free-animations/link
+
+### グラフ/UI実装参考
+
+* React Flow examples: https://reactflow.dev/examples
+* React Flow example apps: https://github.com/xyflow/react-flow-example-apps
+* D3: https://d3js.org/
+* D3 gallery: https://observablehq.com/@d3/gallery
+* shadcn/ui components: https://ui.shadcn.com/docs/components
+* Radix UI primitives: https://www.radix-ui.com/primitives
+* Vercel AI SDK intro: https://ai-sdk.dev/docs/introduction
+* Vercel AI SDK docs: https://vercel.com/docs/ai-sdk
+
+### 運用ルール（MUST）
+
+* アイコンは Lucide / Tabler を第一候補にする
+* 1画面内で icon style を混在させる場合は、線幅とサイズ基準（例: 16/20/24）を統一する
+* 状態表現をアイコンのみに依存しない（テキスト/色/ラベルを併記）
+
+---
+
 ### 技術的注意（Next.js絡みの詰まり回避）
 
 * Firestore `onSnapshot` / Firebase Auth / ReactFlow / RPC呼び出しは基本 **クライアント側で動かす**

@@ -64,9 +64,10 @@
 ### 手順3: Frontend Stream接続
 
 1. `frontend/frontend-spec.md`
-2. `act/specs/behavior/frontend-stream-integration.md`
-3. `act/specs/behavior/frontend-canvas-phases.md`
-4. `act/specs/quality/frontend-stream-acceptance.md`
+2. `frontend/frontend-ui-gaps.md`
+3. `act/specs/behavior/frontend-stream-integration.md`
+4. `act/specs/behavior/frontend-canvas-phases.md`
+5. `act/specs/quality/frontend-stream-acceptance.md`
 
 ### 手順4: Usecase成立確認
 
