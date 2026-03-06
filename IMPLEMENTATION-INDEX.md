@@ -16,6 +16,7 @@
 2. `specs/shared/topic-model.md`
 3. `specs/shared/context-bundle-schema.md`
 4. `specs/shared/context-assembly-core.md`
+5. `specs/shared/context-assembly-implementation.md`
 
 ## 3. Act 仕様索引（Source of Truth）
 
@@ -73,6 +74,7 @@
 1. `specs/shared/topic-model.md`
 2. `specs/shared/context-bundle-schema.md`
 3. `specs/shared/context-assembly-core.md`
+4. `specs/shared/context-assembly-implementation.md`
 
 ### 手順2: データモデル固定
 

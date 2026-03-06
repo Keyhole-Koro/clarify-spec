@@ -1,6 +1,56 @@
-# Usecase ER Diagrams
+# Usecase ER Diagrams (Authorization & Scope)
 
-Usecaseごとのデータ関係をER図で示す。
+## 目的
+
+Act における「認可境界」と「実行スコープ」の関係を可視化し、実装時の検証ロジック漏れを防ぐ。
+
+## 1. Authorization & Scope Boundary
+
+Workspace を中心とした認可とデータの所属関係。
+
+```mermaid
+erDiagram
+    USER ||--o{ WORKSPACE_MEMBER : "joins"
+    WORKSPACE ||--o{ WORKSPACE_MEMBER : "has"
+    
+    WORKSPACE ||--o{ TOPIC : "owns (Knowledge Boundary)"
+    WORKSPACE ||--o{ TREE : "owns (UI Boundary)"
+    
+    ACT_REQUEST }o--|| USER : "initiated by"
+    ACT_REQUEST }o--|| WORKSPACE : "executed in"
+    
+    ACT_REQUEST }o--|| TOPIC : "targets (MUST)"
+    ACT_REQUEST }o--o| TREE : "refers (OPTIONAL)"
+
+    %% Constraints
+    ACT_REQUEST ||--|| AUTH_CHECK : "validates"
+```
+
+## 2. Validation Logic Flow
+
+Act Request 受信時の検証ロジック（Middleware / Handler）。
+
+```mermaid
+flowchart TD
+    Start([RunAct Request]) --> AuthN{Valid Token?}
+    AuthN -- No --> ErrAuthN[UNAUTHENTICATED]
+    AuthN -- Yes --> AuthZ_Member{User is Member<br/>of Workspace?}
+    
+    AuthZ_Member -- No --> ErrAuthZ[PERMISSION_DENIED]
+    AuthZ_Member -- Yes --> CheckTopic{Topic belongs<br/>to Workspace?}
+    
+    CheckTopic -- No --> ErrTopic[PERMISSION_DENIED<br/>(Cross-boundary access)]
+    CheckTopic -- Yes --> HasTree{Tree ID provided?}
+    
+    HasTree -- No --> Exec[Execute Act]
+    HasTree -- Yes --> CheckTree{Tree belongs<br/>to Workspace?}
+    
+    CheckTree -- No --> ErrTree[PERMISSION_DENIED<br/>(Cross-boundary access)]
+    CheckTree -- Yes --> Exec
+```
+
+## 3. Usecase Specific Diagrams
+
 詳細挙動は各usecase本文を正本とする。
 
 ## UC-ASK-EMPTY-01

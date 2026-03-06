@@ -7,6 +7,7 @@
 1. `specs/shared/topic-model.md`
 2. `specs/shared/context-bundle-schema.md`
 3. `specs/shared/context-assembly-core.md`
+4. `specs/shared/context-assembly-implementation.md`
 
 ## Rules
 

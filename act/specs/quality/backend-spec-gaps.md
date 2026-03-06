@@ -24,7 +24,8 @@
 
 決定:
 
-* `tree.workspace_id == request.workspace_id` を必須化
+* `topic.workspace_id == request.workspace_id` を必須化（Context Assembly参照のため）
+* `tree_id` 指定時は `tree.workspace_id == request.workspace_id` を必須化
 * `token.uid` が `members/{workspace_id}` に存在することを必須化
 * 上記違反時は `PERMISSION_DENIED`
 * 認可は共通 middleware に集約し、各handlerで重複実装しない
