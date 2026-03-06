@@ -36,15 +36,17 @@
 ## 正常フロー
 
 1. `AUTHN`: Firebase token 検証
-2. `SID_VALIDATE`: sid検証（soft許容）
-3. `CSRF_VALIDATE`: Double Submit 照合
-4. `AUTHZ`: uid -> workspace membership -> topic access
-5. `VALIDATE_REQUEST`: `topic_id`, `request_id`, 上限検証
-6. 冪等判定 `(uid, workspace_id, request_id)`
-7. Go API が ADK Worker へ実行委譲
-8. ADK Worker が `ASSEMBLY_* -> GENERATE_WITH_MODEL -> NORMALIZE_PATCH_OPS`
-9. Go API が `RunActEvent` へ変換して `EMIT_STREAM`
-10. `FINALIZE`: `done=true` で終端
+2. token claim から `token_uid` を確定（request `uid` は互換用）
+3. `SID_VALIDATE`: sid検証（soft許容）
+4. `CSRF_VALIDATE`: Double Submit 照合
+5. `AUTHZ`: token_uid -> workspace membership -> topic access
+6. `VALIDATE_REQUEST`: `topic_id`, `request_id`, 上限検証
+7. request `uid` が存在する場合は `token_uid` と一致検証
+8. 冪等判定 `(token_uid, workspace_id, request_id)`
+9. Go API が ADK Worker へ実行委譲
+10. ADK Worker が `ASSEMBLY_* -> GENERATE_WITH_MODEL -> NORMALIZE_PATCH_OPS`
+11. Go API が `RunActEvent` へ変換して `EMIT_STREAM`
+12. `FINALIZE`: `done=true` で終端
 
 ## 異常フロー（error/retryable/stage）
 

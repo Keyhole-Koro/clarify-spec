@@ -7,8 +7,10 @@
 決定:
 
 * Firebase ID Token claim を正本とする
-* `RunActRequest.uid` / `workspace_id` は照合用途のみ
-* claim と不一致は `UNAUTHENTICATED`
+* `RunActRequest.uid` は互換用（deprecated）とし、認証正本に使わない
+* 実処理で使う `uid` は常に token claim から採用する
+* `RunActRequest.uid` が存在し claim と不一致の場合は `UNAUTHENTICATED`
+* `workspace_id` は境界照合用途のみ
 
 ## 1.1 冪等キー（request_id）
 
@@ -16,7 +18,7 @@
 
 * `RunActRequest.request_id` を必須化
 * 形式は UUID（v4推奨）
-* 冪等キーは `(uid, workspace_id, request_id)`
+* 冪等キーは `(token_uid, workspace_id, request_id)`
 * 同一キーの重複実行は `ALREADY_EXISTS`
 
 ## 2. 認可境界（workspace/tree/topic）

@@ -21,7 +21,7 @@
 入力:
 
 * Firebase ID Token（`Authorization`）
-* `workspace_id`, `tree_id`, `uid`（request）
+* `workspace_id`, `tree_id`, `uid?`（request, `uid` は互換用）
 
 出力:
 
@@ -32,7 +32,7 @@
 
 1. Firebase ID Token 検証
 2. `firebase.sign_in_provider == google.com` を確認
-3. token `uid` と request `uid` を照合
+3. request `uid` が存在する場合のみ token `uid` と照合（不一致は reject）
 4. token user が request `workspace_id` メンバーであることを確認
 5. request `tree_id` が request `workspace_id` に属することを確認
 6. すべて通過時のみ handler (`RunAct`) へ委譲
@@ -41,6 +41,7 @@
 
 * `sid` は認可判定の正本に使わない
 * 認可正本は常に `token user -> workspace membership -> tree access`
+* request `uid` は互換用で、実処理の主体IDは token `uid` を使う
 
 ## データモデル前提（最小）
 
@@ -56,7 +57,7 @@
 
 ## エラーコード方針
 
-* token不正 / provider不一致 / uid不一致: `UNAUTHENTICATED`
+* token不正 / provider不一致 / request uid不一致: `UNAUTHENTICATED`
 * workspace未所属 / tree越境: `PERMISSION_DENIED`
 * tree不存在: `FAILED_PRECONDITION`
 

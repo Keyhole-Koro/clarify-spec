@@ -35,14 +35,16 @@ Firebase Auth（認証正本）と Redis sid（補助セッション）の責務
 ## 処理フロー（正常）
 
 1. Firebase token を検証し `uid` を確定
-2. `sid` Cookie を Redis で検証（softモードでは欠落許容）
-3. CSRF（Double Submit）を照合
-4. access-control middleware で `workspace/tree` 認可
-5. handler へ委譲して `RunAct` 実行
+2. request `uid` が存在する場合のみ claim `uid` と照合（互換モード）
+3. `sid` Cookie を Redis で検証（softモードでは欠落許容）
+4. CSRF（Double Submit）を照合
+5. access-control middleware で `workspace/tree` 認可
+6. handler へ委譲して `RunAct` 実行
 
 ## 異常フロー（エラーコード・retryable）
 
 * token不正 / provider不一致: `UNAUTHENTICATED`, `retryable=false`, `stage=AUTHN`
+* request uid 不一致: `UNAUTHENTICATED`, `retryable=false`, `stage=AUTHN`
 * sid不正（strict）: `UNAUTHENTICATED`, `retryable=true`, `stage=SID_VALIDATE`
 * csrf不一致: `PERMISSION_DENIED`, `retryable=false`, `stage=CSRF_VALIDATE`
 * workspace未所属 / tree越境: `PERMISSION_DENIED`, `retryable=false`, `stage=AUTHZ`

@@ -36,7 +36,7 @@ Act の Connect RPC 契約を `topic_id` 中心で定義し、コード断片な
 | `user_message` | 必須 | ユーザー入力 |
 | `context_node_ids` | 任意 | 明示コンテキストノード |
 | `workspace_id` | 必須 | workspace境界 |
-| `uid` | 必須 | 呼出ユーザー |
+| `uid` | 任意（互換） | 旧クライアント互換用。認証正本には使わない（deprecated） |
 | `llm_config` | 任意 | モデル設定 |
 | `grounding_config` | 任意 | grounding設定 |
 | `thinking_config` | 任意 | thought設定 |
@@ -110,8 +110,9 @@ flowchart LR
 * Context Assembly は `act/specs/context/core.md` に従う
 * `patch_ops` は `upsert` / `append_md` のみ
 * `done` と `error` は排他
-* 冪等キーは `(uid, workspace_id, request_id)`
+* 冪等キーは `(token_uid, workspace_id, request_id)`
 * `sid` は補助識別子であり認証正本ではない
+* `request.uid` は互換用であり、実処理は token claim の `uid` を使う
 * エラー時は `retryable`, `stage`, `trace_id` を必須返却
 
 ## Frontend Mapping
