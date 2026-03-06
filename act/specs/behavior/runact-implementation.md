@@ -12,9 +12,9 @@
 ## 前提・依存
 
 * `act/specs/contracts/rpc-connect-schema.md`
-* `specs/shared/context-assembly-core.md`
-* `specs/shared/context-bundle-schema.md`
-* `specs/shared/topic-model.md`
+* `act/specs/behavior/context-assembly-core.md`
+* `act/specs/contracts/context-bundle-schema.md`
+* `organize/specs/topic-model.md`
 * `act/specs/behavior/session-and-auth-boundary.md`
 
 ## 契約（I/O）

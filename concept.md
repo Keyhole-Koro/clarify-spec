@@ -12,7 +12,9 @@
 
 * `act/`: ユーザー対話でノード候補をリアルタイム生成（Interaction Layer）
 * `organize/`: 入力を安定処理して永続知識グラフへ反映（Knowledge Pipeline Layer）
-* `specs/shared/`: topicモデルとContext Assemblyの共通正本（Context Assembly Layer）
+* `act/specs/behavior`: Context Assembly Layer の実行仕様
+* `act/specs/contracts`: Context Bundle 契約
+* `organize/specs`: topicモデルとKnowledge Pipeline仕様
 * `frontend/`: 単一画面UIの表示要件と実装方針
 
 ## 不変条件（MUST）
@@ -55,9 +57,8 @@
 
 ## 仕様の正本
 
-* Shared索引: `specs/shared/README.md`
 * Act索引: `act/specs/README.md`
-* Organize索引: `organize/README.md`, `organize/specs/pipeline-summary.md`
+* Organize索引: `organize/README.md`, `organize/specs/pipeline-summary.md`, `organize/specs/topic-model.md`
 * Frontend正本: `frontend/frontend-spec.md`
 
 ## 実装時の導線

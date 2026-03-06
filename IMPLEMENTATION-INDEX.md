@@ -5,20 +5,11 @@
 ## 1. まず読む（全体）
 
 1. `concept.md`
-2. `specs/shared/README.md`
-3. `act/README.md`
-4. `organize/README.md`
-5. `frontend/frontend-spec.md`
+2. `act/README.md`
+3. `organize/README.md`
+4. `frontend/frontend-spec.md`
 
-## 2. Shared 仕様索引（Source of Truth）
-
-1. `specs/shared/README.md`
-2. `specs/shared/topic-model.md`
-3. `specs/shared/context-bundle-schema.md`
-4. `specs/shared/context-assembly-core.md`
-5. `specs/shared/context-assembly-implementation.md`
-
-## 3. Act 仕様索引（Source of Truth）
+## 2. Act 仕様索引（Source of Truth）
 
 1. `act/specs/README.md`
 2. `act/specs/overview/act-overview.md`
@@ -54,7 +45,7 @@
 32. `act/specs/quality/backend-parameter-index.md`
 33. `act/specs/quality/backend-spec-gaps.md`
 
-## 4. Organize 仕様索引（Source of Truth）
+## 3. Organize 仕様索引（Source of Truth）
 
 1. `organize/specs/pipeline-summary.md`
 2. `organize/specs/pipeline-spec.md`
@@ -69,12 +60,12 @@
 
 ## 5. 実装手順（MDの順番）
 
-### 手順1: Shared 契約固定
+### 手順1: Context 契約固定
 
-1. `specs/shared/topic-model.md`
-2. `specs/shared/context-bundle-schema.md`
-3. `specs/shared/context-assembly-core.md`
-4. `specs/shared/context-assembly-implementation.md`
+1. `organize/specs/topic-model.md`
+2. `act/specs/contracts/context-bundle-schema.md`
+3. `act/specs/behavior/context-assembly-core.md`
+4. `act/specs/behavior/context-assembly-implementation.md`
 
 ### 手順2: データモデル固定
 
@@ -114,6 +105,6 @@
 
 ## 6. ルール
 
-* 共有仕様変更は `specs/shared` を先に更新し、Act/Organizeを追従させる
+* Context仕様変更は `act/specs/contracts` / `act/specs/behavior` / `organize/specs/topic-model.md` を同時更新する
 * 実装メモは `act/backend` / `act/frontend` に置く
-* 仕様の正本は `specs/shared` / `act/specs` / `organize/specs` / `firestore` とする
+* 仕様の正本は `act/specs` / `organize/specs` / `firestore` とする

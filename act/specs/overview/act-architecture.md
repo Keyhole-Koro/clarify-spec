@@ -11,9 +11,9 @@ Act の実行経路を `Interaction / Context Assembly / Knowledge Pipeline` の
 
 ## 前提 / 参照
 
-* `specs/shared/topic-model.md`
-* `specs/shared/context-assembly-core.md`
-* `specs/shared/context-bundle-schema.md`
+* `organize/specs/topic-model.md`
+* `act/specs/behavior/context-assembly-core.md`
+* `act/specs/contracts/context-bundle-schema.md`
 * `act/specs/contracts/rpc-connect-schema.md`
 * `firestore/schema.md`
 

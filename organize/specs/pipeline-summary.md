@@ -4,8 +4,8 @@ Version: 1.1 / schemaVersion: v1
 
 この文書は要約版。詳細は正本を参照。
 
-* `specs/shared/topic-model.md`
-* `specs/shared/context-assembly-core.md`
+* `organize/specs/topic-model.md`
+* `act/specs/behavior/context-assembly-core.md`
 * `organize/specs/pipeline-core.md`
 * `organize/specs/pipeline-agents.md`
 * `organize/specs/pipeline-ops.md`

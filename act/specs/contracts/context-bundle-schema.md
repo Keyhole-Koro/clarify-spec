@@ -11,8 +11,8 @@ LLM呼び出し直前の一時文脈フォーマットを固定し、Act/Organiz
 
 ## 前提・依存
 
-* `specs/shared/topic-model.md`
-* `specs/shared/context-assembly-core.md`
+* `organize/specs/topic-model.md`
+* `act/specs/behavior/context-assembly-core.md`
 
 ## 契約（I/O）
 

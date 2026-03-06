@@ -11,7 +11,7 @@
 
 ## 前提・依存
 
-* `specs/shared/context-bundle-schema.md`
+* `act/specs/contracts/context-bundle-schema.md`
 * `organize/specs/pipeline-core.md`
 * `firestore/schema.md`
 
