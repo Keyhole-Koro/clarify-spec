@@ -11,8 +11,8 @@
 
 ## 前提・依存
 
-* `organize/specs/pipeline-core.md`
-* `organize/specs/pipeline-agents.md`
+* `organize/specs/pipeline/core.md`
+* `organize/specs/pipeline/agents.md`
 * `firestore/schema.md`
 
 ## 契約（I/O）

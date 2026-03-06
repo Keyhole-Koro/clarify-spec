@@ -11,8 +11,8 @@
 
 ## 前提・依存
 
-* `act/specs/contracts/context-bundle-schema.md`
-* `organize/specs/pipeline-core.md`
+* `act/specs/context/bundle-schema.md`
+* `organize/specs/pipeline/core.md`
 * `firestore/schema.md`
 
 ## 契約（I/O）

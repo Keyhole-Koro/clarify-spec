@@ -5,7 +5,9 @@
 ## Structure
 
 * `organize/specs/`
-  * Pub/Subパイプライン仕様（中核、agent、運用、要約）
+  * `README.md`（読み順）
+  * `model/`（`topic-model.md`）
+  * `pipeline/`（`summary/spec/core/agents/ops`）
 * `organize/agents/`
   * Agentごとの個別仕様（`a0/`, `a1/` などの下位specを含む）
 * `firestore/`

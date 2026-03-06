@@ -11,9 +11,9 @@
 
 ## 前提・依存
 
-* `act/specs/behavior/context-assembly-core.md`
-* `act/specs/contracts/context-bundle-schema.md`
-* `organize/specs/topic-model.md`
+* `act/specs/context/core.md`
+* `act/specs/context/bundle-schema.md`
+* `organize/specs/model/topic-model.md`
 * `firestore/schema.md`
 
 ## 契約（I/O）

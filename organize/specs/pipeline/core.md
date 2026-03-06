@@ -14,9 +14,9 @@ A0〜A7/A5 のイベント駆動パイプラインを **Pub/Sub (at-least-once)*
 
 ## 前提・依存
 
-* `organize/specs/topic-model.md`
-* `act/specs/behavior/context-assembly-core.md`
-* `organize/specs/pipeline-agents.md`
+* `organize/specs/model/topic-model.md`
+* `act/specs/context/core.md`
+* `organize/specs/pipeline/agents.md`
 * `firestore/schema.md`
 
 ## 契約（I/O）

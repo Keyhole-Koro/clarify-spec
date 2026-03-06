@@ -2,20 +2,20 @@
 
 Version: 1.1 / schemaVersion: v1
 
-`organize/specs/pipeline-spec.md` は入口のみを担い、詳細は分割先を正本とする。
+`organize/specs/pipeline/spec.md` は入口のみを担い、詳細は分割先を正本とする。
 
 ## 1. 参照順序
 
-1. `organize/specs/topic-model.md`
-2. `act/specs/contracts/context-bundle-schema.md`
-3. `act/specs/behavior/context-assembly-core.md`
-4. `organize/specs/pipeline-core.md`
-5. `organize/specs/pipeline-agents.md`
-6. `organize/specs/pipeline-ops.md`
+1. `organize/specs/model/topic-model.md`
+2. `act/specs/context/bundle-schema.md`
+3. `act/specs/context/core.md`
+4. `organize/specs/pipeline/core.md`
+5. `organize/specs/pipeline/agents.md`
+6. `organize/specs/pipeline/ops.md`
 
 ## 2. 分割方針
 
-* `organize/specs/topic-model.md` + `act/specs/contracts/context-bundle-schema.md` + `act/specs/behavior/context-assembly-core.md`: Act/Organize共通の topic / context assembly 正本
+* `organize/specs/model/topic-model.md` + `act/specs/context/bundle-schema.md` + `act/specs/context/core.md`: Act/Organize共通の topic / context assembly 正本
 * `pipeline-core.md`: Topic/Subscription、Envelope/attributes、冪等・Lease・CAS、DLQ/Ackの共通ルール
 * `pipeline-agents.md`: A0〜A7/A5 の入出力・emit・必須競合対策
 * `pipeline-ops.md`: Firestore状態の衝突回避、監視運用、整合性チェックポイント

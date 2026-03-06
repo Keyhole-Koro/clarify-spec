@@ -1,10 +1,11 @@
 # Act Specs Guide
 
-Act仕様は以下の5層で管理する。
+Act仕様は以下の6層で管理する。
 
 ## Layers
 
 * `overview/`: 全体像、読み順、DoD
+* `context/`: Context Assembly と Bundle 契約（Act実行前の文脈層）
 * `contracts/`: RPC/イベント/外部APIの入出力契約（破壊的変更管理対象）
 * `behavior/`: フロー、状態遷移、実行ルール
 * `usecases/`: ユーザー操作起点のシナリオ仕様（受け入れの主導線）

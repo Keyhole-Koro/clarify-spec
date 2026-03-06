@@ -4,11 +4,11 @@ Version: 1.1 / schemaVersion: v1
 
 この文書は要約版。詳細は正本を参照。
 
-* `organize/specs/topic-model.md`
-* `act/specs/behavior/context-assembly-core.md`
-* `organize/specs/pipeline-core.md`
-* `organize/specs/pipeline-agents.md`
-* `organize/specs/pipeline-ops.md`
+* `organize/specs/model/topic-model.md`
+* `act/specs/context/core.md`
+* `organize/specs/pipeline/core.md`
+* `organize/specs/pipeline/agents.md`
+* `organize/specs/pipeline/ops.md`
 
 ## 1. 方針
 

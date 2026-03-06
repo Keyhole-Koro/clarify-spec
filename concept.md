@@ -58,7 +58,7 @@
 ## 仕様の正本
 
 * Act索引: `act/specs/README.md`
-* Organize索引: `organize/README.md`, `organize/specs/pipeline-summary.md`, `organize/specs/topic-model.md`
+* Organize索引: `organize/README.md`, `organize/specs/pipeline/summary.md`, `organize/specs/model/topic-model.md`
 * Frontend正本: `frontend/frontend-spec.md`
 
 ## 実装時の導線

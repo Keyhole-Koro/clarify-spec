@@ -11,10 +11,10 @@ A0〜A7/A5 を `topic_id` 中心で再配線し、Act Context Assembly との責
 
 ## 前提・依存
 
-* `organize/specs/topic-model.md`
-* `act/specs/behavior/context-assembly-core.md`
-* `act/specs/contracts/context-bundle-schema.md`
-* `organize/specs/pipeline-core.md`
+* `organize/specs/model/topic-model.md`
+* `act/specs/context/core.md`
+* `act/specs/context/bundle-schema.md`
+* `organize/specs/pipeline/core.md`
 
 ## 契約（I/O）
 
@@ -239,7 +239,7 @@ flowchart LR
 
 ## 数値パラメータ
 
-* 個別上限は `organize/specs/pipeline-ops.md` と `act/specs/quality/backend-parameter-index.md` を参照
+* 個別上限は `organize/specs/pipeline/ops.md` と `act/specs/quality/backend-parameter-index.md` を参照
 
 ## 受け入れ条件（DoD）
 

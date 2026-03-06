@@ -11,9 +11,9 @@
 
 ## 前提・依存
 
-* `act/specs/contracts/context-bundle-schema.md`
-* `organize/specs/topic-model.md`
-* `organize/specs/pipeline-agents.md`
+* `act/specs/context/bundle-schema.md`
+* `organize/specs/model/topic-model.md`
+* `organize/specs/pipeline/agents.md`
 
 ## 契約（I/O）
 

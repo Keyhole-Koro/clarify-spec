@@ -126,5 +126,5 @@
 
 次アクション:
 
-* backend仕様: `act/specs/behavior/access-control-middleware.md` と `act/specs/usecases/join-workspace-by-invite-url.md` にAPI契約を追記
+* backend仕様: `act/specs/behavior/access-control-middleware.md` と `act/specs/usecases/workspace/join-workspace-by-invite-url.md` にAPI契約を追記
 * frontend仕様: `frontend/frontend-spec.md` に共有/参加UIの最小ワイヤーを追記
