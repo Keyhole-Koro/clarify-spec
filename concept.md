@@ -37,6 +37,7 @@
 ## Act の位置づけ
 
 * Connect RPC server-streaming で `RunAct` を実行
+* Go API（Connect公開）と Python ADK Worker（推論実行）を分離する
 * `PatchOp` は `upsert` / `append_md` のみ
 * thought stream（thinkthrough）を通常回答と分離して表示可能
 * Vertex AI（Gemini 3 Flash / Web Grounding / Deep Research）をプロファイルで使い分け

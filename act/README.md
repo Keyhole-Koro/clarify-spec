@@ -8,15 +8,17 @@
   * 仕様の粒度ルールと命名ルール
 * `act/specs/overview/`
   * 全体像・文書構成ガイド
+* `act/specs/context/`
+  * Context Assembly と Bundle 契約
 * `act/specs/contracts/`
   * RPC契約・Gemini/Vertexレスポンス契約
 * `act/specs/behavior/`
-  * 実行挙動仕様（RunAct、Connect公開、Frontend統合、flow）
+  * 実行挙動仕様（RunAct、ADK連携、Connect公開、Frontend統合）
 * `act/specs/usecases/`
-  * ユーザー操作起点のシナリオ仕様（実装・受け入れ導線）
+  * ユーザー操作起点のシナリオ仕様
 * `act/specs/quality/`
   * テスト戦略・LLM API試験・運用設定
 * `act/backend/`
-  * バックエンド実装ルート（Goコードとテスト）
+  * バックエンド実装ルート（Go API）
 * `act/frontend/`
   * フロント実装ルート（UIコード、実装補助資料）

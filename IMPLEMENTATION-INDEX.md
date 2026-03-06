@@ -21,33 +21,35 @@
 8. `act/specs/contracts/rpc-connect-schema.md`
 9. `act/specs/contracts/gemini-vertex-response-schemas.md`
 10. `act/specs/behavior/act-flow.md`
-11. `act/specs/behavior/act-langgraph-runtime.md`
-12. `act/specs/behavior/session-and-auth-boundary.md`
-13. `act/specs/behavior/cloudrun-redis-topology.md`
-14. `act/specs/behavior/connect-server.md`
-15. `act/specs/behavior/access-control-middleware.md`
-16. `act/specs/behavior/runact-implementation.md`
-17. `act/specs/behavior/frontend-stream-integration.md`
-18. `act/specs/behavior/frontend-canvas-phases.md`
-19. `act/specs/usecases/README.md`
-20. `act/specs/usecases/models/usecase-er-diagrams.md`
-21. `act/specs/usecases/models/usecase-logical-model.md`
-22. `act/specs/usecases/graph/ask-from-empty-canvas.md`
-23. `act/specs/usecases/graph/ask-with-selected-context.md`
-24. `act/specs/usecases/graph/run-act-from-node-action.md`
-25. `act/specs/usecases/graph/thinking-stream-visible.md`
-26. `act/specs/usecases/graph/deep-research-fallback.md`
-27. `act/specs/usecases/workspace/create-workspace.md`
-28. `act/specs/usecases/workspace/join-workspace-by-invite-url.md`
-29. `act/specs/usecases/workspace/runact-without-workspace-access.md`
-30. `act/specs/quality/e2e-test-strategy.md`
-31. `act/specs/quality/act-e2e-test-plan.md`
-32. `act/specs/quality/llm-api-test-spec.md`
-33. `act/specs/quality/hackathon-assembly-checklist.md`
-34. `act/specs/quality/operations-config-observability.md`
-35. `act/specs/quality/frontend-stream-acceptance.md`
-36. `act/specs/quality/backend-parameter-index.md`
-37. `act/specs/quality/backend-spec-gaps.md`
+11. `act/specs/behavior/adk-service-integration.md`
+12. `act/specs/behavior/act-adk-runtime.md`
+13. `act/specs/behavior/session-and-auth-boundary.md`
+14. `act/specs/behavior/cloudrun-redis-topology.md`
+15. `act/specs/behavior/connect-server.md`
+16. `act/specs/behavior/access-control-middleware.md`
+17. `act/specs/behavior/runact-implementation.md`
+18. `act/specs/behavior/frontend-stream-integration.md`
+19. `act/specs/behavior/frontend-canvas-phases.md`
+20. `act/specs/usecases/README.md`
+21. `act/specs/usecases/models/usecase-er-diagrams.md`
+22. `act/specs/usecases/models/usecase-logical-model.md`
+23. `act/specs/usecases/graph/ask-from-empty-canvas.md`
+24. `act/specs/usecases/graph/ask-with-selected-context.md`
+25. `act/specs/usecases/graph/run-act-from-node-action.md`
+26. `act/specs/usecases/graph/thinking-stream-visible.md`
+27. `act/specs/usecases/graph/deep-research-fallback.md`
+28. `act/specs/usecases/workspace/create-workspace.md`
+29. `act/specs/usecases/workspace/join-workspace-by-invite-url.md`
+30. `act/specs/usecases/workspace/runact-without-workspace-access.md`
+31. `act/specs/quality/e2e-test-strategy.md`
+32. `act/specs/quality/act-e2e-test-plan.md`
+33. `act/specs/quality/llm-api-test-spec.md`
+34. `act/specs/quality/hackathon-assembly-checklist.md`
+35. `act/specs/quality/operations-config-observability.md`
+36. `act/specs/quality/frontend-stream-acceptance.md`
+37. `act/specs/quality/backend-parameter-index.md`
+38. `act/specs/quality/backend-spec-gaps.md`
+39. `act/backend/backend-implementation-blueprint.md`
 
 ## 3. Organize 仕様索引（Source of Truth）
 
@@ -89,7 +91,10 @@
 1. `act/specs/contracts/rpc-connect-schema.md`
 2. `act/specs/overview/act-architecture.md`
 3. `act/specs/behavior/act-flow.md`
-4. `act/specs/behavior/runact-implementation.md`
+4. `act/specs/behavior/adk-service-integration.md`
+5. `act/specs/behavior/act-adk-runtime.md`
+6. `act/specs/behavior/runact-implementation.md`
+7. `act/backend/backend-implementation-blueprint.md`
 
 ### 手順5: Frontend Stream接続
 

@@ -1,12 +1,12 @@
-# RunAct 実装仕様（Go / Topic-Centric）
+# RunAct 実装仕様（Go API + ADK Worker）
 
 ## 目的
 
-`RunAct` を `topic_id` 中心で実行し、認証/認可後に Context Assembly を経由して安定ストリームを返す。
+`RunAct` を `topic_id` 中心で実行し、Go API から ADK Worker を利用して安定ストリームを返す。
 
 ## スコープ / 非スコープ
 
-* スコープ: request検証、context assembly、model実行、stream返却
+* スコープ: request検証、ADK委譲、stream返却
 * 非スコープ: Organize write path、UI描画
 
 ## 前提・依存
@@ -14,6 +14,7 @@
 * `act/specs/contracts/rpc-connect-schema.md`
 * `act/specs/context/core.md`
 * `act/specs/context/bundle-schema.md`
+* `act/specs/behavior/adk-service-integration.md`
 * `organize/specs/model/topic-model.md`
 * `act/specs/behavior/session-and-auth-boundary.md`
 
@@ -37,25 +38,26 @@
 4. `AUTHZ`: uid -> workspace membership -> topic access
 5. `VALIDATE_REQUEST`: `topic_id`, `request_id`, 上限検証
 6. 冪等判定 `(uid, workspace_id, request_id)`
-7. `ASSEMBLY_*`: shared仕様に従って context bundle 生成
-8. `GENERATE_WITH_MODEL`: bundle を入力に推論
-9. `NORMALIZE_PATCH_OPS`: `upsert/append_md` のみへ正規化
-10. `EMIT_STREAM`: patch/text/thought 逐次返却
-11. `FINALIZE`: `done=true` で終端
+7. Go API が ADK Worker へ実行委譲
+8. ADK Worker が `ASSEMBLY_* -> GENERATE_WITH_MODEL -> NORMALIZE_PATCH_OPS`
+9. Go API が `RunActEvent` へ変換して `EMIT_STREAM`
+10. `FINALIZE`: `done=true` で終端
 
 ## 異常フロー（error/retryable/stage）
 
 * topic欠落: `INVALID_ARGUMENT`, `retryable=false`, `stage=VALIDATE_REQUEST`
 * topicアクセス不可: `PERMISSION_DENIED`, `retryable=false`, `stage=AUTHZ`
+* ADK worker接続失敗: `UNAVAILABLE`, `retryable=true`, `stage=GENERATE_WITH_MODEL`
+* ADK worker timeout: `DEADLINE_EXCEEDED`, `retryable=true`, `stage=GENERATE_WITH_MODEL`
 * assembly参照失敗: `UNAVAILABLE`, `retryable=true`, `stage=ASSEMBLY_RETRIEVE`
-* assembly予算不足: degrade継続（原則エラー化しない）
 * request重複: `ALREADY_EXISTS`, `retryable=false`, `stage=VALIDATE_REQUEST`
-* モデル障害: `UNAVAILABLE` or `DEADLINE_EXCEEDED`, `retryable=true`, `stage=GENERATE_WITH_MODEL`
+* 返却形式不正: `INTERNAL`, `retryable=false`, `stage=NORMALIZE_PATCH_OPS`
 
 ## 数値パラメータ
 
 * `request_timeout_ms=90000`
-* `model_max_retries=2`
+* `adk_worker_timeout_ms=60000`
+* `adk_worker_retry_max=1`
 * `patch_ops_max_per_run=400`
 * `context_node_ids_max=120`
 * `thought_flush_interval_ms=500`
@@ -63,11 +65,12 @@
 ## 受け入れ条件（DoD）
 
 * `topic_id` なし request は必ず拒否
-* Assembly が read-only で実行される
-* `ErrorInfo.stage` が assembly段階を含めて一貫
+* `RunAct` 契約を変えず ADK経由で実行できる
+* `ErrorInfo.stage` が assembly/生成段階まで一貫
 * `done/error` 排他が守られる
 
 ## 実装メモ（最小）
 
-* `tree_id` は UI scope として扱い、正本参照キーには使わない
-* diagnostics はログに出して UIへは必要最小限返す
+* Go API は契約ゲートウェイとして維持する
+* ADK Worker は read-only実行に限定する
+* `tree_id` は UI scope で扱い、正本キーには使わない

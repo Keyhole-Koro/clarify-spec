@@ -59,6 +59,6 @@
 
 ## Notes
 
-* 変更時は `runact-implementation.md` と `act-langgraph-runtime.md` を同時更新する
+* 変更時は `runact-implementation.md` と `act-adk-runtime.md` を同時更新する
 * セッション境界を変える場合は `session-and-auth-boundary.md` も同時更新する
 * 仕様値と実装値が乖離した場合、この文書を先に修正する

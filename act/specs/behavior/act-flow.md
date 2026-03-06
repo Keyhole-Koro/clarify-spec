@@ -80,4 +80,4 @@ flowchart LR
 ## 実装メモ（最小）
 
 * CommitはOrganize write pathでのみ実行する
-* Act runtimeの詳細状態は `act-langgraph-runtime.md` を参照
+* Act runtimeの詳細状態は `act-adk-runtime.md` を参照

@@ -1,42 +1,28 @@
 # Act Overview
 
-## 1. 目的
+## 目的
 
-Actの責務・契約・挙動・品質基準を一貫した粒度で参照できるようにする。
+Actドメインの読み順と責務境界を定義する。
 
-## 2. スコープ / 非スコープ
+## 読み順
 
-* スコープ: ActのRPC契約、実行挙動、Frontend統合、品質基準
-* 非スコープ: Organize永続化ロジックの詳細実装
+1. `act/specs/overview/act-architecture.md`
+2. `act/specs/context/README.md`
+3. `act/specs/contracts/rpc-connect-schema.md`
+4. `act/specs/behavior/runact-implementation.md`
+5. `act/specs/behavior/adk-service-integration.md`
+6. `act/specs/behavior/act-adk-runtime.md`
+7. `act/specs/usecases/README.md`
+8. `act/specs/quality/e2e-test-strategy.md`
 
-## 3. 前提 / 参照
+## 責務境界
 
-* `act/specs/contracts/rpc-connect-schema.md`
-* `act/specs/contracts/gemini-vertex-response-schemas.md`
-* `act/specs/overview/act-architecture.md`
-* `act/specs/behavior/access-control-middleware.md`
-* `act/specs/behavior/act-langgraph-runtime.md`
-* `act/specs/usecases/README.md`
-* `act/specs/quality/act-e2e-test-plan.md`
+* Go Act API: Connect契約、認証認可、stream返却
+* ADK Worker: context assembly、tool orchestration、model実行
+* Organize: write path（正本更新）
 
-## 4. 仕様構成
+## MUST
 
-* `contracts/`: 入出力契約（変更影響が大きい）
-* `behavior/`: 状態遷移と実行ルール
-* `usecases/`: ユーザー操作起点の受け入れ導線
-* `quality/`: テスト戦略・運用設定
-
-## 5. エラー / 例外
-
-* `RunAct` の終端は `done` / `error` 排他
-* 外部依存失敗はエラーコードへ正規化
-
-## 6. 完了条件（DoD）
-
-* contracts / behavior / quality の各文書が相互参照可能
-* 実装時に迷わない最小導線がある
-
-## 7. 未決定事項
-
-* Deep Research本番運用時の時間上限
-* thought表示のUI標準
+* `RunAct` 契約は後方互換を保つ
+* ADK導入時も `PatchOp` 制約（`upsert`/`append_md`）を維持する
+* read-only境界（ADK/Assembly）を破らない
