@@ -3,141 +3,83 @@
 Version: v1  
 Scope: Act backend（Go）で扱う外部LLMレスポンス
 
+## 目的
+
+Gemini / Vertex 系APIの返却要素を、実装コードなしで参照できる形に固定する。
+
+## スコープ / 非スコープ
+
+* スコープ: Embedding, Grounding, Thinking, Deep Research の返却フィールド
+* 非スコープ: SDK実装サンプル、言語別コード
+
+## 前提・依存
+
+* `act/specs/contracts/rpc-connect-schema.md`
+* `act/specs/behavior/runact-implementation.md`
+
 ## 1. Embedding
 
-### 1.1 Gemini Developer API `models.embedContent`
+### 1.1 Developer API
 
-```json
-{
-  "embedding": {
-    "values": [0.0123, -0.0456, 0.0789]
-  }
-}
-```
+| フィールド | 説明 |
+| --- | --- |
+| `embedding.values[]` | 埋め込みベクトル |
+| `embeddings[]` | Batch時の埋め込み配列 |
 
-Batch:
+### 1.2 Vertex AI
 
-```json
-{
-  "embeddings": [
-    { "values": [0.1, 0.2] },
-    { "values": [0.3, 0.4] }
-  ]
-}
-```
-
-### 1.2 Vertex AI `models.embedContent`
-
-```json
-{
-  "embedding": {
-    "values": [0.0123, -0.0456, 0.0789]
-  },
-  "usageMetadata": {
-    "promptTokenCount": 123,
-    "candidatesTokenCount": 0,
-    "totalTokenCount": 123
-  },
-  "truncated": false
-}
-```
+| フィールド | 説明 |
+| --- | --- |
+| `embedding.values[]` | 埋め込みベクトル |
+| `usageMetadata.promptTokenCount` | 入力トークン |
+| `usageMetadata.totalTokenCount` | 総トークン |
+| `truncated` | 入力切り詰め有無 |
 
 Act利用方針:
 
-* EmbeddingはA1/A4用途が中心。Act内では将来のretrieval拡張で利用。
+* Embeddingは将来のretrieval拡張用途
+* 現時点では主にOrganize側の索引強化に利用
 
 ## 2. Web Grounding
 
-### 2.1 Developer API（GenerateContent）
-
-```json
-{
-  "candidates": [
-    {
-      "content": { "parts": [{ "text": "..." }], "role": "model" },
-      "groundingMetadata": {
-        "webSearchQueries": ["..."],
-        "searchEntryPoint": { "renderedContent": "<div>...</div>" },
-        "groundingChunks": [
-          { "web": { "uri": "https://...", "title": "example.com" } }
-        ],
-        "groundingSupports": [
-          {
-            "segment": { "startIndex": 0, "endIndex": 85, "text": "..." },
-            "groundingChunkIndices": [0]
-          }
-        ]
-      }
-    }
-  ]
-}
-```
-
-### 2.2 Vertex AI `GroundingMetadata`
-
-代表フィールド:
-
-* `webSearchQueries[]`
-* `imageSearchQueries[]`
-* `retrievalQueries[]`
-* `groundingChunks[]`
-* `groundingSupports[]`
-* `searchEntryPoint.renderedContent`
-* `retrievalMetadata`
-* `googleMapsWidgetContextToken`
+| フィールド | 説明 |
+| --- | --- |
+| `groundingMetadata.webSearchQueries[]` | 実行検索クエリ |
+| `groundingMetadata.groundingChunks[]` | 参照ソース（URI/Title） |
+| `groundingMetadata.groundingSupports[]` | 回答断片と根拠の対応 |
+| `groundingMetadata.searchEntryPoint` | 検索UI補助情報 |
 
 Act利用方針:
 
-* UIには簡約して返す（source URL/title, segment）
-* 詳細メタデータはサーバログまたは内部構造に保持
+* UIには source URL/title と該当segmentを簡約表示
+* 詳細メタデータはログまたは内部DTOに保持
 
-## 3. Thinking Stream（Gemini）
+## 3. Thinking Stream（includeThoughts）
 
-`includeThoughts=true` のとき、partsに thoughtフラグ付き増分が来る。
-
-```ts
-for await (const chunk of response) {
-  for (const part of chunk.candidates[0].content.parts ?? []) {
-    if (!part.text) continue;
-    if (part.thought) {
-      // thought
-    } else {
-      // answer
-    }
-  }
-}
-```
+| 判定 | 意味 |
+| --- | --- |
+| thought=true | 思考過程テキスト |
+| thought=false | 通常回答テキスト |
 
 Actマッピング:
 
-* `part.thought=true` -> `RunActEvent.stream_parts[].thought=true`
-* `part.thought=false` -> `RunActEvent.stream_parts[].thought=false`
-* 既存互換として回答は `text_delta` にも反映可
+* thought=true -> `RunActEvent.stream_parts[].thought=true`
+* thought=false -> `RunActEvent.stream_parts[].thought=false`
+* 既存互換のため通常回答は `text_delta` にも反映可
 
 ## 4. Deep Research（Interactions API）
 
-### 4.1 Interaction Resource
+### 4.1 Interaction Resource 主要項目
 
-```json
-{
-  "id": "v1_...",
-  "agent": "deep-research-pro-preview-12-2025",
-  "status": "completed",
-  "object": "interaction",
-  "created": "2025-11-26T12:22:47Z",
-  "updated": "2025-11-26T12:22:47Z",
-  "role": "agent",
-  "outputs": [{ "type": "text", "text": "..." }],
-  "usage": {
-    "total_input_tokens": 20,
-    "total_output_tokens": 1000,
-    "total_thought_tokens": 500,
-    "total_tokens": 1520
-  }
-}
-```
+| フィールド | 説明 |
+| --- | --- |
+| `id` | Interaction識別子 |
+| `agent` | 利用エージェント |
+| `status` | 実行状態 |
+| `outputs` | 出力コンテンツ |
+| `usage` | token使用量 |
 
-主要 `status`:
+### 4.2 status
 
 * `in_progress`
 * `requires_action`
@@ -146,7 +88,7 @@ Actマッピング:
 * `cancelled`
 * `incomplete`
 
-### 4.2 SSEイベント
+### 4.3 SSEイベント種別
 
 * `interaction.start`
 * `interaction.status_update`
@@ -158,19 +100,15 @@ Actマッピング:
 Act利用方針:
 
 * Deep Researchは background前提
-* `interaction.complete` までポーリング/SSEで待機
-* 途中 `content.delta` は `stream_parts` へ橋渡し可能
+* `interaction.complete` まで待機し、必要に応じて `content.delta` を stream_parts に橋渡し
 
-## 5. Go実装での扱い
+## 5. 運用ルール（MUST）
 
-* Vertex AI SDKレスポンスを内部DTOへ正規化
-* 正規化DTOから `RunActEvent` へ変換
-* `usageMetadata` / `usage.total_thought_tokens` をメトリクスへ反映
+* 外部レスポンスは内部DTOへ正規化してから `RunActEvent` へ変換
+* usage系フィールドは observability 指標へ反映
+* レスポンス構造変更時はこの文書を先に更新
 
-## 6. Contract Alignment
-
-本ドキュメントは以下と整合する。
+## 6. 参照
 
 * `act/specs/contracts/rpc-connect-schema.md`
-* `act/specs/behavior/runact-implementation.md`
-* `act/specs/quality/e2e-test-strategy.md`
+* `act/specs/quality/llm-api-test-spec.md`

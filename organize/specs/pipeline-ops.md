@@ -1,36 +1,85 @@
 # Organize 運用仕様（状態管理 / 監視）
 
-## 1. Firestore 状態フィールドの整理（status衝突を防ぐ）
+## 目的
 
-`bundles/{bundleId}` の `status` が “created/described/applied” で衝突しやすいので、分離を仕様化する。
+`topic_id` 基準で運用観測と障害切り分けを行い、競合吸収を安定運用する。
 
-### bundles/{bundleId} 推奨フィールド
+## スコープ / 非スコープ
+
+* スコープ: 状態フィールド、監視キー、runbook
+* 非スコープ: 実装監視ツール固有設定
+
+## 前提・依存
+
+* `organize/specs/pipeline-core.md`
+* `organize/specs/pipeline-agents.md`
+* `firestore/schema.md`
+
+## 契約（I/O）
+
+入力:
+
+* Agent logs/metrics
+* Firestore status docs
+
+出力:
+
+* 障害切り分け手順
+* topic単位の復旧判断
+
+## 正常フロー
+
+1. 各Agentはログへ `traceId`, `topicId`, `idempotencyKey`, `type` を出力
+2. ledger/lease/CAS の結果をメトリクス化
+3. `bundle` 系は apply と describe の状態を分離管理
+
+## 異常フロー（error/retryable/stage）
+
+* ledger競合: retry（`retryable=true`）
+* CAS不一致: skip/ack（正常吸収）
+* topic跨ぎ参照: `FAILED_PRECONDITION`, `retryable=false`
+
+## 数値パラメータ
+
+* DLQ max delivery: 10（重処理20）
+* lease TTL: 60〜300秒
+* ack deadline: 60〜600秒
+
+## 状態フィールド（推奨）
+
+`bundles/{bundleId}`:
 
 * `bundleStatus`: `created|applied|error`
 * `descStatus`: `pending|described|error`
-* `appliedAt`: timestamp（CleanerがCASに使う）
-* `descRef`:（A6）
-* `sourceDraftVersion` / `sourceIdempotencyKey`（Bundler冪等）
+* `topicId`: string
+* `sourceDraftVersion`: int
+* `appliedAt`: timestamp
+* `descRef`: ref
 
----
+## 監視キー（MUST）
 
-## 2. 監視・運用（最低限）
+* `traceId`
+* `topicId`
+* `workspaceId`
+* `idempotencyKey`
+* `type`
+* optional: `nodeId`, `bundleId`, `draftVersion`, `outlineVersion`
 
-* DLQに落ちたメッセージは `idempotencyKey` と `traceId` を軸に原因追跡
-* 各Agentはログに必ず出す：
+## Runbook（topic単位）
 
-  * `traceId`, `idempotencyKey`, `workspaceId`, `type`, (outlineId/nodeId/bundleId)
-* 「CAS失敗」はエラーではなく正常系としてカウント（競合吸収）
+1. `topicId` でログを絞る
+2. `idempotencyKey` で重複処理有無を確認
+3. `bundleStatus/descStatus` を確認
+4. `latestDraftVersion` / `latestOutlineVersion` の進みを確認
+5. 必要なら DLQ を topic単位で再投入
 
----
+## 受け入れ条件（DoD）
 
-## 3. この仕様での「矛盾が起きない」ポイント（要点）
+* topic単位で障害切り分けが完結できる
+* CAS失敗が誤ってエラー扱いされない
+* bundle status衝突が起きない
 
-* type分岐は attributes.type に一本化 → filterが確実に動く
-* 同じ仕事は event_ledger で“1回”に収束
-* 同一エンティティ更新は lease + CAS → Draft/Outline/MindTreeの整合が崩れない
-* 遅延・古いイベントは version/watermark で無害化
-* `bundle.created` の fan-out（A6/A3）は subscription分離で自然に成立
-* bundles.status衝突を分離して更新競合を回避
+## 実装メモ（最小）
 
----
+* ダッシュボードの第一キーは `topicId`
+* `outlineId` ベースの集計は残さない

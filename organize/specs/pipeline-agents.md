@@ -1,239 +1,252 @@
-# Organize Agent 仕様（I/O + 競合対策）
+# Organize Agent 仕様（topic_id 配線版）
 
-以下、既存フローを保ちつつ「MUST」を追加した確定版。
+## 目的
 
-詳細仕様（Agent別）:
+A0〜A7/A5 を `topic_id` 中心で再配線し、Act Context Assembly との責務衝突を防ぐ。
 
-* `organize/agents/a0-media-interpreter.md`
-* `organize/agents/a1-atomizer.md`
-* `organize/agents/a2-router.md`
-* `organize/agents/a3b-bundler.md`
-* `organize/agents/a3-cleaner.md`
-* `organize/agents/a4-indexer.md`
-* `organize/agents/a5-balancer.md`
-* `organize/agents/a6-bundle-description.md`
-* `organize/agents/a7-node-rollup.md`
+## スコープ / 非スコープ
+
+* スコープ: Agentごとの Input/Output/Emit、冪等、lease/CAS、供給責務
+* 非スコープ: 実装コード、モデルプロンプト詳細
+
+## 前提・依存
+
+* `specs/shared/topic-model.md`
+* `specs/shared/context-assembly-core.md`
+* `specs/shared/context-bundle-schema.md`
+* `organize/specs/pipeline-core.md`
+
+## 契約（I/O）
+
+共通入力:
+
+* Envelope with `workspaceId`, `topicId`, `idempotencyKey`, `traceId`
+
+共通出力:
+
+* Firestore/GCS write
+* 次イベント emit
+
+## 配線原則（MUST）
+
+* Organize = write path only
+* Act Context Assembly = read-only only
+* Organize は prompt bundle を生成/永続化しない
+* Act は canonical summary/evidence/index を更新しない
+
+## Prompt Assembly 供給マップ（MVP）
+
+| 供給物 | 主担当 | 保存先 | 用途 |
+| --- | --- | --- | --- |
+| `context_summary` | A3/A7 | topic nodes + GCS ref | focus/neighbor 文脈 |
+| `evidence_refs` | A0/A1/A3 | Firestore refs + GCS | grounding |
+| `relation_importance` | A3/A4 | topic edges/index | ranking |
+| `recent_delta` | A2/A3 | topic draft/outline 差分 | recent changes |
+| `confidence/quality` | A4/A5 | index/metrics | ranking |
+
+### Agent配線図（Mermaid）
+
+```mermaid
+flowchart LR
+  A0[A0 MediaInterpreter] --> A1[A1 Atomizer]
+  A1 --> A2[A2 Router]
+  A2 --> A3b[A3b Bundler]
+  A3b --> A6[A6 BundleDescription]
+  A3b --> A3[A3 Cleaner]
+  A3 --> A4[A4 Indexer]
+  A3 --> A7[A7 NodeRollup]
+  A5[A5 Balancer] --> A7
+```
 
 ---
 
-## A0 MediaInterpreterAgent（メディア→テキスト化）
-
-### Input event
-
-* `type = media.received`
-* payload（既存どおり）
-
-### Output
-
-* GCS：`mind/inputs/{inputId}.md`
-* Firestore：`inputs/{inputId}`（status/refs）
-
-### Emits
-
-* `type = input.received`（A1へ）payload: `{ inputId }`
-
-### 競合対策（MUST）
-
-* ledger：`type:media.received/inputId:{inputId}` を確保
-* inputs/{inputId}.textRef.sha256 が同一で status=processed ならスキップ可能（冪等）
-
----
-
-## A1 AtomizerAgent（Input→Atom抽出）
+## A0 MediaInterpreterAgent
 
 ### Input
-
-* `type = input.received` payload: `{ inputId }`
+* `type=media.received`
 
 ### Output
+* GCS: `mind/inputs/{inputId}.md`
+* Firestore: `inputs/{inputId}`
 
-* GCS：`mind/atoms/{atomId}.md`
-* Firestore：`atoms/{atomId}`（複数）
+### Emit
+* `type=input.received` payload: `{ topicId, inputId }`
 
-### Emits
-
-* `type = atom.created` payload: `{ inputId, atomIds }`
-
-### 競合対策（MUST）
-
-* ledger：`type:input.received/inputId:{inputId}`
-* atoms生成は「同一inputIdの再処理」で二重生成しないようにする：
-
-  * 推奨：`atoms` に `sourceInputId` を持たせ、同inputIdで既に atoms が存在するなら再生成しない
-  * もしくは atomId を deterministic（inputId+span+typeのhash）にする
+### 競合対策
+* ledger key: `type:media.received/topicId:{topicId}/inputId:{inputId}`
 
 ---
 
-## A2 RouterAgent（Atom→Draft追記）
+## A1 AtomizerAgent
 
 ### Input
-
-* `type = atom.created` payload: `{ inputId, atomIds }`
+* `type=input.received` payload: `{ topicId, inputId }`
 
 ### Output
+* GCS: `mind/atoms/{atomId}.md`
+* Firestore: `atoms/{atomId}`
 
-* Firestore：`drafts/{outlineId}` 更新（latestDraft, lastAppendedAtomIds）
-* GCS：`mind/drafts/{outlineId}/v{n}.md`（追記後）
+### Emit
+* `type=atom.created` payload: `{ topicId, inputId, atomIds }`
 
-### Emits
-
-* `type = draft.updated` payload: `{ outlineId, draftVersion, appendedAtomIds }`
-
-### 競合対策（MUST）
-
-* ledger：`type:atom.created/inputId:{inputId}`（または atomIdsハッシュ込み）
-* lease：`outline:{outlineId}`（必須）
-* CAS：`drafts/{outlineId}.latestDraft.version` を expectedPrev として transaction 更新
-
-  * 成功したら `draftVersion = prev+1` を emit
-  * CAS失敗 → ACKして終了（別ワーカーが先に更新済み）
+### 競合対策
+* ledger key: `type:input.received/topicId:{topicId}/inputId:{inputId}`
+* 再処理時の二重 atom 生成を禁止（deterministic id推奨）
 
 ---
 
-## A3b BundlerAgent（Draft差分→Bundle生成）
+## A2 RouterAgent（Atom -> Draft）
 
 ### Input
-
-* `type = draft.updated` payload: `{ outlineId, draftVersion, appendedAtomIds }`
+* `type=atom.created` payload: `{ topicId, inputId, atomIds }`
 
 ### Output
+* Firestore: `topics/{topicId}.latestDraftVersion` 更新
+* GCS: `mind/drafts/{topicId}/v{n}.md`
 
-* Firestore：`bundles/{bundleId}` create
+### Emit
+* `type=draft.updated` payload: `{ topicId, draftVersion, appendedAtomIds }`
 
-### Emits
-
-* `type = bundle.created` payload: `{ outlineId, bundleId }`
-
-### 競合対策（MUST）
-
-* ledger：`type:draft.updated/outlineId:{outlineId}/draftVersion:{draftVersion}`
-* （推奨）lease：`outline:{outlineId}`（Bundlerは順序/差分依存が強いので）
-* 冪等：同じ (outlineId, draftVersion) から bundle を二重作成しない
-
-  * 推奨：`bundles` に `sourceDraftVersion` を持たせ、同版が既にあればスキップ
+### 競合対策
+* lease: `topic:{topicId}`
+* CAS: `latestDraftVersion`
+* ledger key: `type:atom.created/topicId:{topicId}/inputId:{inputId}`
 
 ---
 
-## A6 BundleDescriptionAgent（Bundle→HTML説明）
+## A3b BundlerAgent（Draft差分 -> Bundle）
 
 ### Input
-
-* `type = bundle.created` payload: `{ outlineId, bundleId }`
+* `type=draft.updated` payload: `{ topicId, draftVersion, appendedAtomIds }`
 
 ### Output
+* Firestore: `bundles/{bundleId}`
 
-* GCS：`mind/bundle_desc/{bundleId}/v{n}.html`（+ css）
-* Firestore：`bundles/{bundleId}.descRef` 更新
+### Emit
+* `type=bundle.created` payload: `{ topicId, bundleId, sourceDraftVersion }`
 
-### Emits（任意）
-
-* `type = bundle.described`
-
-### 競合対策（MUST）
-
-* ledger：`type:bundle.created/bundleId:{bundleId}/purpose:desc`（purposeを分ける）
-* version(CAS)：`descRef.version` を prev+1 更新（既に同versionならスキップ）
-* **statusは分離**（後述）
+### 競合対策
+* ledger key: `type:draft.updated/topicId:{topicId}/draftVersion:{draftVersion}`
+* 同一 `(topicId, draftVersion)` の bundle 二重生成禁止
 
 ---
 
-## A3 CleanerAgent（Bundle→Outline/MindTree反映）
+## A6 BundleDescriptionAgent
 
 ### Input
-
-* `type = bundle.created` payload: `{ outlineId, bundleId }`
+* `type=bundle.created` payload: `{ topicId, bundleId }`
 
 ### Output
+* GCS: `mind/bundle_desc/{bundleId}/v{n}.html`
+* Firestore: `bundles/{bundleId}.descRef`
 
-* GCS：`mind/outlines/{outlineId}/v{n}.md`
-* Firestore：
+### Emit（任意）
+* `type=bundle.described` payload: `{ topicId, bundleId }`
 
-  * `outlines/{outlineId}.latestOutline` 更新
-  * `mindtree_nodes/*`, `mindtree_edges/*` upsert
-
-### Emits
-
-* `type = outline.updated` payload: `{ outlineId, outlineVersion }`
-* `type = mindtree.node_changed` payload: `{ outlineId, nodeId, reason }`（※後述：1イベント=1node推奨）
-* `type = atom.reissued`（話題違いの再投入）
-
-### 競合対策（MUST）
-
-* ledger：`type:bundle.created/bundleId:{bundleId}/purpose:apply`
-* lease：`outline:{outlineId}`（必須）
-* 冪等（必須）：bundleの二重適用を必ず防ぐ
-
-  * 推奨：`bundles/{bundleId}.appliedAt` を transaction で “未適用なら適用済みにする” をCASし、適用はその後
-  * または `mindtree_edges/{bundleId}_{edgeId}` のように bundleId をキーにして upsert（増殖しない）
-* outlineVersion(CAS)：`outlines.latestOutline.version` を prev+1 更新。CAS失敗はACKでスキップ
+### 競合対策
+* ledger key: `type:bundle.created/topicId:{topicId}/bundleId:{bundleId}/purpose:desc`
+* desc version CAS
 
 ---
 
-## A4 IndexerAgent（Outline→Index/Map）
+## A3 CleanerAgent（Bundle -> Outline/Graph）
 
 ### Input
-
-* `type = outline.updated` payload: `{ outlineId, outlineVersion }`
+* `type=bundle.created` payload: `{ topicId, bundleId }`
 
 ### Output
+* GCS: `mind/outlines/{topicId}/v{n}.md`
+* Firestore:
+  * `topics/{topicId}.latestOutlineVersion` 更新
+  * `topics/{topicId}/nodes/*`, `topics/{topicId}/edges/*` upsert
 
-* Firestore：`index_items/*` upsert
-* GCS：`mind/maps/{outlineId}/v{n}.md`
-* Firestore：`outlines/{outlineId}.latestMap` 更新
+### Emit
+* `type=outline.updated` payload: `{ topicId, outlineVersion }`
+* `type=mindtree.node_changed` payload: `{ topicId, nodeId, reason }`
+* `type=atom.reissued` payload: `{ topicId, atomId, reason }`
 
-### 競合対策（MUST）
-
-* ledger：`type:outline.updated/outlineId:{outlineId}/outlineVersion:{outlineVersion}`
-* lease：`outline:{outlineId}`
-* 古い版スキップ：`outlineVersion < latestOutline.version` はACKして終了
+### 競合対策
+* lease: `topic:{topicId}`
+* outline version CAS
+* ledger key: `type:bundle.created/topicId:{topicId}/bundleId:{bundleId}/purpose:apply`
+* bundle二重適用禁止（appliedAt CAS）
 
 ---
 
-## A7 NodeRollupAgent（Node rollup）
+## A4 IndexerAgent（Outline -> Index/Map）
 
 ### Input
-
-* `type = mindtree.node_changed` または `node.rollup_requested`
+* `type=outline.updated` payload: `{ topicId, outlineVersion }`
 
 ### Output
+* Firestore: `index_items/*` upsert
+* GCS: `mind/maps/{topicId}/v{n}.md`
+* Firestore: `topics/{topicId}.latestMapVersion` 更新
 
-* GCS：`mind/node_rollup/{nodeId}/v{n}.html`
-* Firestore：`mindtree_nodes/{nodeId}.rollupRef` + `rollupWatermark`
-
-### Emits（任意）
-
-* `type = node.rollup_updated`
-
-### 競合対策（MUST）
-
-* **イベント形の推奨変更（重要）**：`mindtree.node_changed` は `nodeId` を単数にする
-
-  * payload推奨：`{ outlineId, nodeId, reason }`
-* ledger：`type:mindtree.node_changed/nodeId:{nodeId}/generation:{gen}`（generationを含めると強い）
-* lease：`node:{nodeId}`
-* watermarkスキップ：要求が `rollupWatermark` 以下ならACKして終了（古い要求の無害化）
+### 競合対策
+* lease: `topic:{topicId}`
+* 古い版は skip/ack
+* ledger key: `type:outline.updated/topicId:{topicId}/outlineVersion:{outlineVersion}`
 
 ---
 
-## A5 BalancerAgent（偏り是正）
+## A7 NodeRollupAgent
 
 ### Input
-
-* `type = mindtree.metrics.updated`（または定期実行）
+* `type=mindtree.node_changed` or `node.rollup_requested`
 
 ### Output
+* GCS: `mind/node_rollup/{nodeId}/v{n}.html`
+* Firestore: `topics/{topicId}/nodes/{nodeId}.rollupRef` + watermark
 
-* Firestore：OperationPatchログ（推奨）
+### Emit（任意）
+* `type=node.rollup.updated` payload: `{ topicId, nodeId }`
 
-  * `organizeOps/{opId}`
+### 競合対策
+* lease: `node:{nodeId}`
+* watermark以下は skip/ack
+* ledger key: `type:mindtree.node_changed/topicId:{topicId}/nodeId:{nodeId}/generation:{gen}`
 
-### Emits
-
-* `mindtree.node_changed` / `mindtree.metrics.updated`
-
-### 競合対策（MUST/SHOULD）
-
-* 変更適用は lease（outlineまたはscopeNodeId）推奨
-* patch適用は generation(CAS) 推奨
+### Prompt Assembly供給責務
+* `context_summary_ref` を更新可能にする
+* 詳細本文と注入用短要約を分離する
 
 ---
+
+## A5 BalancerAgent
+
+### Input
+* `type=mindtree.metrics.updated`（または定期）
+
+### Output
+* Firestore: `organizeOps/{opId}`（推奨）
+
+### Emit
+* `mindtree.node_changed`, `mindtree.metrics.updated`
+
+### 競合対策
+* topic/node lease 推奨
+* generation CAS 推奨
+
+### Prompt Assembly供給責務
+* ranking用特徴量（偏り/未解決率/冗長度）を index/metrics に反映
+
+## 異常フロー（error/retryable/stage）
+
+* topic不整合: `FAILED_PRECONDITION`, `retryable=false`, `stage=VALIDATE_EVENT`
+* 外部依存失敗: `UNAVAILABLE`, `retryable=true`, `stage=PROCESS_AGENT`
+* CAS失敗: skip/ack（正常）
+
+## 数値パラメータ
+
+* 個別上限は `organize/specs/pipeline-ops.md` と `act/specs/quality/backend-parameter-index.md` を参照
+
+## 受け入れ条件（DoD）
+
+* 全Agent I/Oが `topicId` 中心で一貫
+* A2/A3/A4/A7 の ledger/lease/CAS が topic基準で定義
+* Prompt Assembly は供給データを参照のみで利用できる
+
+## 実装メモ（最小）
+
+* legacy `outlineId` は新規仕様で使用しない

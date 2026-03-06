@@ -1,23 +1,26 @@
-# Firestore スキーマ仕様（統合版）
+# Firestore スキーマ仕様（Topic-Centric 統合版）
 
-目的: DB周りの論理モデルとFirestore物理配置を、実装に使える粒度で固定する。
+目的: Topic中心モデルで、Act/Organize/Frontendが同じ正本を参照できるようにする。
 
 ## 1. スコープ
 
-* Act実行に必要な認証/認可/冪等
-* 知識グラフ（tree/node/edge/evidence）
-* Organize運用（ledger/lease/version）
+* 認証/認可に必要な workspace 境界
+* topic/draft/outline/node/evidence の知識正本
+* act run と event ledger/lease/version 管理
 
-## 2. 論理ER（Core Knowledge Graph）
+## 2. 論理ER（Core）
 
 ```mermaid
 erDiagram
   USER ||--o{ WORKSPACE_MEMBER : belongs_to
   WORKSPACE ||--o{ WORKSPACE_MEMBER : has
-  WORKSPACE ||--o{ TREE : has
-  TREE ||--o{ NODE : has
-  TREE ||--o{ EDGE : has
+  WORKSPACE ||--o{ TOPIC : has
+  TOPIC ||--o{ DRAFT : has
+  TOPIC ||--o{ OUTLINE : has
+  TOPIC ||--o{ NODE : has
+  TOPIC ||--o{ EDGE : has
   NODE ||--o{ EVIDENCE : cites
+  TOPIC ||--o{ ACT_RUN : has
 
   WORKSPACE {
     string workspace_id PK
@@ -27,111 +30,73 @@ erDiagram
     string status
   }
 
-  WORKSPACE_MEMBER {
-    string workspace_id PK
-    string uid PK
-    string role
-    timestamp joined_at
-  }
-
-  TREE {
-    string tree_id PK
+  TOPIC {
+    string topic_id PK
     string workspace_id FK
     string title
-    string[] entry_node_ids "optional"
-    timestamp created_at
+    string status
+    int latest_draft_version
+    int latest_outline_version
     timestamp updated_at
+  }
+
+  DRAFT {
+    string topic_id PK
+    int version PK
+    ref summary_md_ref
+    string[] source_atom_ids
+    timestamp created_at
+  }
+
+  OUTLINE {
+    string topic_id PK
+    int version PK
+    ref summary_md_ref
+    ref map_md_ref
+    timestamp published_at
   }
 
   NODE {
     string node_id PK
-    string tree_id FK
+    string topic_id FK
     string kind
     string title
-    string content_md
     string parent_id
-    boolean layout_locked
-    json layout
+    ref context_summary_ref
     timestamp updated_at
   }
 
   EDGE {
     string edge_id PK
-    string tree_id FK
+    string topic_id FK
     string source_id FK
     string target_id FK
-    string edge_type
+    string relation
     number order_key
-    timestamp created_at
   }
 
   EVIDENCE {
     string evidence_id PK
     string node_id FK
-    string type
+    string source_type
     string url
-    string ref
-    string excerpt
-    timestamp created_at
-  }
-```
-
-## 3. 論理ER（Act Runtime / Idempotency）
-
-```mermaid
-erDiagram
-  USER ||--o{ ACT_REQUEST : sends
-  WORKSPACE ||--o{ ACT_REQUEST : receives
-  TREE ||--o{ ACT_REQUEST : targets
-  ACT_REQUEST ||--o{ ACT_RUN : spawns
-  ACT_RUN ||--o{ RUN_EVENT : emits
-  RUN_EVENT ||--o{ STREAM_PART : has
-  ACT_RUN ||--o{ ERROR_INFO : may_end_with
-
-  ACT_REQUEST {
-    string uid PK
-    string workspace_id PK
-    string request_id PK
-    string tree_id
-    string act_type
-    timestamp created_at
+    string gcs_uri
+    string generation
+    string sha256
   }
 
   ACT_RUN {
-    string trace_id PK
+    string run_id PK
+    string topic_id FK
     string request_id
+    string uid
     string status
     timestamp started_at
     timestamp ended_at
   }
-
-  RUN_EVENT {
-    string trace_id PK
-    int seq PK
-    string text_delta
-    json patch_ops
-    string terminal
-  }
-
-  STREAM_PART {
-    string trace_id PK
-    int seq PK
-    int idx PK
-    string text
-    boolean thought
-  }
-
-  ERROR_INFO {
-    string trace_id PK
-    string code
-    string message
-    boolean retryable
-    string stage
-    int retry_after_ms
-  }
 ```
 
-## 4. 論理ER（Operations / Conflict Control）
+## 3. 論理ER（Operations）
 
 ```mermaid
 erDiagram
@@ -142,103 +107,69 @@ erDiagram
   EVENT_LEDGER {
     string ledger_id PK
     string idempotency_key_hash
-    string state
+    string topic_id
+    string agent
+    string status
     timestamp started_at
     timestamp finished_at
-    string error_code
   }
 
   LEASE {
     string resource_key PK
-    string holder
-    timestamp acquired_at
+    string topic_id
+    string owner
     timestamp expires_at
   }
 
   VERSION_CURSOR {
     string resource_key PK
+    string topic_id
     int version
     timestamp updated_at
   }
 ```
 
-## 5. Firestore 物理パス（推奨）
+## 4. 物理パス（推奨）
 
-```txt
-workspaces/{workspaceId}
-workspaces/{workspaceId}/members/{uid}
-workspaces/{workspaceId}/invites/{inviteId}
-workspaces/{workspaceId}/trees/{treeId}
-workspaces/{workspaceId}/trees/{treeId}/nodes/{nodeId}
-workspaces/{workspaceId}/trees/{treeId}/edges/{edgeId}
-workspaces/{workspaceId}/trees/{treeId}/nodes/{nodeId}/evidence/{evidenceId}
-workspaces/{workspaceId}/actRequests/{uid_requestId}
-workspaces/{workspaceId}/actRuns/{traceId}
-workspaces/{workspaceId}/actRuns/{traceId}/events/{seq}
-workspaces/{workspaceId}/eventLedger/{hash}
-workspaces/{workspaceId}/leases/{resourceKey}
-workspaces/{workspaceId}/versions/{resourceKey}
-```
+* `workspaces/{workspaceId}`
+* `workspaces/{workspaceId}/members/{uid}`
+* `workspaces/{workspaceId}/invites/{inviteId}`
+* `workspaces/{workspaceId}/topics/{topicId}`
+* `workspaces/{workspaceId}/topics/{topicId}/drafts/{version}`
+* `workspaces/{workspaceId}/topics/{topicId}/outlines/{version}`
+* `workspaces/{workspaceId}/topics/{topicId}/nodes/{nodeId}`
+* `workspaces/{workspaceId}/topics/{topicId}/edges/{edgeId}`
+* `workspaces/{workspaceId}/topics/{topicId}/nodes/{nodeId}/evidence/{evidenceId}`
+* `workspaces/{workspaceId}/topics/{topicId}/actRuns/{runId}`
+* `workspaces/{workspaceId}/topics/{topicId}/actRuns/{runId}/events/{seq}`
+* `workspaces/{workspaceId}/eventLedger/{hash}`
+* `workspaces/{workspaceId}/leases/{resourceKey}`
+* `workspaces/{workspaceId}/versions/{resourceKey}`
 
-互換パス（旧）:
+## 5. 主要制約（MUST）
 
-```txt
-users/{uid}/trees/{treeId}
-users/{uid}/trees/{treeId}/nodes/{nodeId}
-users/{uid}/trees/{treeId}/edges/{edgeId}
-users/{uid}/trees/{treeId}/nodes/{nodeId}/evidence/{evidenceId}
-```
-
-## 6. 主要制約（MUST）
-
-* `request.workspace_id == tree.workspace_id`
+* `topic.workspace_id == request.workspace_id`
 * `members/{uid}` が無ければ `PERMISSION_DENIED`
-* `ACT_REQUEST (uid, workspace_id, request_id)` は一意
-* `EDGE` の `source_id/target_id` は同一 `tree_id` 内に限定
-* `RUN_EVENT.terminal=error` のとき `ERROR_INFO` 必須
-* `layout` は `layout_locked=true` のノードのみ保存
+* `ACT_RUN` は `(uid, request_id)` で topic内一意
+* `EDGE.source/target` は同一 topic 内に限定
+* `latest_draft_version`, `latest_outline_version` は単調増加
+* 本文はGCS versioned ref（`gcsUri/generation/sha256`）を保持
 
-## 7. 推奨インデックス
+## 6. トランザクション境界
 
-* `trees`: `workspace_id + updated_at desc`
-* `nodes`: `tree_id + updated_at desc`
-* `edges`: `tree_id + source_id`
-* `actRequests`: `uid + created_at desc`
-* `actRuns`: `status + started_at desc`
-* `eventLedger`: `idempotency_key_hash`（unique相当）
+* Topic参加/招待: invite消費 + member追加を同一transaction
+* Draft更新: `latest_draft_version` CAS
+* Outline更新: `latest_outline_version` CAS
+* Bundle適用: `appliedAt` CAS
+* Lease取得: `leases/{resourceKey}` compare-and-set
 
-## 8. トランザクション境界
+## 7. 監査/保持
 
-* Workspace参加: `invites` 消費 + `members` 追加を同一トランザクション
-* Act開始: `actRequests` 作成（重複チェック）を先に確定
-* ApplyPatch: `nodes/edges/evidence` を一括バッチ（CAS版数確認）
-* Lease取得: `leases/{resourceKey}` を compare-and-set
+* `actRuns/events`: TTLで短期保持
+* `eventLedger`: 冪等期間に合わせて保持
+* error系は `trace_id` でログ相互参照
 
-## 9. レイアウト保存フロー
+## 8. ノート
 
-```mermaid
-sequenceDiagram
-  autonumber
-  participant F as Frontend (ReactFlow)
-  participant O as OrganizeService (Connect RPC)
-  participant FS as Firestore
-
-  F->>O: GetTree(treeId) + ListNodes/ListEdges
-  O->>FS: read trees/nodes/edges
-  FS-->>O: docs
-  O-->>F: nodes + edges
-
-  F-->>F: ELKレイアウト計算<br>(layoutLocked=trueは固定)
-
-  Note over F: ユーザーがノードAをドラッグしてlock
-  F->>O: UpdateNodeFields(A, layoutLocked=true, layout={x,y})
-  O->>FS: update nodes/{A}
-  FS-->>O: ok
-  O-->>F: Node(updated)
-```
-
-## 10. 監査/保持
-
-* `actRuns/events`: TTLで短期保持（デバッグ用途）
-* `eventLedger`: 冪等性期間に合わせて保持
-* `ERROR_INFO`: `trace_id` でログと相互参照
+* `tree_id` はUI表示境界として利用可
+* 知識正本の主キーは `topic_id`

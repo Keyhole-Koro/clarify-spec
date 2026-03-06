@@ -20,44 +20,42 @@ Version: 1.1
 ## 3. MVPスコープ固定（ハッカソン運用）
 
 * 本実装対象: `ACT_TYPE_EXPLORE`
-* `ACT_TYPE_CONSULT` / `ACT_TYPE_INVESTIGATE` は当面 `EXPLORE` と同じ実装にフォールバック
+* `ACT_TYPE_CONSULT` / `ACT_TYPE_INVESTIGATE` は当面 `EXPLORE` と同等実装
 * `ACT_TYPE_UNSPECIFIED` は `INVALID_ARGUMENT`
 
 ## 3.1 Vertex AI モデル方針（MUST）
 
 * 既定モデル: Gemini 3 Flash（低レイテンシ）
-* 深掘りモード: Deep Research 相当プロファイルを使用
-* Web根拠が必要な問い合わせは Web Grounding を有効化
+* 深掘りモード: Deep Research 相当プロファイル
+* 根拠が必要な問い合わせは Web Grounding を有効化
 * 実際の model ID は環境変数で切替し、仕様上はプロファイル名で扱う
 
 ## 3.2 実装言語（MUST）
 
-* バックエンド実装は Go を前提とする
-* Connect streaming は Go の goroutine/chan で実装する
+* バックエンド実装は Go 前提
+* Connect streaming は goroutine/chan で制御
 
 ## 4. LangGraph State
 
-```txt
-ActState {
-  request: RunActRequest
-  trace_id: string
-  context_snapshot: TreeContext
-  draft_graph: DraftGraph
-  planner_output: Plan
-  model_stream_buffer: string
-  emitted_patch_count: number
-  emitted_text_chars: number
-  warnings: string[]
-  first_act_root_id?: string
-  error?: { code, message }
-}
-```
+| フィールド | 説明 |
+| --- | --- |
+| `request` | RunActRequest |
+| `trace_id` | 実行トレースID |
+| `context_snapshot` | 読み取り済み文脈 |
+| `draft_graph` | メモリ内ドラフトグラフ |
+| `planner_output` | プラン結果 |
+| `model_stream_buffer` | 出力バッファ |
+| `emitted_patch_count` | 送信patch数 |
+| `emitted_text_chars` | 送信文字数 |
+| `warnings` | 非致命警告 |
+| `first_act_root_id` | 初回ACT_ROOT識別子 |
+| `error` | 失敗情報 |
 
 補足:
 
 * `draft_graph` はメモリ上のみ保持
 * follow-up時は未commit提案も prompt context に含める
-* `request_id` は `(uid, workspace_id, request_id)` の冪等キーで扱う
+* `request_id` は `(uid, workspace_id, request_id)` 冪等で扱う
 
 ## 5. Graph Nodes（固定）
 
@@ -76,30 +74,23 @@ ActState {
 * `LoadContext -> BuildPrompt`（snapshot取得成功）
 * `BuildPrompt -> GenerateWithModel`
 * `GenerateWithModel -> NormalizePatchOps`（chunkまたは構造出力受信）
-* `NormalizePatchOps -> EmitStream`（有効 `PatchOp` あり）
+* `NormalizePatchOps -> EmitStream`（有効PatchOpあり）
 * `EmitStream -> GenerateWithModel`（stream継続）
 * `GenerateWithModel -> Finalize`（モデル完了）
-* 例外はすべて `HandleError`
+* 例外は `HandleError`
 
 ## 7. Nodeごとの責務
 
 ### 7.1 ValidateRequest
 
-必須入力:
-
-* `tree_id`
-* `act_type`
-* `user_message`
-* `workspace_id`
-* `uid`
-* `request_id`
+必須入力: `tree_id`, `act_type`, `user_message`, `workspace_id`, `uid`, `request_id`
 
 検証ルール:
 
-* `user_message` は trim 後 1〜6000 文字
-* `anchor_node_ids` は最大 40
-* `context_node_ids` は最大 120
-* `request_id` は UUID 形式
+* `user_message` は trim後 1〜6000文字
+* `anchor_node_ids` 最大40
+* `context_node_ids` 最大120
+* `request_id` はUUID形式
 
 失敗時:
 
@@ -109,7 +100,7 @@ ActState {
 
 ### 7.2 LoadContext
 
-* Firestoreから anchor 周辺の nodes/edges/evidence を読み込み
+* Firestoreから anchor 周辺の nodes/edges/evidence を読取
 * 既定探索範囲: 2-hop
 * 取得上限: nodes 500 / edges 1000 / evidence 1000
 
@@ -121,9 +112,9 @@ ActState {
 ### 7.3 BuildPrompt
 
 * 入力: `act_type`, `user_message`, `anchor`, `context_node_ids`, snapshot
-* モデル命令は「`PatchOp(upsert/append_md)` 以外を生成しない」制約を強制
-* 文脈が空の場合でも `ACT_ROOT` を最低1つ生成する方針を指示
-* `llm_config.profile` と `grounding_config.use_web_grounding` をプロンプト方針へ反映
+* 制約: `PatchOp(upsert/append_md)` 以外を生成しない
+* 文脈空でも `ACT_ROOT` を最低1つ生成
+* `llm_config.profile` と `grounding_config.use_web_grounding` を反映
 
 ### 7.4 GenerateWithModel
 
@@ -131,32 +122,31 @@ ActState {
 
 * Node timeout: 60秒
 * Run全体 timeout: 90秒
-* モデル再試行: 最大2回（`UNAVAILABLE` / `DEADLINE_EXCEEDED` のみ）
-* 推論ループ上限: 5サイクル
-* `GEMINI_DEEP_RESEARCH` 利用時は timeout超過を優先監視
+* モデル再試行: 最大2回（`UNAVAILABLE` / `DEADLINE_EXCEEDED`）
+* 推論ループ上限: 5
 * `thinking_config.include_thoughts=true` 時は thought増分を収集
-* Deep Research 利用時は Interactions API を background 実行で扱う
+* Deep Research 利用時は background実行として扱う
 
 ### 7.5 NormalizePatchOps
 
-* 許可op: `upsert`, `append_md` のみ
-* 禁止opは破棄し `warnings` に記録
-* `append_md` 対象 block 未作成時は補完 `upsert` を先行追加
-* 親子循環検出時は該当edgeを破棄
-* 1 Run あたり上限: `patch_ops <= 400`
+* 許可op: `upsert`, `append_md`
+* 禁止opは破棄して warning記録
+* `append_md` 対象未作成時は補完 `upsert` を先行
+* 親子循環検出時は該当edge破棄
+* 1 Run上限: `patch_ops <= 400`
 
 ### 7.6 EmitStream
 
 送信規約:
 
-* 1イベントに `patch_ops` と `text_delta` の同居を許可
-* 送信順序は親 -> 子
+* 1イベントに `patch_ops` と `text_delta` 同居可
+* 送信順序は親->子
 * `patch_ops` バッチ: 1〜40件
 * `text_delta` バッチ: 50〜800文字
-* `text_delta` 総量上限: 50,000 文字
+* `text_delta` 総量上限: 50,000文字
 * thought増分は `stream_parts[].thought=true` で送出
 
-ID生成規則（固定）:
+ID生成規則:
 
 * block/node id: `act_{traceId}_n{seq}`
 * edge id: `act_{traceId}_e{seq}`
@@ -164,27 +154,23 @@ ID生成規則（固定）:
 ### 7.7 Finalize
 
 * 正常時のみ `done=true` を1回返す
-* `done=true` 送信後の追加イベント送信を禁止
-* メトリクス記録後に終了
+* `done=true` 後の追加送信禁止
 
 ### 7.8 HandleError
 
 * `RunActEvent.error` を1回返す
 * `done=true` は返さない
-* 可能なら `warnings` をログへ残す
-* `ErrorInfo.stage` は失敗ノードに対応した値を設定
-* `ErrorInfo.retryable` は再試行可否を設定
-* `ErrorInfo.trace_id` は必ず設定
+* `ErrorInfo.stage`, `retryable`, `trace_id` を必ず設定
 
-## 8. ストリーミング規約（RunActEvent）
+## 8. ストリーミング規約
 
-* 終了状態は `done` と `error` が排他的
+* 終了状態は `done` と `error` が排他
 * 終了イベントは必ず最後の1イベント
 * 部分成功後に失敗した場合は `error` 終了
 
 ## 9. エラーポリシー
 
-返却コード（`ErrorInfo.code`）:
+返却コード:
 
 * `INVALID_ARGUMENT`
 * `ALREADY_EXISTS`
@@ -193,53 +179,20 @@ ID生成規則（固定）:
 * `DEADLINE_EXCEEDED`
 * `INTERNAL`
 
-返却メタ（`ErrorInfo`）:
-
-* `retryable=true`: `UNAVAILABLE`, `DEADLINE_EXCEEDED`（一時障害）
-* `retryable=false`: `INVALID_ARGUMENT`, `ALREADY_EXISTS`, `FAILED_PRECONDITION`
-* `stage`: 失敗地点（`AUTHN`, `AUTHZ`, `LOAD_CONTEXT`, `GENERATE_WITH_MODEL` など）
-
 運用方針:
 
 * 入力不正は即終了
 * 外部依存障害は1回再試行
 * 2回連続失敗で `error` 返却
 
-## 10. フォールバック方針（固定）
+## 10. フォールバック方針
 
-LLMが構造出力を返せない場合でも、以下を返してUIを壊さない。
+LLMが構造出力を返せない場合:
 
 * `upsert` で `ACT_ROOT` を1件生成
 * `append_md` で失敗理由を簡潔に追記
 * 最後は `done=true`
 
-## 11. Mock互換ルール（固定）
+## 11. Mock互換ルール
 
-Mock `ActService` は本番と同一契約で返す。
-
-* `RunActEvent` フォーマットを一致
-* `upsert` / `append_md` 以外を返さない
-* `done` / `error` 排他を守る
-* `ACT_ROOT` を必ず含める
-
-## 12. 観測性
-
-最低限のメトリクス:
-
-* `run_act_total`
-* `run_act_error_total`
-* `run_act_latency_ms`
-* `emitted_patch_ops_total`
-* `emitted_text_chars_total`
-
-ログ必須項目:
-
-* `traceId`, `treeId`, `uid`, `actType`, `anchorNodeIds`, `error.code`, `latencyMs`
-
-## 13. 仕様整合チェック
-
-* Firestore直接更新はしない
-* `PatchOp` は `upsert` / `append_md` のみ
-* レイアウト固定はユーザー操作経由のみ
-* 永続化は `OrganizeService.ApplyPatch` のみ
-* 細かい数値は `act/specs/quality/backend-parameter-index.md` を正本とする
+Mock `ActService` も本番と同一 `RunActEvent` 契約で返す。

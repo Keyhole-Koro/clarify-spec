@@ -5,11 +5,19 @@
 ## 1. まず読む（全体）
 
 1. `concept.md`
-2. `act/README.md`
-3. `organize/README.md`
-4. `frontend/frontend-spec.md`
+2. `specs/shared/README.md`
+3. `act/README.md`
+4. `organize/README.md`
+5. `frontend/frontend-spec.md`
 
-## 2. Act 仕様索引（Source of Truth）
+## 2. Shared 仕様索引（Source of Truth）
+
+1. `specs/shared/README.md`
+2. `specs/shared/topic-model.md`
+3. `specs/shared/context-bundle-schema.md`
+4. `specs/shared/context-assembly-core.md`
+
+## 3. Act 仕様索引（Source of Truth）
 
 1. `act/specs/README.md`
 2. `act/specs/overview/act-overview.md`
@@ -45,7 +53,7 @@
 32. `act/specs/quality/backend-parameter-index.md`
 33. `act/specs/quality/backend-spec-gaps.md`
 
-## 3. Organize 仕様索引（Source of Truth）
+## 4. Organize 仕様索引（Source of Truth）
 
 1. `organize/specs/pipeline-summary.md`
 2. `organize/specs/pipeline-spec.md`
@@ -56,51 +64,41 @@
 7. `organize/agents/a0/specs/ingest-extract-spec-v0.3.md`
 8. `organize/agents/a1/specs/a0-a1-boundary.md`
 9. `firestore/schema.md`
+10. `firestore/indexes.md`
 
-## 4. 実装手順（MDの順番）
+## 5. 実装手順（MDの順番）
 
-### 手順1: 契約固定
+### 手順1: Shared 契約固定
+
+1. `specs/shared/topic-model.md`
+2. `specs/shared/context-bundle-schema.md`
+3. `specs/shared/context-assembly-core.md`
+
+### 手順2: データモデル固定
+
+1. `firestore/schema.md`
+2. `firestore/indexes.md`
+
+### 手順3: Organize 配線固定
+
+1. `organize/specs/pipeline-core.md`
+2. `organize/specs/pipeline-agents.md`
+3. `organize/specs/pipeline-ops.md`
+
+### 手順4: Act 契約固定
 
 1. `act/specs/contracts/rpc-connect-schema.md`
-2. `act/specs/contracts/gemini-vertex-response-schemas.md`
-3. `firestore/schema.md`
+2. `act/specs/overview/act-architecture.md`
+3. `act/specs/behavior/act-flow.md`
+4. `act/specs/behavior/runact-implementation.md`
 
-### 手順2: Act Backend骨格
-
-1. `act/specs/overview/act-architecture.md`
-2. `act/specs/behavior/session-and-auth-boundary.md`
-3. `act/specs/behavior/cloudrun-redis-topology.md`
-4. `act/specs/behavior/connect-server.md`
-5. `act/specs/behavior/access-control-middleware.md`
-6. `act/specs/behavior/runact-implementation.md`
-7. `act/specs/behavior/act-langgraph-runtime.md`
-
-### 手順3: Frontend Stream接続
+### 手順5: Frontend Stream接続
 
 1. `frontend/frontend-spec.md`
 2. `frontend/frontend-ui-gaps.md`
 3. `act/specs/behavior/frontend-stream-integration.md`
 4. `act/specs/behavior/frontend-canvas-phases.md`
 5. `act/specs/quality/frontend-stream-acceptance.md`
-
-### 手順4: Usecase成立確認
-
-1. `act/specs/usecases/ask-from-empty-canvas.md`
-2. `act/specs/usecases/usecase-er-diagrams.md`
-3. `act/specs/usecases/usecase-logical-model.md`
-4. `act/specs/usecases/ask-with-selected-context.md`
-5. `act/specs/usecases/run-act-from-node-action.md`
-6. `act/specs/usecases/thinking-stream-visible.md`
-7. `act/specs/usecases/deep-research-fallback.md`
-8. `act/specs/usecases/create-workspace.md`
-9. `act/specs/usecases/join-workspace-by-invite-url.md`
-10. `act/specs/usecases/runact-without-workspace-access.md`
-
-### 手順5: Organize接続
-
-1. `organize/specs/pipeline-core.md`
-2. `organize/specs/pipeline-agents.md`
-3. `organize/specs/pipeline-ops.md`
 
 ### 手順6: 品質・運用仕上げ
 
@@ -112,8 +110,8 @@
 6. `act/specs/quality/backend-parameter-index.md`
 7. `act/specs/quality/backend-spec-gaps.md`
 
-## 5. ルール
+## 6. ルール
 
-* 契約変更は `contracts` を先に更新し、他ファイルは追従
+* 共有仕様変更は `specs/shared` を先に更新し、Act/Organizeを追従させる
 * 実装メモは `act/backend` / `act/frontend` に置く
-* 仕様は `act/specs` / `organize/specs` を正本にする
+* 仕様の正本は `specs/shared` / `act/specs` / `organize/specs` / `firestore` とする
