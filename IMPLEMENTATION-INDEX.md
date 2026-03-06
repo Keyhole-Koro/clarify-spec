@@ -21,13 +21,13 @@
 8. `act/specs/contracts/rpc-connect-schema.md`
 9. `act/specs/contracts/gemini-vertex-response-schemas.md`
 10. `act/specs/behavior/act-flow.md`
-11. `act/act-api/specs/adk-service-integration.md`
+11. `act/act-api/specs/runtime/adk-service-integration.md`
 12. `act/act-adk-worker/specs/act-adk-runtime.md`
-13. `act/act-api/specs/session-and-auth-boundary.md`
-14. `act/act-api/specs/cloudrun-redis-topology.md`
-15. `act/act-api/specs/connect-server.md`
-16. `act/act-api/specs/access-control-middleware.md`
-17. `act/act-api/specs/runact-implementation.md`
+13. `act/act-api/specs/security/session-and-auth-boundary.md`
+14. `act/act-api/specs/platform/cloudrun-redis-topology.md`
+15. `act/act-api/specs/runtime/connect-server.md`
+16. `act/act-api/specs/security/access-control-middleware.md`
+17. `act/act-api/specs/runtime/runact-implementation.md`
 18. `act/specs/behavior/frontend-stream-integration.md`
 19. `act/specs/behavior/frontend-canvas-phases.md`
 20. `act/specs/usecases/README.md`
@@ -52,8 +52,15 @@
 39. `act/act-api/backend-implementation-blueprint.md`
 40. `act/act-api/README.md`
 41. `act/act-api/specs/README.md`
-42. `act/act-adk-worker/README.md`
-43. `act/act-adk-worker/specs/README.md`
+42. `act/act-api/specs/context/context-assembly-execution-profile.md`
+43. `act/act-api/specs/reliability/idempotency-policy.md`
+44. `act/act-api/specs/platform/redis-keyspace-policy.md`
+45. `act/act-api/specs/security/cookie-cors-policy.md`
+46. `act/act-api/specs/security/internal-service-auth.md`
+47. `act/act-api/specs/reliability/error-mapping-matrix.md`
+48. `act/act-api/specs/workspace/invite-link-api-contract.md`
+49. `act/act-adk-worker/README.md`
+50. `act/act-adk-worker/specs/README.md`
 
 ## 3. Organize 仕様索引（Source of Truth）
 
@@ -95,14 +102,21 @@
 1. `act/specs/contracts/rpc-connect-schema.md`
 2. `act/specs/overview/act-architecture.md`
 3. `act/specs/behavior/act-flow.md`
-4. `act/act-api/specs/adk-service-integration.md`
+4. `act/act-api/specs/runtime/adk-service-integration.md`
 5. `act/act-adk-worker/specs/act-adk-runtime.md`
-6. `act/act-api/specs/runact-implementation.md`
+6. `act/act-api/specs/runtime/runact-implementation.md`
 7. `act/act-api/backend-implementation-blueprint.md`
 8. `act/act-api/README.md`
 9. `act/act-api/specs/README.md`
-10. `act/act-adk-worker/README.md`
-11. `act/act-adk-worker/specs/README.md`
+10. `act/act-api/specs/context/context-assembly-execution-profile.md`
+11. `act/act-api/specs/reliability/idempotency-policy.md`
+12. `act/act-api/specs/platform/redis-keyspace-policy.md`
+13. `act/act-api/specs/security/cookie-cors-policy.md`
+14. `act/act-api/specs/security/internal-service-auth.md`
+15. `act/act-api/specs/reliability/error-mapping-matrix.md`
+16. `act/act-api/specs/workspace/invite-link-api-contract.md`
+17. `act/act-adk-worker/README.md`
+18. `act/act-adk-worker/specs/README.md`
 
 ### 手順5: Frontend Stream接続
 

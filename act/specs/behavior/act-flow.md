@@ -19,9 +19,9 @@
 ## 3. 前提・依存
 
 * `act/specs/contracts/rpc-connect-schema.md`
-* `act/act-api/specs/runact-implementation.md`
-* `act/act-api/specs/adk-service-integration.md`
-* `act/act-api/specs/session-and-auth-boundary.md`
+* `act/act-api/specs/runtime/runact-implementation.md`
+* `act/act-api/specs/runtime/adk-service-integration.md`
+* `act/act-api/specs/security/session-and-auth-boundary.md`
 * `act/specs/context/core.md`
 * `act/specs/context/bundle-schema.md`
 * `firestore/schema.md`

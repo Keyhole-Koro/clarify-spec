@@ -99,30 +99,33 @@
 
 * `act/specs/quality/backend-parameter-index.md`
 
-## 11. 招待リンク共有機能（未実装ギャップ）
+## 11. 招待リンク共有機能（解決済み）
 
-現状:
+決定:
 
-* 共有リンク発行/検証のバックエンド契約が未定義
-* フロント共有UIが未定義
+* API契約を `act/act-api/specs/workspace/invite-link-api-contract.md` に固定
+* usecase連携を `act/specs/usecases/workspace/join-workspace-by-invite-url.md` に固定
+* 認可境界は `act/act-api/specs/security/access-control-middleware.md` を正本とする
 
-次アクション:
+## 12. Context Assembly 実装粒度（解決済み）
 
-* backend仕様: `act/act-api/specs/access-control-middleware.md` と `act/specs/usecases/workspace/join-workspace-by-invite-url.md` にAPI契約追記
-* frontend仕様: `frontend/frontend-spec.md` に共有/参加UIの最小ワイヤー追記
+決定:
 
-## 12. Context Assembly 実装粒度ギャップ（未固定）
+* 実装固定値は `act/specs/context/implementation.md` を正本とする
+* act-api 実行プロファイルは `act/act-api/specs/context/context-assembly-execution-profile.md` を正本とする
+* Firestore query/index 固定値を同仕様へ明記した
 
-現状:
+## 13. ErrorInfo 最終マッピング（解決済み）
 
-* `ResolveIntent` / `RetrieveContext` / `RankAndBudget` は概念定義が中心
-* 実装時に揺れやすい定数・優先順位が未固定
+決定:
 
-次アクション（固定必須）:
+* `code/stage/retryable/retry_after_ms` の最終表は `act/act-api/specs/reliability/error-mapping-matrix.md` を正本とする
 
-* `intent` 判定の優先順位表（競合時ルール）
-* `retrieval_policy` 固定値（hop、relation、件数上限）
-* `ranking` 重み定数（score計算）
-* `token budgeting` 推定式と削除順序
-* Firestore query条件 + 必要index一覧
-* `ErrorInfo` 最終マッピング（`code/stage/retryable/retry_after_ms`）
+## 14. 追加で固定した運用仕様（解決済み）
+
+決定:
+
+* idempotency: `act/act-api/specs/reliability/idempotency-policy.md`
+* redis keyspace: `act/act-api/specs/platform/redis-keyspace-policy.md`
+* cookie/cors: `act/act-api/specs/security/cookie-cors-policy.md`
+* service-to-service auth: `act/act-api/specs/security/internal-service-auth.md`

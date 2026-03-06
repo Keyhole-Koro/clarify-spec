@@ -14,7 +14,7 @@
 
 参照:
 
-* `act/act-api/specs/access-control-middleware.md`
+* `act/act-api/specs/security/access-control-middleware.md`
 * `act/specs/overview/act-architecture.md`
 
 ## 正常フロー

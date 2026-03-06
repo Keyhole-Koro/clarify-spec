@@ -13,10 +13,12 @@
 ## 前提仕様
 
 * `act/specs/contracts/rpc-connect-schema.md`
-* `act/act-api/specs/runact-implementation.md`
-* `act/act-api/specs/access-control-middleware.md`
-* `act/act-api/specs/session-and-auth-boundary.md`
-* `act/act-api/specs/cloudrun-redis-topology.md`
+* `act/act-api/specs/runtime/runact-implementation.md`
+* `act/act-api/specs/security/access-control-middleware.md`
+* `act/act-api/specs/security/session-and-auth-boundary.md`
+* `act/act-api/specs/platform/cloudrun-redis-topology.md`
+* `act/act-api/specs/security/cookie-cors-policy.md`
+* `act/act-api/specs/security/internal-service-auth.md`
 
 ## サーバ要件（MUST）
 

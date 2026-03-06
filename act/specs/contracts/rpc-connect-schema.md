@@ -124,6 +124,6 @@ flowchart LR
 
 ## References
 
-* `act/act-api/specs/runact-implementation.md`
+* `act/act-api/specs/runtime/runact-implementation.md`
 * `act/specs/behavior/act-flow.md`
 * `act/specs/context/bundle-schema.md`

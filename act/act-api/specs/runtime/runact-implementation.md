@@ -14,9 +14,12 @@
 * `act/specs/contracts/rpc-connect-schema.md`
 * `act/specs/context/core.md`
 * `act/specs/context/bundle-schema.md`
-* `act/act-api/specs/adk-service-integration.md`
+* `act/act-api/specs/runtime/adk-service-integration.md`
+* `act/act-api/specs/context/context-assembly-execution-profile.md`
+* `act/act-api/specs/reliability/idempotency-policy.md`
+* `act/act-api/specs/reliability/error-mapping-matrix.md`
 * `organize/specs/model/topic-model.md`
-* `act/act-api/specs/session-and-auth-boundary.md`
+* `act/act-api/specs/security/session-and-auth-boundary.md`
 
 ## 契約（I/O）
 

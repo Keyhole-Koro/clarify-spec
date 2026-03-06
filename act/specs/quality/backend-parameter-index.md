@@ -29,6 +29,13 @@
 * `redis_connect_timeout_ms`: 200
 * `redis_read_timeout_ms`: 200
 * `redis_write_timeout_ms`: 200
+* `cors_preflight_max_age_seconds`: 600
+* `invite_token_ttl_seconds_default`: 172800
+* `invite_token_ttl_seconds_max`: 604800
+* `invite_token_single_use`: true
+* `internal_auth_token_cache_ttl_seconds`: 300
+* `idempotency_inflight_ttl_seconds`: 120
+* `idempotency_snapshot_ttl_seconds`: 900
 
 ## Load Context Limits
 
@@ -59,6 +66,6 @@
 
 ## Notes
 
-* 変更時は `runact-implementation.md` と `act-adk-runtime.md` を同時更新する
-* セッション境界を変える場合は `session-and-auth-boundary.md` も同時更新する
+* 変更時は `act/act-api/specs/runtime/runact-implementation.md` と `act/act-adk-worker/specs/act-adk-runtime.md` を同時更新する
+* セッション境界を変える場合は `act/act-api/specs/security/session-and-auth-boundary.md` も同時更新する
 * 仕様値と実装値が乖離した場合、この文書を先に修正する

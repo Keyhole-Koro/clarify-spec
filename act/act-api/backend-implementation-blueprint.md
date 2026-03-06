@@ -12,9 +12,9 @@
 ## 前提 / 参照
 
 * `act/specs/contracts/rpc-connect-schema.md`
-* `act/act-api/specs/runact-implementation.md`
-* `act/act-api/specs/adk-service-integration.md`
-* `act/act-api/specs/cloudrun-redis-topology.md`
+* `act/act-api/specs/runtime/runact-implementation.md`
+* `act/act-api/specs/runtime/adk-service-integration.md`
+* `act/act-api/specs/platform/cloudrun-redis-topology.md`
 * `act/specs/quality/backend-parameter-index.md`
 
 ## アーキテクチャ要約
