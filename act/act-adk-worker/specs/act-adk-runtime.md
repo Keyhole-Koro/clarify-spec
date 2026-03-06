@@ -85,8 +85,8 @@ flowchart LR
 flowchart TD
   X[Error Raised] --> Y{error source}
   Y -->|input validation| I[INVALID_ARGUMENT<br>stage=VALIDATE_REQUEST<br>retryable=false]
-  Y -->|context retrieval| C[UNAVAILABLE<br>stage=ASSEMBLY_RETRIEVAL<br>retryable=true]
-  Y -->|budgeting| B[RESOURCE_EXHAUSTED or degrade<br>stage=ASSEMBLY_BUDGETING]
+  Y -->|context retrieval| C[UNAVAILABLE<br>stage=ASSEMBLY_RETRIEVE<br>retryable=true]
+  Y -->|budgeting| B[RESOURCE_EXHAUSTED or degrade<br>stage=ASSEMBLY_BUDGET]
   Y -->|vertex call| V[UNAVAILABLE/DEADLINE_EXCEEDED<br>stage=GENERATE_WITH_MODEL<br>retryable=true]
   Y -->|patch normalize| N[INTERNAL<br>stage=NORMALIZE_PATCH_OPS<br>retryable=false]
 ```

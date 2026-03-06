@@ -114,7 +114,7 @@
 決定:
 
 * 実装固定値は `act/specs/context/implementation.md` を正本とする
-* act-api 実行プロファイルは `act/act-api/specs/context/context-assembly-execution-profile.md` を正本とする
+* ADK Worker 実行プロファイルは `act/act-adk-worker/specs/context/context-assembly-execution-profile.md` を正本とする
 * Firestore query/index 固定値を同仕様へ明記した
 
 ## 13. ErrorInfo 最終マッピング（解決済み）
@@ -131,3 +131,22 @@
 * redis keyspace: `act/act-api/specs/platform/redis-keyspace-policy.md`
 * cookie/cors: `act/act-api/specs/security/cookie-cors-policy.md`
 * service-to-service auth: `act/act-api/specs/security/internal-service-auth.md`
+
+## 15. ADK Worker 実装詳細ギャップ（未解決）
+
+現状:
+
+* `act-adk-worker` の runtime は主要フローを定義済みだが、実装時に差が出やすい境界が残っている
+
+次アクション（要決定）:
+
+* cancel伝播仕様
+  * `act-api` からの中断を `GenerateWithModel` / 外部tool呼び出しへ即時伝播する方式
+* stream順序保証
+  * thought / answer / patch の flush順序と同一chunk内の並びルール
+* model profile切替表
+  * Gemini 3 Flash / grounding / deep research の選択条件を固定
+* tool/grounding metadata 正規化
+  * `RunActEvent` へ何を残し、何を圧縮/破棄するかを固定
+* ADK workerテスト仕様
+  * 最小ゴールデンケース（intent, budget超過, error mapping, stream順序）を追加

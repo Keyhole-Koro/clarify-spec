@@ -5,6 +5,7 @@ Python `act-adk-worker` 実装に依存する仕様を置く。
 ## Files
 
 * `act-adk-runtime.md`
+* `context/context-assembly-execution-profile.md`
 
 ## Rule
 

@@ -16,6 +16,7 @@
 * `act/specs/contracts/rpc-connect-schema.md`
 * `act/specs/quality/frontend-stream-acceptance.md`
 * `act/specs/behavior/act-flow.md`
+* `act/specs/behavior/ai-streaming-cases.md`
 
 ## 適用ルール（MUST）
 

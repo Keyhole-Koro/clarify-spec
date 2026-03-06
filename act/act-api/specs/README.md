@@ -27,10 +27,6 @@ Go `act-api` 実装に依存する仕様を置く。
 * `reliability/idempotency-policy.md`
 * `reliability/error-mapping-matrix.md`
 
-### `context/`
-
-* `context/context-assembly-execution-profile.md`
-
 ### `workspace/`
 
 * `workspace/invite-link-api-contract.md`

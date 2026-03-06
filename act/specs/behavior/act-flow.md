@@ -121,7 +121,7 @@ flowchart LR
 * Redis不達 (`soft`): 継続 + degradeログ, `stage=SID_VALIDATE`
 * Redis不達 (`strict`): `UNAVAILABLE` または `UNAUTHENTICATED`
 * 冪等重複: 既存結果返却または重複抑止終端, `stage=IDEMPOTENCY_CHECK`
-* Assembly参照失敗: `UNAVAILABLE`, `retryable=true`, `stage=ASSEMBLY_RETRIEVAL`
+* Assembly参照失敗: `UNAVAILABLE`, `retryable=true`, `stage=ASSEMBLY_RETRIEVE`
 * Assembly予算超過: degrade継続, diagnosticsに `truncation_reason` を残す
 * ADK worker不達: `UNAVAILABLE`, `retryable=true`, `stage=GENERATE_WITH_MODEL`
 * Vertexタイムアウト: `DEADLINE_EXCEEDED`, `retryable=true`, `stage=GENERATE_WITH_MODEL`

@@ -1,6 +1,7 @@
 # Act Specs Guide
 
 Act仕様は「共有正本」と「実装依存仕様」を分離して管理する。
+人間向けの要約ガイドは `act/readable/` に分離する。
 
 ## Shared Layers (`act/specs`)
 

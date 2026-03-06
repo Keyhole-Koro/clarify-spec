@@ -1,4 +1,4 @@
-# Context Assembly Execution Profile（Act API）
+# Context Assembly Execution Profile（Act ADK Worker）
 
 ## 目的
 
@@ -31,7 +31,7 @@
 1. `ResolveIntent`
 2. `RetrieveContext`
 3. `RankAndBudget`
-4. `bundle + diagnostics` を ADK worker へ渡す
+4. `bundle + diagnostics` を返し、同一 worker 実行内で `GenerateWithModel` へ渡す
 
 ## ResolveIntent 固定ルール
 

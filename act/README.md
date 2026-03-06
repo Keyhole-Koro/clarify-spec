@@ -18,6 +18,8 @@
   * ユーザー操作起点のシナリオ仕様
 * `act/specs/quality/`
   * テスト戦略・LLM API試験・運用設定
+* `act/readable/`
+  * 人間向けの読み物（高速理解用ガイド）
 * `act/act-api/`
   * Go API 実装ルート（Connect公開、auth/authz、stream）
 * `act/act-adk-worker/`

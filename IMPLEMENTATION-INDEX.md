@@ -6,8 +6,9 @@
 
 1. `concept.md`
 2. `act/README.md`
-3. `organize/README.md`
-4. `frontend/frontend-spec.md`
+3. `act/readable/README.md`
+4. `organize/README.md`
+5. `frontend/frontend-spec.md`
 
 ## 2. Act 仕様索引（Source of Truth）
 
@@ -28,39 +29,47 @@
 15. `act/act-api/specs/runtime/connect-server.md`
 16. `act/act-api/specs/security/access-control-middleware.md`
 17. `act/act-api/specs/runtime/runact-implementation.md`
-18. `act/specs/behavior/frontend-stream-integration.md`
-19. `act/specs/behavior/frontend-canvas-phases.md`
-20. `act/specs/usecases/README.md`
-21. `act/specs/usecases/models/usecase-er-diagrams.md`
-22. `act/specs/usecases/models/usecase-logical-model.md`
-23. `act/specs/usecases/graph/ask-from-empty-canvas.md`
-24. `act/specs/usecases/graph/ask-with-selected-context.md`
-25. `act/specs/usecases/graph/run-act-from-node-action.md`
-26. `act/specs/usecases/graph/thinking-stream-visible.md`
-27. `act/specs/usecases/graph/deep-research-fallback.md`
-28. `act/specs/usecases/workspace/create-workspace.md`
-29. `act/specs/usecases/workspace/join-workspace-by-invite-url.md`
-30. `act/specs/usecases/workspace/runact-without-workspace-access.md`
-31. `act/specs/quality/e2e-test-strategy.md`
-32. `act/specs/quality/act-e2e-test-plan.md`
-33. `act/specs/quality/llm-api-test-spec.md`
-34. `act/specs/quality/hackathon-assembly-checklist.md`
-35. `act/specs/quality/operations-config-observability.md`
-36. `act/specs/quality/frontend-stream-acceptance.md`
-37. `act/specs/quality/backend-parameter-index.md`
-38. `act/specs/quality/backend-spec-gaps.md`
-39. `act/act-api/backend-implementation-blueprint.md`
-40. `act/act-api/README.md`
-41. `act/act-api/specs/README.md`
-42. `act/act-api/specs/context/context-assembly-execution-profile.md`
-43. `act/act-api/specs/reliability/idempotency-policy.md`
-44. `act/act-api/specs/platform/redis-keyspace-policy.md`
-45. `act/act-api/specs/security/cookie-cors-policy.md`
-46. `act/act-api/specs/security/internal-service-auth.md`
-47. `act/act-api/specs/reliability/error-mapping-matrix.md`
-48. `act/act-api/specs/workspace/invite-link-api-contract.md`
-49. `act/act-adk-worker/README.md`
-50. `act/act-adk-worker/specs/README.md`
+18. `act/specs/behavior/ai-streaming-cases.md`
+19. `act/specs/behavior/frontend-stream-integration.md`
+20. `act/specs/behavior/frontend-canvas-phases.md`
+21. `act/specs/usecases/README.md`
+22. `act/specs/usecases/models/usecase-er-diagrams.md`
+23. `act/specs/usecases/models/usecase-logical-model.md`
+24. `act/specs/usecases/graph/ask-from-empty-canvas.md`
+25. `act/specs/usecases/graph/ask-with-selected-context.md`
+26. `act/specs/usecases/graph/run-act-from-node-action.md`
+27. `act/specs/usecases/graph/thinking-stream-visible.md`
+28. `act/specs/usecases/graph/deep-research-fallback.md`
+29. `act/specs/usecases/workspace/create-workspace.md`
+30. `act/specs/usecases/workspace/join-workspace-by-invite-url.md`
+31. `act/specs/usecases/workspace/runact-without-workspace-access.md`
+32. `act/specs/quality/e2e-test-strategy.md`
+33. `act/specs/quality/act-e2e-test-plan.md`
+34. `act/specs/quality/llm-api-test-spec.md`
+35. `act/specs/quality/hackathon-assembly-checklist.md`
+36. `act/specs/quality/operations-config-observability.md`
+37. `act/specs/quality/frontend-stream-acceptance.md`
+38. `act/specs/quality/backend-parameter-index.md`
+39. `act/specs/quality/backend-spec-gaps.md`
+40. `act/act-api/backend-implementation-blueprint.md`
+41. `act/act-api/README.md`
+42. `act/act-api/specs/README.md`
+43. `act/act-adk-worker/specs/context/context-assembly-execution-profile.md`
+44. `act/act-api/specs/reliability/idempotency-policy.md`
+45. `act/act-api/specs/platform/redis-keyspace-policy.md`
+46. `act/act-api/specs/security/cookie-cors-policy.md`
+47. `act/act-api/specs/security/internal-service-auth.md`
+48. `act/act-api/specs/reliability/error-mapping-matrix.md`
+49. `act/act-api/specs/workspace/invite-link-api-contract.md`
+50. `act/act-adk-worker/README.md`
+51. `act/act-adk-worker/specs/README.md`
+
+## 2.1 Act 人間向け導線（Readable）
+
+1. `act/readable/README.md`
+2. `act/readable/system-map.md`
+3. `act/readable/streaming-guide.md`
+4. `act/readable/runtime-guide.md`
 
 ## 3. Organize 仕様索引（Source of Truth）
 
@@ -105,18 +114,19 @@
 4. `act/act-api/specs/runtime/adk-service-integration.md`
 5. `act/act-adk-worker/specs/act-adk-runtime.md`
 6. `act/act-api/specs/runtime/runact-implementation.md`
-7. `act/act-api/backend-implementation-blueprint.md`
-8. `act/act-api/README.md`
-9. `act/act-api/specs/README.md`
-10. `act/act-api/specs/context/context-assembly-execution-profile.md`
-11. `act/act-api/specs/reliability/idempotency-policy.md`
-12. `act/act-api/specs/platform/redis-keyspace-policy.md`
-13. `act/act-api/specs/security/cookie-cors-policy.md`
-14. `act/act-api/specs/security/internal-service-auth.md`
-15. `act/act-api/specs/reliability/error-mapping-matrix.md`
-16. `act/act-api/specs/workspace/invite-link-api-contract.md`
-17. `act/act-adk-worker/README.md`
-18. `act/act-adk-worker/specs/README.md`
+7. `act/specs/behavior/ai-streaming-cases.md`
+8. `act/act-api/backend-implementation-blueprint.md`
+9. `act/act-api/README.md`
+10. `act/act-api/specs/README.md`
+11. `act/act-adk-worker/specs/context/context-assembly-execution-profile.md`
+12. `act/act-api/specs/reliability/idempotency-policy.md`
+13. `act/act-api/specs/platform/redis-keyspace-policy.md`
+14. `act/act-api/specs/security/cookie-cors-policy.md`
+15. `act/act-api/specs/security/internal-service-auth.md`
+16. `act/act-api/specs/reliability/error-mapping-matrix.md`
+17. `act/act-api/specs/workspace/invite-link-api-contract.md`
+18. `act/act-adk-worker/README.md`
+19. `act/act-adk-worker/specs/README.md`
 
 ### 手順5: Frontend Stream接続
 

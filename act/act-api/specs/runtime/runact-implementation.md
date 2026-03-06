@@ -15,7 +15,7 @@
 * `act/specs/context/core.md`
 * `act/specs/context/bundle-schema.md`
 * `act/act-api/specs/runtime/adk-service-integration.md`
-* `act/act-api/specs/context/context-assembly-execution-profile.md`
+* `act/act-adk-worker/specs/context/context-assembly-execution-profile.md`
 * `act/act-api/specs/reliability/idempotency-policy.md`
 * `act/act-api/specs/reliability/error-mapping-matrix.md`
 * `organize/specs/model/topic-model.md`
