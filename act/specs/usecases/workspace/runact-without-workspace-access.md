@@ -14,8 +14,8 @@ workspace 未所属ユーザーによる `RunAct` を拒否し、越境アクセ
 
 参照:
 
-* `act/specs/behavior/access-control-middleware.md`
-* `act/specs/behavior/connect-server.md`
+* `act/act-api/specs/access-control-middleware.md`
+* `act/act-api/specs/connect-server.md`
 
 ## 正常フロー
 

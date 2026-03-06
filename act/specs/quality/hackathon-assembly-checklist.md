@@ -11,8 +11,8 @@
 
 ## 前提 / 参照
 
-* `act/specs/behavior/session-and-auth-boundary.md`
-* `act/specs/behavior/cloudrun-redis-topology.md`
+* `act/act-api/specs/session-and-auth-boundary.md`
+* `act/act-api/specs/cloudrun-redis-topology.md`
 * `act/specs/contracts/rpc-connect-schema.md`
 * `act/specs/quality/backend-parameter-index.md`
 

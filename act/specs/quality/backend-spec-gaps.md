@@ -108,5 +108,21 @@
 
 次アクション:
 
-* backend仕様: `act/specs/behavior/access-control-middleware.md` と `act/specs/usecases/workspace/join-workspace-by-invite-url.md` にAPI契約追記
+* backend仕様: `act/act-api/specs/access-control-middleware.md` と `act/specs/usecases/workspace/join-workspace-by-invite-url.md` にAPI契約追記
 * frontend仕様: `frontend/frontend-spec.md` に共有/参加UIの最小ワイヤー追記
+
+## 12. Context Assembly 実装粒度ギャップ（未固定）
+
+現状:
+
+* `ResolveIntent` / `RetrieveContext` / `RankAndBudget` は概念定義が中心
+* 実装時に揺れやすい定数・優先順位が未固定
+
+次アクション（固定必須）:
+
+* `intent` 判定の優先順位表（競合時ルール）
+* `retrieval_policy` 固定値（hop、relation、件数上限）
+* `ranking` 重み定数（score計算）
+* `token budgeting` 推定式と削除順序
+* Firestore query条件 + 必要index一覧
+* `ErrorInfo` 最終マッピング（`code/stage/retryable/retry_after_ms`）

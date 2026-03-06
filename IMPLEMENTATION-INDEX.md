@@ -21,13 +21,13 @@
 8. `act/specs/contracts/rpc-connect-schema.md`
 9. `act/specs/contracts/gemini-vertex-response-schemas.md`
 10. `act/specs/behavior/act-flow.md`
-11. `act/specs/behavior/adk-service-integration.md`
-12. `act/specs/behavior/act-adk-runtime.md`
-13. `act/specs/behavior/session-and-auth-boundary.md`
-14. `act/specs/behavior/cloudrun-redis-topology.md`
-15. `act/specs/behavior/connect-server.md`
-16. `act/specs/behavior/access-control-middleware.md`
-17. `act/specs/behavior/runact-implementation.md`
+11. `act/act-api/specs/adk-service-integration.md`
+12. `act/act-adk-worker/specs/act-adk-runtime.md`
+13. `act/act-api/specs/session-and-auth-boundary.md`
+14. `act/act-api/specs/cloudrun-redis-topology.md`
+15. `act/act-api/specs/connect-server.md`
+16. `act/act-api/specs/access-control-middleware.md`
+17. `act/act-api/specs/runact-implementation.md`
 18. `act/specs/behavior/frontend-stream-integration.md`
 19. `act/specs/behavior/frontend-canvas-phases.md`
 20. `act/specs/usecases/README.md`
@@ -49,7 +49,11 @@
 36. `act/specs/quality/frontend-stream-acceptance.md`
 37. `act/specs/quality/backend-parameter-index.md`
 38. `act/specs/quality/backend-spec-gaps.md`
-39. `act/backend/backend-implementation-blueprint.md`
+39. `act/act-api/backend-implementation-blueprint.md`
+40. `act/act-api/README.md`
+41. `act/act-api/specs/README.md`
+42. `act/act-adk-worker/README.md`
+43. `act/act-adk-worker/specs/README.md`
 
 ## 3. Organize 仕様索引（Source of Truth）
 
@@ -91,10 +95,14 @@
 1. `act/specs/contracts/rpc-connect-schema.md`
 2. `act/specs/overview/act-architecture.md`
 3. `act/specs/behavior/act-flow.md`
-4. `act/specs/behavior/adk-service-integration.md`
-5. `act/specs/behavior/act-adk-runtime.md`
-6. `act/specs/behavior/runact-implementation.md`
-7. `act/backend/backend-implementation-blueprint.md`
+4. `act/act-api/specs/adk-service-integration.md`
+5. `act/act-adk-worker/specs/act-adk-runtime.md`
+6. `act/act-api/specs/runact-implementation.md`
+7. `act/act-api/backend-implementation-blueprint.md`
+8. `act/act-api/README.md`
+9. `act/act-api/specs/README.md`
+10. `act/act-adk-worker/README.md`
+11. `act/act-adk-worker/specs/README.md`
 
 ### 手順5: Frontend Stream接続
 
@@ -117,5 +125,5 @@
 ## 6. ルール
 
 * Context仕様変更は `act/specs/context` / `organize/specs/model/topic-model.md` / `act/specs/contracts/rpc-connect-schema.md` を同時更新する
-* 実装メモは `act/backend` / `act/frontend` に置く
+* 実装メモは `act/act-api` / `act/act-adk-worker` / `act/frontend` に置く
 * 仕様の正本は `act/specs` / `organize/specs` / `firestore` とする

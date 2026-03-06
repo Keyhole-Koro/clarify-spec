@@ -17,7 +17,7 @@ Deep Research実行中の遅延・失敗時に、UIを壊さず通常Flashプロ
 
 * `act/specs/contracts/rpc-connect-schema.md`
 * `act/specs/contracts/gemini-vertex-response-schemas.md`
-* `act/specs/behavior/runact-implementation.md`
+* `act/act-api/specs/runact-implementation.md`
 
 ## 正常フロー
 

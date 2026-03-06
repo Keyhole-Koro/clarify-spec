@@ -1,15 +1,20 @@
 # Act Specs Guide
 
-Act仕様は以下の6層で管理する。
+Act仕様は「共有正本」と「実装依存仕様」を分離して管理する。
 
-## Layers
+## Shared Layers (`act/specs`)
 
 * `overview/`: 全体像、読み順、DoD
 * `context/`: Context Assembly と Bundle 契約（Act実行前の文脈層）
 * `contracts/`: RPC/イベント/外部APIの入出力契約（破壊的変更管理対象）
-* `behavior/`: フロー、状態遷移、実行ルール
+* `behavior/`: 実装非依存の共通フロー（Act Flow / Frontend integration）
 * `usecases/`: ユーザー操作起点のシナリオ仕様（受け入れの主導線）
 * `quality/`: テスト戦略、運用設定、可観測性
+
+## Implementation-Specific Specs
+
+* `act/act-api/specs/`: Go API 実装依存仕様（auth/authz, connect, redis, runact orchestration）
+* `act/act-adk-worker/specs/`: Python ADK Worker 実装依存仕様（runtime, model execution）
 
 ## Granularity Rules
 
@@ -39,6 +44,7 @@ Act仕様は以下の6層で管理する。
 
 ## Cross-Reference Rules
 
-* 参照は原則 `act/specs/...` の絶対相対パスで書く
-* `backend/` や `frontend/` から参照する場合も同じパス基準を使う
+* 共有契約は `act/specs/...` を正本参照にする
+* 実装依存仕様は `act/act-api/specs/...` または `act/act-adk-worker/specs/...` に置く
+* `act-api` / `act-adk-worker` / `frontend` から共有正本を参照する場合は `act/specs/...` を使う
 * リネーム時は `rg` で旧パスを全置換してから完了とする

@@ -1,25 +1,11 @@
-# Act Backend
+# Act Backend (Moved)
 
-Go実装ディレクトリ（Connect RPC / Vertex AI / stream orchestration）。
+実装ルートは以下へ分割移動した。
 
-## Role
+* `act/act-api/`（Go）
+* `act/act-adk-worker/`（Python）
 
-* `act/specs/contracts/*` を契約正本として実装する
-* `act/specs/behavior/*` の状態遷移と制約を満たす
-* `act/specs/quality/*` のテスト/運用基準を満たす
+参照:
 
-## Source Of Truth
-
-* Contracts: `act/specs/contracts/rpc-connect-schema.md`
-* Runtime behavior: `act/specs/behavior/act-adk-runtime.md`
-* Connect behavior: `act/specs/behavior/connect-server.md`
-* Backend blueprint: `act/backend/backend-implementation-blueprint.md`
-* Test plan: `act/specs/quality/act-e2e-test-plan.md`
-
-## Implementation Scope
-
-* 実装コード（Go）
-* テストコード（unit/integration/e2e）
-* ローカル実行手順
-
-仕様そのものは `act/specs/` に追加・更新する。
+* `act/act-api/README.md`
+* `act/act-adk-worker/README.md`

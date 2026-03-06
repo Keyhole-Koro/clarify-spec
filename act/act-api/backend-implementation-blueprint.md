@@ -2,7 +2,7 @@
 
 ## 目的
 
-ハッカソン当日に `act/backend` を迷わず実装できるよう、ライブラリ選定、ディレクトリ構成、Cloud Run構成、Redisの責務を固定する。
+ハッカソン当日に `act/act-api` と `act/act-adk-worker` を迷わず実装できるよう、ライブラリ選定、ディレクトリ構成、Cloud Run構成、Redisの責務を固定する。
 
 ## スコープ / 非スコープ
 
@@ -12,9 +12,9 @@
 ## 前提 / 参照
 
 * `act/specs/contracts/rpc-connect-schema.md`
-* `act/specs/behavior/runact-implementation.md`
-* `act/specs/behavior/adk-service-integration.md`
-* `act/specs/behavior/cloudrun-redis-topology.md`
+* `act/act-api/specs/runact-implementation.md`
+* `act/act-api/specs/adk-service-integration.md`
+* `act/act-api/specs/cloudrun-redis-topology.md`
 * `act/specs/quality/backend-parameter-index.md`
 
 ## アーキテクチャ要約
@@ -68,10 +68,11 @@
 ## ディレクトリ構成（提案）
 
 ```text
-act/backend/
+act/
   README.md
-  backend-implementation-blueprint.md
-  api-go/
+  act-api/
+    README.md
+    backend-implementation-blueprint.md
     cmd/
       act-api/
         main.go
@@ -91,7 +92,8 @@ act/backend/
     test/
       integration/
       e2e/
-  adk-worker-py/
+  act-adk-worker/
+    README.md
     app/
       main.py
       routes/
@@ -165,4 +167,3 @@ Redisは認証の正本ではなく、実行安定化の補助に限定する。
 * 実装ディレクトリ構成の迷いがない
 * Cloud Runのデフォルト値が仕様に一致
 * Redisの責務が「補助」に限定されている
-

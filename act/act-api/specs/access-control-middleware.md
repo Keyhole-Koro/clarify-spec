@@ -11,8 +11,8 @@
 
 ## 前提 / 参照
 
-* `act/specs/behavior/connect-server.md`
-* `act/specs/behavior/session-and-auth-boundary.md`
+* `act/act-api/specs/connect-server.md`
+* `act/act-api/specs/session-and-auth-boundary.md`
 * `act/specs/contracts/rpc-connect-schema.md`
 * `act/specs/overview/act-architecture.md`
 

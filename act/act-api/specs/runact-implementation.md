@@ -14,9 +14,9 @@
 * `act/specs/contracts/rpc-connect-schema.md`
 * `act/specs/context/core.md`
 * `act/specs/context/bundle-schema.md`
-* `act/specs/behavior/adk-service-integration.md`
+* `act/act-api/specs/adk-service-integration.md`
 * `organize/specs/model/topic-model.md`
-* `act/specs/behavior/session-and-auth-boundary.md`
+* `act/act-api/specs/session-and-auth-boundary.md`
 
 ## 契約（I/O）
 

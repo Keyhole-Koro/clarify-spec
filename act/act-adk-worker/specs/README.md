@@ -1,0 +1,13 @@
+# Act ADK Worker Specs
+
+Python `act-adk-worker` 実装に依存する仕様を置く。
+
+## Files
+
+* `act-adk-runtime.md`
+
+## Rule
+
+* API契約は `act/specs/contracts/*` を参照する
+* Context assembly正本は `act/specs/context/*` を参照する
+* API連携境界は `act/act-api/specs/adk-service-integration.md` を参照する

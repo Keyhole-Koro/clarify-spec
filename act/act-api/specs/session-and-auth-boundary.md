@@ -12,8 +12,8 @@ Firebase Auth（認証正本）と Redis sid（補助セッション）の責務
 ## 前提 / 参照
 
 * `act/specs/contracts/rpc-connect-schema.md`
-* `act/specs/behavior/connect-server.md`
-* `act/specs/behavior/access-control-middleware.md`
+* `act/act-api/specs/connect-server.md`
+* `act/act-api/specs/access-control-middleware.md`
 * `act/specs/quality/backend-parameter-index.md`
 
 ## 契約（I/O）

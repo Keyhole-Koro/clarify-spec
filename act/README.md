@@ -18,7 +18,9 @@
   * ユーザー操作起点のシナリオ仕様
 * `act/specs/quality/`
   * テスト戦略・LLM API試験・運用設定
-* `act/backend/`
-  * バックエンド実装ルート（Go API）
+* `act/act-api/`
+  * Go API 実装ルート（Connect公開、auth/authz、stream）
+* `act/act-adk-worker/`
+  * Python ADK Worker 実装ルート（assembly、model、normalization）
 * `act/frontend/`
   * フロント実装ルート（UIコード、実装補助資料）
