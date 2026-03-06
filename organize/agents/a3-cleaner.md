@@ -7,13 +7,13 @@
 ## 2. I/O
 
 * Input: `bundle.created`
-* Output: `outlines/{outlineId}`, `mindtree_nodes/*`, `mindtree_edges/*`
+* Output: `topics/{topicId}/outlines/{outlineVersion}`, `mindtree_nodes/*`, `mindtree_edges/*`
 * Emit: `outline.updated`, `mindtree.node_changed`, `atom.reissued`
 
 ## 3. Idempotency / 競合対策
 
 * ledger: `type:bundle.created/bundleId:{bundleId}/purpose:apply`
-* lease: `outline:{outlineId}`
+* lease: `topic:{topicId}`
 * bundle二重適用防止（`appliedAt` CAS など）
 * outlineVersion CAS
 

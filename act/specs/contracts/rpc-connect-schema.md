@@ -14,9 +14,9 @@ Act の Connect RPC 契約を `topic_id` 中心で定義し、コード断片な
 
 ## 前提・依存
 
-* `act/specs/context/bundle-schema.md`
-* `act/specs/context/core.md`
-* `organize/specs/model/topic-model.md`
+* `context/assembly/bundle-schema.md`
+* `context/assembly/core.md`
+* `context/model/topic-model.md`
 
 ## サービス契約
 
@@ -107,7 +107,7 @@ flowchart LR
 * `topic_id` は必須
 * `tree_id` は optional（UI scope）
 * `RunAct` は read-only（Firestore/GCS write禁止）
-* Context Assembly は `act/specs/context/core.md` に従う
+* Context Assembly は `context/assembly/core.md` に従う
 * `patch_ops` は `upsert` / `append_md` のみ
 * `done` と `error` は排他
 * 冪等キーは `(token_uid, workspace_id, request_id)`
@@ -127,4 +127,4 @@ flowchart LR
 
 * `act/act-api/specs/runtime/runact-implementation.md`
 * `act/specs/behavior/act-flow.md`
-* `act/specs/context/bundle-schema.md`
+* `context/assembly/bundle-schema.md`

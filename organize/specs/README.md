@@ -4,7 +4,7 @@ Organize仕様は `model` と `pipeline` に分ける。
 
 ## Read Order
 
-1. `organize/specs/model/topic-model.md`
+1. `context/model/topic-model.md`
 2. `organize/specs/pipeline/summary.md`
 3. `organize/specs/pipeline/spec.md`
 4. `organize/specs/pipeline/core.md`

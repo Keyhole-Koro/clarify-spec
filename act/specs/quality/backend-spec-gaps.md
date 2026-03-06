@@ -113,7 +113,7 @@
 
 決定:
 
-* 実装固定値は `act/specs/context/implementation.md` を正本とする
+* 実装固定値は `context/assembly/implementation.md` を正本とする
 * ADK Worker 実行プロファイルは `act/act-adk-worker/specs/context/context-assembly-execution-profile.md` を正本とする
 * Firestore query/index 固定値を同仕様へ明記した
 

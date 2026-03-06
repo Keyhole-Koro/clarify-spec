@@ -39,6 +39,8 @@
 
 ## Load Context Limits
 
+* `focus_nodes_soft_max`: 10
+* `focus_nodes_hard_max`: 30
 * `load_nodes_max`: 500
 * `load_edges_max`: 1000
 * `load_evidence_max`: 1000

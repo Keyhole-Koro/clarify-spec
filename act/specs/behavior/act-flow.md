@@ -22,8 +22,8 @@
 * `act/act-api/specs/runtime/runact-implementation.md`
 * `act/act-api/specs/runtime/adk-service-integration.md`
 * `act/act-api/specs/security/session-and-auth-boundary.md`
-* `act/specs/context/core.md`
-* `act/specs/context/bundle-schema.md`
+* `context/assembly/core.md`
+* `context/assembly/bundle-schema.md`
 * `firestore/schema.md`
 * `organize/specs/pipeline/core.md`
 

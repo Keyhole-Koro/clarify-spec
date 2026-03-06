@@ -34,5 +34,5 @@ Go `act-api` 実装に依存する仕様を置く。
 ## Rule
 
 * 契約正本は `act/specs/contracts/*` を参照する
-* Context正本は `act/specs/context/*` を参照する
+* Context正本は `context/*` を参照する
 * 共有フローは `act/specs/behavior/act-flow.md` を参照する

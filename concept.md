@@ -12,6 +12,7 @@
 
 * `act/`: ユーザー対話でノード候補をリアルタイム生成（Interaction Layer）
 * `organize/`: 入力を安定処理して永続知識グラフへ反映（Knowledge Pipeline Layer）
+* `context/`: personalization overlay（profile/session/memory）の仕様正本
 * `act/specs/behavior`: Context Assembly Layer の実行仕様
 * `act/specs/contracts`: Context Bundle 契約
 * `organize/specs`: topicモデルとKnowledge Pipeline仕様
@@ -59,7 +60,8 @@
 ## 仕様の正本
 
 * Act索引: `act/specs/README.md`
-* Organize索引: `organize/README.md`, `organize/specs/pipeline/summary.md`, `organize/specs/model/topic-model.md`
+* Organize索引: `organize/README.md`, `organize/specs/pipeline/summary.md`, `context/model/topic-model.md`
+* Context索引: `context/README.md`
 * Frontend正本: `frontend/frontend-spec.md`
 
 ## 実装時の導線

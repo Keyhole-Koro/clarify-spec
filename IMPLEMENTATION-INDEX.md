@@ -7,18 +7,19 @@
 1. `concept.md`
 2. `act/README.md`
 3. `act/readable/README.md`
-4. `organize/README.md`
-5. `frontend/frontend-spec.md`
+4. `context/README.md`
+5. `organize/README.md`
+6. `frontend/frontend-spec.md`
 
 ## 2. Act 仕様索引（Source of Truth）
 
 1. `act/specs/README.md`
 2. `act/specs/overview/act-overview.md`
 3. `act/specs/overview/act-architecture.md`
-4. `act/specs/context/README.md`
-5. `act/specs/context/bundle-schema.md`
-6. `act/specs/context/core.md`
-7. `act/specs/context/implementation.md`
+4. `context/README.md`
+5. `context/assembly/bundle-schema.md`
+6. `context/assembly/core.md`
+7. `context/assembly/implementation.md`
 8. `act/specs/contracts/rpc-connect-schema.md`
 9. `act/specs/contracts/gemini-vertex-response-schemas.md`
 10. `act/specs/behavior/act-flow.md`
@@ -74,7 +75,7 @@
 ## 3. Organize 仕様索引（Source of Truth）
 
 1. `organize/specs/README.md`
-2. `organize/specs/model/topic-model.md`
+2. `context/model/topic-model.md`
 3. `organize/specs/pipeline/summary.md`
 4. `organize/specs/pipeline/spec.md`
 5. `organize/specs/pipeline/core.md`
@@ -86,14 +87,20 @@
 11. `firestore/schema.md`
 12. `firestore/indexes.md`
 
+## 3.1 Context 仕様索引（Source of Truth）
+
+1. `context/README.md`
+2. `context/model/context-model.md`
+3. `context/personalization/overlay.md`
+
 ## 4. 実装手順（MDの順番）
 
 ### 手順1: Context 契約固定
 
-1. `organize/specs/model/topic-model.md`
-2. `act/specs/context/bundle-schema.md`
-3. `act/specs/context/core.md`
-4. `act/specs/context/implementation.md`
+1. `context/model/topic-model.md`
+2. `context/assembly/bundle-schema.md`
+3. `context/assembly/core.md`
+4. `context/assembly/implementation.md`
 
 ### 手順2: データモデル固定
 
@@ -148,6 +155,6 @@
 
 ## 6. ルール
 
-* Context仕様変更は `act/specs/context` / `organize/specs/model/topic-model.md` / `act/specs/contracts/rpc-connect-schema.md` を同時更新する
+* Context仕様変更は `context/*` / `act/specs/contracts/rpc-connect-schema.md` を同時更新する
 * 実装メモは `act/act-api` / `act/act-adk-worker` / `act/frontend` に置く
 * 仕様の正本は `act/specs` / `organize/specs` / `firestore` とする

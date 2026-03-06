@@ -12,9 +12,9 @@
 
 ## 3. Idempotency / 競合対策
 
-* ledger: `type:draft.updated/outlineId:{outlineId}/draftVersion:{draftVersion}`
-* 推奨 lease: `outline:{outlineId}`
-* 同一 `(outlineId, draftVersion)` の重複 bundle を禁止
+* ledger: `type:draft.updated/topicId:{topicId}/draftVersion:{draftVersion}`
+* 推奨 lease: `topic:{topicId}`
+* 同一 `(topicId, draftVersion)` の重複 bundle を禁止
 
 ## 4. 未決定事項
 

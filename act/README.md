@@ -8,8 +8,8 @@
   * 仕様の粒度ルールと命名ルール
 * `act/specs/overview/`
   * 全体像・文書構成ガイド
-* `act/specs/context/`
-  * Context Assembly と Bundle 契約
+* `context/`
+  * Context Assembly / Topic / Personalization の正本仕様
 * `act/specs/contracts/`
   * RPC契約・Gemini/Vertexレスポンス契約
 * `act/specs/behavior/`

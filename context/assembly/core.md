@@ -11,8 +11,8 @@
 
 ## 前提・依存
 
-* `act/specs/context/bundle-schema.md`
-* `organize/specs/model/topic-model.md`
+* `context/assembly/bundle-schema.md`
+* `context/model/topic-model.md`
 * `organize/specs/pipeline/agents.md`
 
 ## 契約（I/O）
@@ -53,7 +53,7 @@
 
 ## 数値パラメータ
 
-* focus nodes: max 3
+* focus nodes: soft max 10, hard max 30
 * neighbors (1-hop): max 8
 * unresolved: max 3
 * evidence: max 2 per focus (hard upper 5 total)

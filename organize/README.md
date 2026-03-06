@@ -6,7 +6,7 @@
 
 * `organize/specs/`
   * `README.md`（読み順）
-  * `model/`（`topic-model.md`）
+  * `model/`（topic正本は `context/model/topic-model.md` を参照）
   * `pipeline/`（`summary/spec/core/agents/ops`）
 * `organize/agents/`
   * Agentごとの個別仕様（`a0/`, `a1/` などの下位specを含む）

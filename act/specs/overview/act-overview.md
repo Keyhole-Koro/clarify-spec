@@ -7,7 +7,7 @@ Actドメインの読み順と責務境界を定義する。
 ## 読み順
 
 1. `act/specs/overview/act-architecture.md`
-2. `act/specs/context/README.md`
+2. `context/README.md`
 3. `act/specs/contracts/rpc-connect-schema.md`
 4. `act/act-api/specs/runtime/runact-implementation.md`
 5. `act/act-api/specs/runtime/adk-service-integration.md`

@@ -11,8 +11,8 @@
 
 ## 前提・依存
 
-* `act/specs/context/implementation.md`
-* `act/specs/context/core.md`
+* `context/assembly/implementation.md`
+* `context/assembly/core.md`
 * `act/specs/quality/backend-parameter-index.md`
 * `firestore/indexes.md`
 
@@ -53,7 +53,7 @@
 
 ### 取得上限
 
-* focus: 最大 3
+* focus: soft最大 10、hard最大 30
 * neighbor: 最大 8
 * evidence: focus あたり最大 2、全体最大 5
 * unresolved: 最大 3

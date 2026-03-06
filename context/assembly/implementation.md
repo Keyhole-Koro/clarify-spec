@@ -11,9 +11,9 @@
 
 ## 前提・依存
 
-* `act/specs/context/core.md`
-* `act/specs/context/bundle-schema.md`
-* `organize/specs/model/topic-model.md`
+* `context/assembly/core.md`
+* `context/assembly/bundle-schema.md`
+* `context/model/topic-model.md`
 * `firestore/schema.md`
 
 ## 契約（I/O）
@@ -88,7 +88,9 @@ flowchart LR
 
 #### focus取得ルール
 
-* `selectedNodeIds` 上位3件
+* `selectedNodeIds` は soft 上限10件まで優先採用
+* 10件を超える場合は ranking前の候補として30件まで保持（hard上限）
+* 30件を超える場合は `truncationReason=policy` で切り捨て
 * 未選択時は topic の最新更新ノード最大2件
 
 #### neighbors取得ルール
@@ -184,7 +186,8 @@ intentごとに展開を固定する。
 
 ## 数値パラメータ（固定）
 
-* `selectedNodeIds_max = 3`
+* `selectedNodeIds_soft_max = 10`
+* `selectedNodeIds_hard_max = 30`
 * `neighbors_max = 8`
 * `evidence_per_focus_max = 2`
 * `evidence_total_max = 5`

@@ -11,9 +11,9 @@ A0〜A7/A5 を `topic_id` 中心で再配線し、Act Context Assembly との責
 
 ## 前提・依存
 
-* `organize/specs/model/topic-model.md`
-* `act/specs/context/core.md`
-* `act/specs/context/bundle-schema.md`
+* `context/model/topic-model.md`
+* `context/assembly/core.md`
+* `context/assembly/bundle-schema.md`
 * `organize/specs/pipeline/core.md`
 
 ## 契約（I/O）
