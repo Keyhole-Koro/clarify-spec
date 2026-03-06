@@ -7,13 +7,26 @@
 ## スコープ / 非スコープ
 
 * スコープ: Act API の request 前段で行う検証
-* 非スコープ: UI上の招待導線詳細
+* 非スコープ: セッション保持実装、UI上の招待導線詳細
 
 ## 前提 / 参照
 
 * `act/specs/behavior/connect-server.md`
+* `act/specs/behavior/session-and-auth-boundary.md`
 * `act/specs/contracts/rpc-connect-schema.md`
 * `act/specs/overview/act-architecture.md`
+
+## 契約（I/O）
+
+入力:
+
+* Firebase ID Token（`Authorization`）
+* `workspace_id`, `tree_id`, `uid`（request）
+
+出力:
+
+* 検証通過時のみ handler（`RunAct`）へ委譲
+* 失敗時は `UNAUTHENTICATED` / `PERMISSION_DENIED` / `FAILED_PRECONDITION`
 
 ## 検証チェーン（MUST）
 
@@ -23,6 +36,11 @@
 4. token user が request `workspace_id` メンバーであることを確認
 5. request `tree_id` が request `workspace_id` に属することを確認
 6. すべて通過時のみ handler (`RunAct`) へ委譲
+
+補足:
+
+* `sid` は認可判定の正本に使わない
+* 認可正本は常に `token user -> workspace membership -> tree access`
 
 ## データモデル前提（最小）
 
@@ -41,6 +59,11 @@
 * token不正 / provider不一致 / uid不一致: `UNAUTHENTICATED`
 * workspace未所属 / tree越境: `PERMISSION_DENIED`
 * tree不存在: `FAILED_PRECONDITION`
+
+## 数値パラメータ
+
+* 追加の独自パラメータは持たない
+* timeout/retry は上位仕様（`connect-server.md`, `backend-parameter-index.md`）を使用する
 
 ## 完了条件（DoD）
 

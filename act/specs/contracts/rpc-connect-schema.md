@@ -36,6 +36,8 @@ message RunActRequest {
   ResearchConfig research_config = 12;
   // Client-generated UUID for idempotency.
   string request_id = 13;
+  // Session identifier. Canonical source is HttpOnly cookie sid.
+  string sid = 14;
 }
 
 message ErrorInfo {
@@ -64,14 +66,16 @@ message RunActEvent {
 enum ErrorStage {
   ERROR_STAGE_UNSPECIFIED = 0;
   ERROR_STAGE_AUTHN = 1;
-  ERROR_STAGE_AUTHZ = 2;
-  ERROR_STAGE_VALIDATE_REQUEST = 3;
-  ERROR_STAGE_LOAD_CONTEXT = 4;
-  ERROR_STAGE_BUILD_PROMPT = 5;
-  ERROR_STAGE_GENERATE_WITH_MODEL = 6;
-  ERROR_STAGE_NORMALIZE_PATCH_OPS = 7;
-  ERROR_STAGE_EMIT_STREAM = 8;
-  ERROR_STAGE_FINALIZE = 9;
+  ERROR_STAGE_SID_VALIDATE = 2;
+  ERROR_STAGE_CSRF_VALIDATE = 3;
+  ERROR_STAGE_AUTHZ = 4;
+  ERROR_STAGE_VALIDATE_REQUEST = 5;
+  ERROR_STAGE_LOAD_CONTEXT = 6;
+  ERROR_STAGE_BUILD_PROMPT = 7;
+  ERROR_STAGE_GENERATE_WITH_MODEL = 8;
+  ERROR_STAGE_NORMALIZE_PATCH_OPS = 9;
+  ERROR_STAGE_EMIT_STREAM = 10;
+  ERROR_STAGE_FINALIZE = 11;
 }
 ```
 
@@ -192,6 +196,8 @@ message AppendMdPatch {
 * `done=true` または `error` を最後に1回返して終了
 * `request_id` は必須（UUID v4 推奨）
 * 冪等キーは `(uid, workspace_id, request_id)` で扱う
+* `sid` は補助セッション識別子（認証正本ではない）
+* `sid` の正本は HttpOnly Cookie、request body の `sid` は互換用途
 * `error` 返却時は `retryable`, `stage`, `trace_id` を必ず埋める
 * 既定LLMは `GEMINI_3_FLASH`、重探索時は `GEMINI_DEEP_RESEARCH` を許可
 * Web Groundingは `grounding_config.use_web_grounding=true` で有効化
@@ -211,5 +217,6 @@ message AppendMdPatch {
 
 * `act/specs/behavior/act-flow.md`
 * `act/specs/behavior/act-langgraph-runtime.md`
+* `act/specs/behavior/session-and-auth-boundary.md`
 * `act/specs/quality/frontend-stream-acceptance.md`
 * `act/specs/contracts/gemini-vertex-response-schemas.md`

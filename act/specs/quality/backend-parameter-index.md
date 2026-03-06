@@ -19,6 +19,17 @@
 * `text_batch_max_chars`: 800
 * `thought_flush_interval_ms`: 500
 
+## Session / CSRF / Redis
+
+* `sid_ttl_seconds`: 86400
+* `sid_req_ttl_seconds`: 900
+* `sid_lock_ttl_seconds`: 10
+* `csrf_ttl_seconds`: 86400
+* `sid_enforce_mode`: `soft`（hackathon default）
+* `redis_connect_timeout_ms`: 200
+* `redis_read_timeout_ms`: 200
+* `redis_write_timeout_ms`: 200
+
 ## Load Context Limits
 
 * `load_nodes_max`: 500
@@ -49,4 +60,5 @@
 ## Notes
 
 * 変更時は `runact-implementation.md` と `act-langgraph-runtime.md` を同時更新する
+* セッション境界を変える場合は `session-and-auth-boundary.md` も同時更新する
 * 仕様値と実装値が乖離した場合、この文書を先に修正する

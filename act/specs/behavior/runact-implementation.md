@@ -1,80 +1,83 @@
-# RunAct 実装仕様（LangGraph）
+# RunAct 実装仕様（LangGraph / Go）
 
 ## 目的
 
 `ActService.RunAct` を仕様どおりの server-streaming として実装し、フロントへ安定した Draft Patch を供給する。
 
-## 境界
+## スコープ / 非スコープ
 
-* 入力: `RunActRequest`
-* 出力: `RunActEvent` stream
-* 非スコープ: Firestore永続化、layout固定、Organize更新
-* 実装言語: Go（バックエンド）
+* スコープ: `RunActRequest` の検証、冪等、モデル実行、`RunActEvent` ストリーム送信
+* 非スコープ: Firestore永続化、Organize更新、UIレイアウト
 
-## 前提仕様
+## 前提・依存
 
 * `act/specs/contracts/rpc-connect-schema.md`
 * `act/specs/contracts/gemini-vertex-response-schemas.md`
+* `act/specs/behavior/session-and-auth-boundary.md`
+* `act/specs/behavior/access-control-middleware.md`
 * `act/specs/behavior/act-langgraph-runtime.md`
-* `act/specs/behavior/act-flow.md`
 * `act/specs/quality/backend-parameter-index.md`
 
-## モデル方針（Vertex AI）
+## 契約（I/O）
 
-* 既定プロファイル: `GEMINI_3_FLASH`
-* 深掘りプロファイル: `GEMINI_DEEP_RESEARCH`
-* Web検索根拠が必要な場合は `use_web_grounding=true` を有効化
-* `llm_config.profile` 未指定時はサーバ側で `GEMINI_3_FLASH` を採用
-* thought配信が必要な場合は `thinking_config.include_thoughts=true`
-* Deep Researchは Interactions API 前提で `research_config.use_deep_research=true`
+入力:
 
-## 状態遷移（MUST）
+* `RunActRequest`（`request_id` 必須、`sid` は互換フィールド）
+* `Authorization`（Firebase ID Token）
+* Cookie `sid`（正本）
+* Cookie/Header の CSRF ペア（Double Submit）
 
-1. `ValidateRequest`
-2. `LoadContext`
-3. `BuildPrompt`
-4. `GenerateWithModel`
-5. `NormalizePatchOps`
-6. `EmitStream`
-7. `Finalize`
-8. `HandleError`
+出力:
 
-## 実装ルール（MUST）
+* `RunActEvent` stream
+* 失敗時 `ErrorInfo { code, message, retryable, stage, trace_id, retry_after_ms? }`
 
-* `PatchOp` は `upsert` / `append_md` のみ許可
-* `done` と `error` は同一Runで排他
-* stream終端は最後に1回だけ
-* `RunAct` handler 直前に access-control middleware を必ず通す
-* `request_id` を必須として検証する
-* 冪等キー `(uid, workspace_id, request_id)` を重複判定に使う
-* `ACT_TYPE_UNSPECIFIED` は `INVALID_ARGUMENT`
-* 親 -> 子の順序で patch を送る
-* `append_md` の対象未存在時は `upsert` 補完を先行
-* Vertex AI 呼び出しは `llm_config` と `grounding_config` を反映
-* thoughtトークンは `stream_parts[].thought=true` で送出
-* Go実装は goroutine/chan で stream backpressure を制御
+## 処理フロー（正常）
 
-## 制限値（MUST）
+1. `AUTHN`: Firebase token を検証し `uid` を確定する
+2. `SID_VALIDATE`: sid Cookie を検証する（`SID_ENFORCE_MODE=soft` では欠落/Redis不達を許容）
+3. `CSRF_VALIDATE`: `csrf_token` Cookie と `X-CSRF-Token` を照合する
+4. `AUTHZ`: `token user -> workspace membership -> tree access` を検証する
+5. `VALIDATE_REQUEST`: `request_id` / `act_type` / 各種上限を検証する
+6. 冪等チェック: `(uid, workspace_id, request_id)` で重複判定する
+7. `LOAD_CONTEXT` -> `BUILD_PROMPT` -> `GENERATE_WITH_MODEL`
+8. `NORMALIZE_PATCH_OPS`: `upsert` / `append_md` のみへ正規化する
+9. `EMIT_STREAM`: 親->子順で patch と text/thought を送信する
+10. `FINALIZE`: `done=true` を1回返して終了する
 
-* request timeout: 90s
-* model retry: 2回
-* 推論ループ上限: 5
-* patch_ops上限: 400/run
-* anchor_node_ids: <= 40
-* context_node_ids: <= 120
-* thought stream flush interval: <= 500ms
+## 異常フロー（エラーコード・retryable）
 
-## エラーハンドリング
+* token不正 / provider不一致: `UNAUTHENTICATED`, `retryable=false`, `stage=AUTHN`
+* sid不正（strict）: `UNAUTHENTICATED`, `retryable=true`, `stage=SID_VALIDATE`
+* csrf不一致: `PERMISSION_DENIED`, `retryable=false`, `stage=CSRF_VALIDATE`
+* workspace未所属 / tree越境: `PERMISSION_DENIED`, `retryable=false`, `stage=AUTHZ`
+* 入力不正: `INVALID_ARGUMENT`, `retryable=false`, `stage=VALIDATE_REQUEST`
+* `request_id` 重複: `ALREADY_EXISTS`, `retryable=false`, `stage=VALIDATE_REQUEST`
+* Redis不達（soft）: 処理継続、警告ログのみ（degrade）
+* モデル/外部依存障害: `UNAVAILABLE` または `DEADLINE_EXCEEDED`, `retryable=true`, `stage=GENERATE_WITH_MODEL`
+* 部分送信後の破綻: `error` で終端し、`done` は返さない
 
-* 入力不正: 即 `error` 終端
-* 重複 `request_id`: `ALREADY_EXISTS` で終端
-* 外部依存障害: 再試行後 `error` 終端
-* 部分送信後の破綻: `error` で終端（`done` は返さない）
-* Deep Research timeout時は通常Flashへフォールバック可能（設定で制御）
+## 数値パラメータ
 
-## 完了条件（DoD）
+* `request_timeout_ms=90000`
+* `model_max_retries=2`
+* `reasoning_loop_max=5`
+* `patch_ops_max_per_run=400`
+* `anchor_node_ids_max=40`
+* `context_node_ids_max=120`
+* `thought_flush_interval_ms=500`
+* `idempotency_key_ttl_ms=900000`
+
+## 受け入れ条件（DoD）
 
 * 正常入力で `done=true` まで返る
-* 異常入力で `INVALID_ARGUMENT` を返す
-* 禁止op混入が発生しない
-* thoughtが有効時、`stream_parts.thought` が1回以上返る
+* `request_id` 重複で `ALREADY_EXISTS` を返す
+* sid不達時の soft/strict 差が仕様どおりに再現できる
+* `ErrorInfo.stage/retryable/trace_id` が全失敗ケースで埋まる
+* thought有効時に `stream_parts[].thought=true` が1回以上返る
+
+## 実装メモ（最小）
+
+* sid は常に Cookie 正本を優先し、request `sid` は互換用途のみに使う
+* Go実装は goroutine/chan で stream backpressure を制御する
+* Deep Research timeout時は `GEMINI_3_FLASH` フォールバックを設定で許可する

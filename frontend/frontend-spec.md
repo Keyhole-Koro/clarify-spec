@@ -177,9 +177,22 @@ frontend/
       nodeMarkdown/
       actExplore/
       auth/
+        components/
+          AuthGate.tsx
+          LoginButton.tsx
+          LogoutButton.tsx
+        hooks/
+          useAuthState.ts
+          useRequireAuth.ts
+        store/
+          auth-ui-store.ts
 
     services/
       firebase/
+        app.ts
+        auth.ts
+        token.ts
+        csrf.ts
       act/
       organize/
 
@@ -198,10 +211,30 @@ frontend/
       env.ts
       logger.ts
       error.ts
+      cookie.ts
 
     gen/
       rpc/
 ```
+
+### 認証系の追加ファイル（MUST）
+
+* `src/features/auth/components/AuthGate.tsx`
+  * 未ログイン時にログイン導線を出し、ログイン済み時に子要素を描画する
+* `src/features/auth/hooks/useAuthState.ts`
+  * `onAuthStateChanged` を購読し、`user/loading/error` を返す
+* `src/features/auth/hooks/useRequireAuth.ts`
+  * 認証必須画面で未ログイン時の遷移/表示制御を行う
+* `src/services/firebase/app.ts`
+  * Firebase app 初期化のみを担当する
+* `src/services/firebase/auth.ts`
+  * Googleログイン/ログアウト/現在ユーザー取得を提供する
+* `src/services/firebase/token.ts`
+  * ID Token取得と更新（Authorizationヘッダ用）を提供する
+* `src/services/firebase/csrf.ts`
+  * `csrf_token` Cookie読み取りと `X-CSRF-Token` 付与ヘルパを提供する
+* `src/lib/cookie.ts`
+  * Cookie読み取りの共通ユーティリティ（`sid` は読み取らない）
 
 ---
 
@@ -211,6 +244,17 @@ frontend/
 * Firestore snapshot（onSnapshot）
 * onAuthStateChangedで未ログイン時はログイン誘導
 * モックモード時はAuth/Firestoreを必須にしない（UIを回す）
+
+---
+
+## セッション・送信境界（MUST）
+
+* 認証正本は Firebase ID Token（`Authorization: Bearer ...`）
+* `sid` は HttpOnly Cookie 正本として扱い、フロントJSで保存/参照しない
+* `csrf_token` Cookie はJS参照可とし、state-changing request で `X-CSRF-Token` に同値を送る
+* RPC/HTTP呼び出しは `credentials: include` を必須とする
+* `RunActRequest.sid` は原則送らない（互換用途のみ）
+* `request_id` はクライアントで毎回UUID生成して付与する
 
 ---
 
@@ -240,6 +284,9 @@ frontend/
 * organize購読：`features/knowledgeTree/hooks/useTreeSnapshot.ts` → `services/organize/index.ts`（real/mock吸収）
 * ノード操作：`features/knowledgeTree/hooks/useTreeActions.ts` → `services/organize/index.ts`
 * act呼び出し：`features/actExplore/hooks/*` → `services/act/index.ts`
+* 認証ガード：`features/auth/components/AuthGate.tsx` + `features/auth/hooks/useRequireAuth.ts`
+* Token注入：`services/firebase/token.ts` を経由して `Authorization` を付与
+* CSRF付与：`services/firebase/csrf.ts` を経由して `X-CSRF-Token` を付与
 * ReactFlow描画：`features/graph/components/GraphCanvas.tsx`
 * ELKレイアウト：`features/graph/utils/layoutElk.ts`
 * Markdown表示：`features/nodeMarkdown/components/MarkdownPane.tsx`（sanitize必須）

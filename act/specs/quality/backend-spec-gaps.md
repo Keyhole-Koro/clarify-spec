@@ -24,8 +24,9 @@
 
 決定:
 
-* `tree.workspace_id == token.workspace_id` を必須化
-* 越境時は `PERMISSION_DENIED`
+* `tree.workspace_id == request.workspace_id` を必須化
+* `token.uid` が `members/{workspace_id}` に存在することを必須化
+* 上記違反時は `PERMISSION_DENIED`
 * 認可は共通 middleware に集約し、各handlerで重複実装しない
 
 ## 2.1 Workspace作成・招待URL
@@ -98,3 +99,31 @@
 リミット・タイムアウト等の細かい数値は以下を正本とする。
 
 * `act/specs/quality/backend-parameter-index.md`
+
+## 11. 招待リンク共有機能（未実装ギャップ）
+
+現状:
+
+* 「招待URLで参加可能」は決定済みだが、共有リンク発行/検証のバックエンド契約が未定義
+* フロントの共有UI（どこで発行、どう見せる、失効をどう扱う）が未定義
+
+バックエンド側ギャップ（MUST で次に決める）:
+
+* 招待リンクAPI契約（作成/検証/参加/失効）
+* トークン仕様（長さ、署名方式、TTL、1回利用可否）
+* 冪等性（同一ユーザーの重複参加時の戻り値）
+* エラーコード（期限切れ、無効、権限不足、既存メンバー）
+* 監査ログ（誰がいつ発行/参加/失効したか）
+
+フロント側ギャップ（MUST で次に決める）:
+
+* Workspace設定画面の「招待リンク作成」UI配置
+* リンクコピー状態（未発行/有効/期限切れ/失効済み）の表示ルール
+* 参加導線UI（リンク踏み→確認→参加完了）
+* 失敗時メッセージ（期限切れ・権限なし・既参加）の文言と再試行導線
+* 招待管理UI（再生成・失効・有効期限表示）
+
+次アクション:
+
+* backend仕様: `act/specs/behavior/access-control-middleware.md` と `act/specs/usecases/join-workspace-by-invite-url.md` にAPI契約を追記
+* frontend仕様: `frontend/frontend-spec.md` に共有/参加UIの最小ワイヤーを追記
