@@ -2,13 +2,13 @@
 
 ## 1. 責務
 
-* `mindtree.metrics.updated` を受けて偏り是正のOperationを生成
+* `topic.metrics.updated` を受けて偏り是正の Operation を生成
 
 ## 2. I/O
 
-* Input: `mindtree.metrics.updated`（または定期実行）
+* Input: `topic.metrics.updated`（または定期実行）
 * Output: `organizeOps/{opId}`
-* Emit: `mindtree.node_changed`, `mindtree.metrics.updated`
+* Emit: `topic.node_changed`, `topic.metrics.updated`
 
 ## 3. Idempotency / 競合対策
 

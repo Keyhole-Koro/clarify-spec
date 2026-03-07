@@ -35,6 +35,8 @@ A0〜A7/A5 を `topic_id` 中心で再配線し、Act Context Assembly との責
 * Organize は Act の `PromptBundle` を生成/永続化しない
 * Organize の `Bundle` は `PipelineBundle`（draft差分の中間成果物）を指す
 * Act は canonical summary/evidence/index を更新しない
+* `mind/` は GCS オブジェクト接頭辞として扱い、知識モデル名には使わない
+* `mindtree` は legacy 用語とし、新規イベント名/実体名には使わない
 
 ## Prompt Assembly 供給マップ（MVP）
 
@@ -164,7 +166,7 @@ flowchart LR
 
 ### Emit
 * `type=outline.updated` payload: `{ topicId, outlineVersion }`
-* `type=mindtree.node_changed` payload: `{ topicId, nodeId, reason }`
+* `type=topic.node_changed` payload: `{ topicId, nodeId, reason }`
 * `type=atom.reissued` payload: `{ topicId, atomId, reason }`
 
 ### 競合対策
@@ -195,7 +197,7 @@ flowchart LR
 ## A7 NodeRollupAgent
 
 ### Input
-* `type=mindtree.node_changed` or `node.rollup_requested`
+* `type=topic.node_changed` or `node.rollup_requested`
 
 ### Output
 * GCS: `mind/node_rollup/{nodeId}/v{n}.html`
@@ -207,7 +209,7 @@ flowchart LR
 ### 競合対策
 * lease: `node:{nodeId}`
 * watermark以下は skip/ack
-* ledger key: `type:mindtree.node_changed/topicId:{topicId}/nodeId:{nodeId}/generation:{gen}`
+* ledger key: `type:topic.node_changed/topicId:{topicId}/nodeId:{nodeId}/generation:{gen}`
 
 ### Prompt Assembly供給責務
 * `context_summary_ref` を更新可能にする
@@ -218,13 +220,13 @@ flowchart LR
 ## A5 BalancerAgent
 
 ### Input
-* `type=mindtree.metrics.updated`（または定期）
+* `type=topic.metrics.updated`（または定期）
 
 ### Output
 * Firestore: `organizeOps/{opId}`（推奨）
 
 ### Emit
-* `mindtree.node_changed`, `mindtree.metrics.updated`
+* `topic.node_changed`, `topic.metrics.updated`
 
 ### 競合対策
 * topic/node lease 推奨

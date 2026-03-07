@@ -1,4 +1,4 @@
-# A0 MediaInterpreter Ingest/Extract 仕様（Mind v0.3）
+# A0 MediaInterpreter Ingest/Extract 仕様（topic-centric v0.3）
 
 Version: v0.3-draft-3  
 Owner: A0
@@ -7,6 +7,7 @@ Owner: A0
 
 * 本仕様は A0 MediaInterpreter の実行仕様。
 * A1 Atomizer は本仕様の出力契約のみ利用する（実装仕様は別）。
+* `mind-events` はイベントバス名、`mind/` は GCS 接頭辞としてのみ扱う。
 
 ## 目的
 

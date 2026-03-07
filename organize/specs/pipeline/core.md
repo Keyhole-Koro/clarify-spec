@@ -42,6 +42,8 @@ A0〜A7/A5 のイベント駆動パイプラインを **Pub/Sub (at-least-once)*
 6. Context Assembly は read-only で `mind-events` に publish しない
 7. Organize は `act-adk-worker` を呼ばず、独立した write pipeline として動作する
 8. `PromptBundle`（Act推論入力）と `PipelineBundle`（Organize中間成果物）を分離する
+9. `mind-events` はイベントバス名としてのみ使い、知識モデル名には使わない
+10. 知識モデルは `topic` / `node` / `edge` を正本用語とし、`mindtree` は新規仕様で使用しない
 
 ## Pub/Sub リソース仕様
 
@@ -61,8 +63,8 @@ A0〜A7/A5 のイベント駆動パイプラインを **Pub/Sub (at-least-once)*
 | A6 BundleDesc | sub-a6 | `attributes.type="bundle.created"` | OFF |
 | A3 Cleaner | sub-a3 | `attributes.type="bundle.created"` | ON（topicId） |
 | A4 Indexer | sub-a4 | `attributes.type="outline.updated"` | ON（topicId） |
-| A7 Rollup | sub-a7 | `attributes.type="mindtree.node_changed" OR attributes.type="node.rollup_requested"` | ON（nodeId） |
-| A5 Balancer | sub-a5 | `attributes.type="mindtree.metrics.updated"` | OFF |
+| A7 Rollup | sub-a7 | `attributes.type="topic.node_changed" OR attributes.type="node.rollup_requested"` | ON（nodeId） |
+| A5 Balancer | sub-a5 | `attributes.type="topic.metrics.updated"` | OFF |
 
 ## Envelope 仕様
 

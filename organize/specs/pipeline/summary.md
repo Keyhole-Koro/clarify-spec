@@ -20,6 +20,7 @@ Version: 1.1 / schemaVersion: v1
 * 知識正本キーは `topic_id`
 * Organize は write path 専任で、`act-adk-worker` は呼ばない
 * Bundle 用語は分離する（Act: `PromptBundle` / Organize: `PipelineBundle`）
+* `mind-events` はインフラ名として維持し、知識モデル名には `topic/node/edge` を使う
 
 ## 2. Topic / Subscription
 
@@ -35,8 +36,8 @@ Version: 1.1 / schemaVersion: v1
 | A6 BundleDesc | `sub-a6` | `attributes.type="bundle.created"` | OFF |
 | A3 Cleaner | `sub-a3` | `attributes.type="bundle.created"` | ON（`topicId`） |
 | A4 Indexer | `sub-a4` | `attributes.type="outline.updated"` | ON（`topicId`） |
-| A7 Rollup | `sub-a7` | `attributes.type="mindtree.node_changed" OR attributes.type="node.rollup_requested"` | ON（`nodeId`） |
-| A5 Balancer | `sub-a5` | `attributes.type="mindtree.metrics.updated"` | OFF |
+| A7 Rollup | `sub-a7` | `attributes.type="topic.node_changed" OR attributes.type="node.rollup_requested"` | ON（`nodeId`） |
+| A5 Balancer | `sub-a5` | `attributes.type="topic.metrics.updated"` | OFF |
 
 ## 3. Envelope / Attributes
 
