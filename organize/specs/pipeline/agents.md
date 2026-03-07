@@ -31,7 +31,9 @@ A0〜A7/A5 を `topic_id` 中心で再配線し、Act Context Assembly との責
 
 * Organize = write path only
 * Act Context Assembly = read-only only
-* Organize は prompt bundle を生成/永続化しない
+* Organize は `act-adk-worker` を呼ばない
+* Organize は Act の `PromptBundle` を生成/永続化しない
+* Organize の `Bundle` は `PipelineBundle`（draft差分の中間成果物）を指す
 * Act は canonical summary/evidence/index を更新しない
 
 ## Prompt Assembly 供給マップ（MVP）
@@ -120,7 +122,7 @@ flowchart LR
 * `type=draft.updated` payload: `{ topicId, draftVersion, appendedAtomIds }`
 
 ### Output
-* Firestore: `bundles/{bundleId}`
+* Firestore: `pipelineBundles/{bundleId}`
 
 ### Emit
 * `type=bundle.created` payload: `{ topicId, bundleId, sourceDraftVersion }`

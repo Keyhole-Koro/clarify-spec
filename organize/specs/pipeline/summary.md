@@ -18,6 +18,8 @@ Version: 1.1 / schemaVersion: v1
 * 重複・競合は `event_ledger + lease + version(CAS)` で無害化
 * fan-out は Subscription 複数化で実現
 * 知識正本キーは `topic_id`
+* Organize は write path 専任で、`act-adk-worker` は呼ばない
+* Bundle 用語は分離する（Act: `PromptBundle` / Organize: `PipelineBundle`）
 
 ## 2. Topic / Subscription
 

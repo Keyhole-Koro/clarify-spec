@@ -31,7 +31,7 @@
 
 1. 各Agentはログへ `traceId`, `topicId`, `idempotencyKey`, `type` を出力
 2. ledger/lease/CAS の結果をメトリクス化
-3. `bundle` 系は apply と describe の状態を分離管理
+3. `PipelineBundle` 系は apply と describe の状態を分離管理
 
 ## 異常フロー（error/retryable/stage）
 
@@ -55,6 +55,10 @@
 * `sourceDraftVersion`: int
 * `appliedAt`: timestamp
 * `descRef`: ref
+
+補足:
+
+* これは Organize 中間成果物（`PipelineBundle`）の状態であり、Act の `PromptBundle` とは別物
 
 ## 監視キー（MUST）
 

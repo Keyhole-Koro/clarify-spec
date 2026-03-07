@@ -41,6 +41,7 @@
 
 * `context` は `topic` を上書きしない
 * 矛盾時は `topic` を優先し、`diagnostics` に衝突を残す
+* Organize は personalization を read-only 参照し、MVPでは更新しない
 
 ## 受け入れ条件
 

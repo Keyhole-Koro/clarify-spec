@@ -154,6 +154,8 @@ erDiagram
 * `EDGE.source/target` は同一 topic 内に限定
 * `latest_draft_version`, `latest_outline_version` は単調増加
 * 本文はGCS versioned ref（`gcsUri/generation/sha256`）を保持
+* Firestore は確定済みメタ/関係/権限境界/検索キーの正本とし、stream中の高頻度一時状態は保持しない
+* `actRuns/events` は監査と短期再送補助のための記録に限定し、Act memory の代替にしない
 
 ## 6. トランザクション境界
 
@@ -173,3 +175,4 @@ erDiagram
 
 * `tree_id` はUI表示境界として利用可
 * 知識正本の主キーは `topic_id`
+* 長文本文、raw observation、生成物、snapshot 実体は Firestore 本体ではなく GCS に置く

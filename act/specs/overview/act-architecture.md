@@ -53,7 +53,7 @@ flowchart LR
 
 * Frontend: stream反映、thought表示、commit起点
 * Act API (Go): 認証認可、契約変換、stream配信
-* ADK Worker: Assembly、tool orchestration、モデル実行
+* ADK Worker: Assembly、tool orchestration、モデル実行、Act memory の管理
 * Organize: 知識正本更新（write-only）
 * Firestore/GCS: topic正本ストア
 
@@ -64,6 +64,10 @@ flowchart LR
 * ADK Worker は Firestore/GCS に書き込まない
 * Organizeは RunAct stream を emit しない
 * 認証は Firebase Auth `google.com` のみ
+* Act memory は実行中だけ有効な揮発状態であり、知識正本にしない
+* stream中の ephemeral node、未確定候補、途中推論は Act memory に置く
+* 確定して再利用したいデータは Organize 経由でのみ Firestore/GCS に昇格する
+* Firestore は確定済み軽量メタと参照、GCS は大きい実体を担当する
 
 ## エラー / 例外
 

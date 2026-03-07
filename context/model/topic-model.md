@@ -47,6 +47,11 @@ erDiagram
 4. Act は `outline` を主参照し、必要時のみ `draft recent delta` を補助参照する
 5. Runごとの実行記録は `act_run` として topic 配下へ残す
 
+責務補足:
+
+* Organize は `draft -> pipeline bundle -> outline` の write path を担当
+* Act は `RunAct` で read path を担当し、`act-adk-worker` で Context Assembly を実行する
+
 ## 異常フロー（error/retryable/stage）
 
 * `topic_id` 不在: `INVALID_ARGUMENT`, `retryable=false`, `stage=VALIDATE_REQUEST`

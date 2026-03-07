@@ -24,6 +24,7 @@ Act の Context Assembly で `topic context` に personalization を重ねる手
 
 * `topic` の factual content を profile/memory で改変しない
 * overlay層から Firestore/GCS write を行わない
+* Organize pipeline から `act-adk-worker` を経由して overlay を実行しない
 
 ## diagnostics 必須項目
 

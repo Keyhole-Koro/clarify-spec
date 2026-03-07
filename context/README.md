@@ -20,3 +20,4 @@
 
 * `topic_id` は知識正本キーのまま維持
 * `context` は read-time overlay（上書きではなく補助）
+* Act memory は `context/` の personalization 正本とは別で、RunAct 実行中の揮発状態として扱う

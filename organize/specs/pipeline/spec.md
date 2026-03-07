@@ -20,6 +20,13 @@ Version: 1.1 / schemaVersion: v1
 * `pipeline-agents.md`: A0〜A7/A5 の入出力・emit・必須競合対策
 * `pipeline-ops.md`: Firestore状態の衝突回避、監視運用、整合性チェックポイント
 
+## 2.1 境界ルール（MUST）
+
+* Organize は write path 専任（Firestore/GCS更新）とする
+* Organize は `act-adk-worker` を呼び出さない
+* Act の `PromptBundle` と Organize の `PipelineBundle` を混同しない
+* Context Assembly の共通仕様は参照するが、実行主体は Act と Organize で独立させる
+
 ## 3. 用語・命名の固定
 
 * 知識正本キーは `topic_id`

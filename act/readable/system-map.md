@@ -11,6 +11,15 @@
 3. Knowledge Pipeline  
 `organize` が write path を担当
 
+## データの置き場所
+
+* Firestore:
+  * 確定済みの軽量メタ、関係、権限境界、検索キー
+* GCS:
+  * 本文、raw observation、生成物、versioned snapshot
+* Act memory:
+  * 実行中の ephemeral node、未確定候補、途中推論
+
 ## 実装責務の境界
 
 * `act-api`:
@@ -22,6 +31,12 @@
   * ResolveIntent / RetrieveContext / RankAndBudget
   * Gemini呼び出し
   * Patch正規化
+  * 実行中メモリの保持
+
+## 昇格ルール
+
+* Act memory は正本ではない
+* 確定データは Organize を通して Firestore/GCS に昇格する
 
 ## 正本参照
 

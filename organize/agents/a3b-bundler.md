@@ -2,12 +2,12 @@
 
 ## 1. 責務
 
-* `draft.updated` 差分から Bundle を作り `bundle.created` を発火
+* `draft.updated` 差分から `PipelineBundle` を作り `bundle.created` を発火
 
 ## 2. I/O
 
 * Input: `draft.updated`
-* Output: `bundles/{bundleId}`
+* Output: `pipelineBundles/{bundleId}`
 * Emit: `bundle.created`
 
 ## 3. Idempotency / 競合対策

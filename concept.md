@@ -29,6 +29,15 @@
 * 根拠参照を保持する（URL / deep link / generation / sha256）
 * 知識正本キーは `topic_id` を使用する
 
+## ストレージ責務分割（MUST）
+
+* Firestore は確定済みの軽量メタ、関係、状態遷移、権限境界、検索キー、GCS参照ポインタを保持する
+* GCS は本文、raw observation、生成物、versioned snapshot など大きい実体を保持する
+* Act memory は実行中だけ有効な揮発状態とし、stream中の ephemeral node、未確定候補、途中推論を保持する
+* Firestore に高頻度で揺れる stream 中状態を保存しない
+* GCS の本文系オブジェクトは `gcsUri/generation/sha256` で参照可能にする
+* Act memory は知識正本ではなく、確定データは Organize 経由でのみ Firestore/GCS へ昇格する
+
 ## 3層アーキテクチャ
 
 1. Interaction Layer（Act Run / stream）

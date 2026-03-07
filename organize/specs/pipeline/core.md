@@ -40,6 +40,8 @@ A0〜A7/A5 のイベント駆動パイプラインを **Pub/Sub (at-least-once)*
 4. ルーティングは `attributes.type` で行う
 5. fan-out は subscription 複数化で実現する
 6. Context Assembly は read-only で `mind-events` に publish しない
+7. Organize は `act-adk-worker` を呼ばず、独立した write pipeline として動作する
+8. `PromptBundle`（Act推論入力）と `PipelineBundle`（Organize中間成果物）を分離する
 
 ## Pub/Sub リソース仕様
 
