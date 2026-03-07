@@ -6,8 +6,9 @@
 ## 読み順（最短）
 
 1. `act/readable/system-map.md`
-2. `act/readable/streaming-guide.md`
-3. `act/readable/runtime-guide.md`
+2. `act/readable/context-guide.md`
+3. `act/readable/streaming-guide.md`
+4. `act/readable/runtime-guide.md`
 
 ## ルール
 
