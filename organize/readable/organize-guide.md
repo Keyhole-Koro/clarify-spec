@@ -199,6 +199,337 @@ graph 全体の偏りや未解決部分を見て、再整理を促す補助 Agen
   * 偏りの大きい topic の調整
   * 未解決ノードの掘り起こし
 
+## 各 Agent の成果物例
+
+同じ `topicId=tp_ai_agents` を例に、各 Agent が何を残すかを具体化する。
+
+### A0 MediaInterpreter の成果物例
+
+Firestore:
+
+```json
+{
+  "path": "inputs/in_web_001",
+  "status": "extracted",
+  "contentType": "html",
+  "traceId": "tr_001",
+  "origin": {
+    "sourceType": "web_url",
+    "url": "https://example.com/ai-agents-overview"
+  },
+  "rawRef": {
+    "gcsUri": "gs://bucket/mind/inputs/in_web_001.raw.html",
+    "generation": "1710000000000001",
+    "sha256": "raw_sha_001"
+  },
+  "extractedRef": {
+    "gcsUri": "gs://bucket/mind/inputs/in_web_001.md",
+    "generation": "1710000000000002",
+    "sha256": "ext_sha_001"
+  }
+}
+```
+
+GCS:
+
+```md
+# AI Agents Overview
+
+AI agents are software systems that can plan, use tools, and iterate on tasks...
+```
+
+Emit:
+
+```json
+{
+  "type": "input.received",
+  "topicId": "tp_ai_agents",
+  "payload": {
+    "inputId": "in_web_001"
+  }
+}
+```
+
+### A1 Atomizer の成果物例
+
+Firestore:
+
+```json
+{
+  "path": "atoms/at_001",
+  "topicId": "tp_ai_agents",
+  "inputId": "in_web_001",
+  "kind": "fact",
+  "title": "Agentは計画とツール利用を行う",
+  "sourceRef": {
+    "inputId": "in_web_001",
+    "excerptRange": "p1:1-3"
+  }
+}
+```
+
+GCS:
+
+```md
+- Agentは単なるチャット応答ではなく、計画、ツール利用、反復を含む実行単位である。
+```
+
+Emit:
+
+```json
+{
+  "type": "atom.created",
+  "topicId": "tp_ai_agents",
+  "payload": {
+    "inputId": "in_web_001",
+    "atomIds": ["at_001", "at_002", "at_003"]
+  }
+}
+```
+
+### A2 Router の成果物例
+
+Firestore:
+
+```json
+{
+  "path": "topics/tp_ai_agents",
+  "latestDraftVersion": 4
+}
+```
+
+GCS:
+
+```md
+# Draft v4
+
+- Agentは計画、ツール利用、反復を行う
+- エージェント設計では memory, planning, tools が主要構成要素
+- evaluation が品質改善に重要
+```
+
+Emit:
+
+```json
+{
+  "type": "draft.updated",
+  "topicId": "tp_ai_agents",
+  "payload": {
+    "draftVersion": 4,
+    "appendedAtomIds": ["at_001", "at_002", "at_003"]
+  }
+}
+```
+
+### A3b Distillation 相当の成果物例
+
+ここは現仕様上は `PipelineBundle` だが、意味としては「後段へ渡すための文脈蒸留物」に近い。
+
+Firestore:
+
+```json
+{
+  "path": "pipelineBundles/pb_004",
+  "topicId": "tp_ai_agents",
+  "sourceDraftVersion": 4,
+  "focus": [
+    "agent capability",
+    "tool use",
+    "evaluation"
+  ],
+  "normalizedClaims": [
+    "AI agent is a software unit that can plan and act",
+    "Tool use is a core differentiator",
+    "Evaluation is required for reliable deployment"
+  ]
+}
+```
+
+Emit:
+
+```json
+{
+  "type": "bundle.created",
+  "topicId": "tp_ai_agents",
+  "payload": {
+    "bundleId": "pb_004",
+    "sourceDraftVersion": 4
+  }
+}
+```
+
+### A6 BundleDescription の成果物例
+
+GCS:
+
+```html
+<h1>Bundle pb_004</h1>
+<p>This bundle summarizes the recent draft delta around agent capability, tool use, and evaluation.</p>
+<ul>
+  <li>3 normalized claims</li>
+  <li>2 candidate node merges</li>
+  <li>1 unresolved contradiction</li>
+</ul>
+```
+
+Firestore:
+
+```json
+{
+  "path": "bundles/pb_004",
+  "descRef": {
+    "gcsUri": "gs://bucket/mind/bundle_desc/pb_004/v1.html",
+    "generation": "1710000000000008",
+    "sha256": "desc_sha_004"
+  }
+}
+```
+
+### A3 Cleaner の成果物例
+
+Firestore topic:
+
+```json
+{
+  "path": "topics/tp_ai_agents",
+  "latestOutlineVersion": 2
+}
+```
+
+Firestore node:
+
+```json
+{
+  "path": "topics/tp_ai_agents/nodes/nd_tool_use",
+  "kind": "concept",
+  "title": "Tool Use",
+  "parentId": "nd_agent_architecture",
+  "contextSummaryRef": {
+    "gcsUri": "gs://bucket/mind/node_rollup/nd_tool_use/v3.html"
+  },
+  "updatedAt": "2026-03-07T12:00:00Z"
+}
+```
+
+Firestore edge:
+
+```json
+{
+  "path": "topics/tp_ai_agents/edges/ed_001",
+  "sourceId": "nd_agent_architecture",
+  "targetId": "nd_tool_use",
+  "relation": "has_component"
+}
+```
+
+GCS outline:
+
+```md
+# AI Agents
+
+## Core Components
+- Planning
+- Tool Use
+- Memory
+
+## Reliability
+- Evaluation
+- Guardrails
+```
+
+Emit:
+
+```json
+{
+  "type": "topic.node_changed",
+  "topicId": "tp_ai_agents",
+  "payload": {
+    "nodeId": "nd_tool_use",
+    "reason": "merged_from_bundle_pb_004"
+  }
+}
+```
+
+### A4 Indexer の成果物例
+
+Firestore:
+
+```json
+{
+  "path": "index_items/idx_tp_ai_agents_tool_use",
+  "topicId": "tp_ai_agents",
+  "nodeId": "nd_tool_use",
+  "tokens": ["tool", "use", "tools", "function calling"],
+  "importance": 0.87,
+  "freshness": 0.74
+}
+```
+
+GCS:
+
+```md
+# Topic Map
+
+- Agent Architecture
+  - Planning
+  - Tool Use
+  - Memory
+- Reliability
+  - Evaluation
+  - Guardrails
+```
+
+### A7 NodeRollup の成果物例
+
+GCS:
+
+```html
+<h1>Tool Use</h1>
+<p>Tool use is the capability that lets an agent call external systems, retrieve information, and perform actions.</p>
+```
+
+Firestore:
+
+```json
+{
+  "path": "topics/tp_ai_agents/nodes/nd_tool_use",
+  "rollupRef": {
+    "gcsUri": "gs://bucket/mind/node_rollup/nd_tool_use/v3.html",
+    "generation": "1710000000000011",
+    "sha256": "rollup_sha_003"
+  },
+  "rollupWatermark": 3
+}
+```
+
+### A5 Balancer の成果物例
+
+Firestore:
+
+```json
+{
+  "path": "organizeOps/op_balance_001",
+  "topicId": "tp_ai_agents",
+  "kind": "rebalance",
+  "reason": "evaluation cluster is underdeveloped compared with tool-use cluster",
+  "targetNodeId": "nd_evaluation",
+  "status": "planned"
+}
+```
+
+Emit:
+
+```json
+{
+  "type": "topic.metrics.updated",
+  "topicId": "tp_ai_agents",
+  "payload": {
+    "coverageSkew": 0.42,
+    "redundancyScore": 0.18
+  }
+}
+```
+
 ## Organize と Act の関係
 
 `Act` と `Organize` はつながっているが、役割は逆である。
