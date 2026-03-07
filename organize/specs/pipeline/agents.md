@@ -190,6 +190,16 @@ flowchart LR
 * schema と不整合な候補は `atom.reissued` で再評価へ戻せる
 * 生成した node/edge は使用した `schema_version` を辿れるようにする
 
+### Cleaner処理段階
+1. bundle から claim 群を取得する
+2. claim を normalize して node候補 / edge候補 / unresolved候補へ分ける
+3. 既存 node と照合して entity resolution を行う
+4. node を merge/create/reject 判定して upsert する
+5. edge を upsert する
+6. graph から outline を再構成し `latestOutlineVersion` を進める
+7. changed node ごとに `topic.node_changed` を emit する
+8. 確定不能候補を `atom.reissued` で戻す
+
 ---
 
 ## A4 IndexerAgent（Outline -> Index/Map）

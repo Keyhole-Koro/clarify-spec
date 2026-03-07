@@ -166,6 +166,38 @@ flowchart LR
   C --> EV3[atom.reissued]
 ```
 
+Cleaner の中では、だいたい次の順で処理している。
+
+1. bundle を読む
+2. claim を normalize する
+3. 既存 node と照合して merge 候補を探す
+4. node を create / merge / reject に振り分ける
+5. edge を張る
+6. outline を再生成する
+7. changed node を downstream へ通知する
+8. 確定できない候補を `atom.reissued` で戻す
+
+```mermaid
+flowchart LR
+  B[Bundle] --> N1[Normalize Claims]
+  N1 --> ER[Entity Resolution]
+  ER --> DECIDE{Create / Merge / Reject}
+  DECIDE --> NODE[Upsert Nodes]
+  DECIDE --> REISSUE[atom.reissued]
+  NODE --> EDGE[Upsert Edges]
+  EDGE --> OUT[Regenerate Outline]
+  OUT --> CHG[topic.node_changed]
+```
+
+ここで A3 が実際に判断しているのは次のようなこと。
+
+* この claim は新規 node にするべきか
+* 既存 node の別表現として merge すべきか
+* relation は親子か、関連か、依存か
+* outline に昇格するだけの確度があるか
+* current schema で表現できるか
+* downstream に rollup 更新を流す必要があるか
+
 ### 7. A4 Indexer
 
 outline と graph から検索・ランキング用の索引を作る。
