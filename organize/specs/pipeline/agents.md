@@ -37,6 +37,7 @@ A0〜A7/A5 を `topic_id` 中心で再配線し、Act Context Assembly との責
 * Act は canonical summary/evidence/index を更新しない
 * `mind/` は GCS オブジェクト接頭辞として扱い、知識モデル名には使わない
 * `mindtree` は legacy 用語とし、新規イベント名/実体名には使わない
+* topic ごとに knowledge schema は進化可能だが、workspace/authz/path/id など platform schema は固定する
 
 ## Prompt Assembly 供給マップ（MVP）
 
@@ -118,20 +119,28 @@ flowchart LR
 
 ---
 
-## A3b BundlerAgent（Draft差分 -> Bundle）
+## A3b BundlerAgent（Draft差分 -> Bundle / Schema Proposal）
 
 ### Input
 * `type=draft.updated` payload: `{ topicId, draftVersion, appendedAtomIds }`
 
 ### Output
 * Firestore: `pipelineBundles/{bundleId}`
+* Firestore: `topics/{topicId}/schemas/{version}`（必要時）
 
 ### Emit
 * `type=bundle.created` payload: `{ topicId, bundleId, sourceDraftVersion }`
+* `type=topic.schema_updated` payload: `{ topicId, schemaVersion }`（必要時）
 
 ### 競合対策
 * ledger key: `type:draft.updated/topicId:{topicId}/draftVersion:{draftVersion}`
 * 同一 `(topicId, draftVersion)` の bundle 二重生成禁止
+* schema 更新時は `topics/{topicId}.schema_version` を CAS で進める
+
+### Schema進化責務
+* 現行 schema で表現不能な node kind / relation type / attribute set / index feature を検出する
+* schema 変更が不要なら current schema を引き継ぐ
+* schema 変更が必要なら新しい `schema_version` を発行する
 
 ---
 
@@ -157,6 +166,7 @@ flowchart LR
 
 ### Input
 * `type=bundle.created` payload: `{ topicId, bundleId }`
+* `type=topic.schema_updated` payload: `{ topicId, schemaVersion }`（参照可能）
 
 ### Output
 * GCS: `mind/outlines/{topicId}/v{n}.md`
@@ -174,6 +184,11 @@ flowchart LR
 * outline version CAS
 * ledger key: `type:bundle.created/topicId:{topicId}/bundleId:{bundleId}/purpose:apply`
 * bundle二重適用禁止（appliedAt CAS）
+
+### Schema適用責務
+* 適用時点の `schema_version` を解決して node/edge/index 生成に使う
+* schema と不整合な候補は `atom.reissued` で再評価へ戻せる
+* 生成した node/edge は使用した `schema_version` を辿れるようにする
 
 ---
 

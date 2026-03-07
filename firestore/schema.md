@@ -35,9 +35,23 @@ erDiagram
     string workspace_id FK
     string title
     string status
+    int schema_version
     int latest_draft_version
     int latest_outline_version
     timestamp updated_at
+  }
+
+  TOPIC ||--o{ TOPIC_SCHEMA : has
+
+  TOPIC_SCHEMA {
+    string topic_id PK
+    int version PK
+    string status
+    string[] node_kinds
+    string[] relation_types
+    map attribute_defs
+    map index_feature_defs
+    timestamp created_at
   }
 
   DRAFT {
@@ -137,6 +151,7 @@ erDiagram
 * `workspaces/{workspaceId}/topics/{topicId}`
 * `workspaces/{workspaceId}/topics/{topicId}/drafts/{version}`
 * `workspaces/{workspaceId}/topics/{topicId}/outlines/{version}`
+* `workspaces/{workspaceId}/topics/{topicId}/schemas/{version}`
 * `workspaces/{workspaceId}/topics/{topicId}/nodes/{nodeId}`
 * `workspaces/{workspaceId}/topics/{topicId}/edges/{edgeId}`
 * `workspaces/{workspaceId}/topics/{topicId}/nodes/{nodeId}/evidence/{evidenceId}`
@@ -152,15 +167,19 @@ erDiagram
 * `members/{uid}` が無ければ `PERMISSION_DENIED`
 * `ACT_RUN` は `(uid, request_id)` で topic内一意
 * `EDGE.source/target` は同一 topic 内に限定
+* `schema_version` は topic 内で単調増加し、`topics/{topicId}/schemas/{version}` と一致する
 * `latest_draft_version`, `latest_outline_version` は単調増加
 * 本文はGCS versioned ref（`gcsUri/generation/sha256`）を保持
 * Firestore は確定済みメタ/関係/権限境界/検索キーの正本とし、stream中の高頻度一時状態は保持しない
 * `actRuns/events` は監査と短期再送補助のための記録に限定し、Act memory の代替にしない
+* topic ごとに進化できるのは knowledge schema のみとし、workspace/authz/path/id など platform schema は topic ごとに変化させない
+* node/edge/index は適用に使った `schema_version` を参照可能にする
 
 ## 6. トランザクション境界
 
 * Topic参加/招待: invite消費 + member追加を同一transaction
 * Draft更新: `latest_draft_version` CAS
+* Topic schema 更新: `schema_version` CAS
 * Outline更新: `latest_outline_version` CAS
 * Bundle適用: `appliedAt` CAS
 * Lease取得: `leases/{resourceKey}` compare-and-set
@@ -176,3 +195,4 @@ erDiagram
 * `tree_id` はUI表示境界として利用可
 * 知識正本の主キーは `topic_id`
 * 長文本文、raw observation、生成物、snapshot 実体は Firestore 本体ではなく GCS に置く
+* `topic_schema` は topic ごとの知識構造を表す。例: node kind, relation type, attribute set, index feature

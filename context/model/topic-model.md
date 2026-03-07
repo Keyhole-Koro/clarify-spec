@@ -26,7 +26,7 @@
 出力:
 
 * topic配下の `drafts`, `outlines`, `nodes`, `act_runs` 参照
-* `latest_outline_version`, `latest_draft_version`
+* `latest_outline_version`, `latest_draft_version`, `schema_version`
 
 ## 論理モデル（ER）
 
@@ -43,13 +43,15 @@ erDiagram
 
 1. ユーザーが新しい調査目的を開始すると `topic` を作成する
 2. Organize が入力を `draft` へ反映し、`draft version` を進める
-3. Cleaner が確定可能な内容を `outline` へ昇格し、`outline version` を進める
-4. Act は `outline` を主参照し、必要時のみ `draft recent delta` を補助参照する
-5. Runごとの実行記録は `act_run` として topic 配下へ残す
+3. Organize が蒸留段階で current topic schema を評価し、必要なら `schema version` を進める
+4. Cleaner が schema に従って確定可能な内容を `outline` へ昇格し、`outline version` を進める
+5. Act は `outline` と `schema` を主参照し、必要時のみ `draft recent delta` を補助参照する
+6. Runごとの実行記録は `act_run` として topic 配下へ残す
 
 責務補足:
 
 * Organize は `draft -> pipeline bundle -> outline` の write path を担当
+* Organize は topic ごとの knowledge schema を進化させてよい
 * Act は `RunAct` で read path を担当し、`act-adk-worker` で Context Assembly を実行する
 
 ## 異常フロー（error/retryable/stage）
@@ -61,6 +63,7 @@ erDiagram
 ## 数値パラメータ
 
 * `topic_id` は workspace 内で一意
+* `schema_version` は topic 内で単調増加（+1）
 * `draft` / `outline` version は単調増加（+1）
 
 ## 受け入れ条件（DoD）
