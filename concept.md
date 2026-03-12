@@ -53,6 +53,15 @@
 * Vertex AI（Gemini 3 Flash / Web Grounding / Deep Research）をプロファイルで使い分け
 * Context Assembly は read-only で Firestore/GCS を参照
 
+## Agent と Frontend の設計原則
+
+* agent は frontend の機能を可能な限り `tool` として利用する
+* frontend 固有の操作知識を agent 本体へ埋め込みすぎず、UI能力は tool contract として外出しする
+* tool は `click` のような画面部品単位ではなく、`select_nodes` / `open_node_detail` / `run_act_with_context` のような意図単位で設計する
+* 読み取り系 tool と書き込み系 tool は分離し、権限と失敗時挙動を明確にする
+* frontend state は操作面のインターフェースであり、知識正本や実行契約の正本にはしない
+* 新しいUI機能は、可能なら agent 専用分岐より先に再利用可能な tool として追加する
+
 ## Organize の位置づけ
 
 * Agent分割（A0〜A7）で入力解釈→分解→統合→索引化

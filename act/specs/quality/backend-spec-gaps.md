@@ -150,3 +150,37 @@
   * `RunActEvent` へ何を残し、何を圧縮/破棄するかを固定
 * ADK workerテスト仕様
   * 最小ゴールデンケース（intent, budget超過, error mapping, stream順序）を追加
+
+## 16. Frontend エラー可視化ポリシー（未解決）
+
+現状:
+
+* UI向けの `ErrorInfo.message` / `stage` / `retryable` の表示要件はあるが、開発時に dev console へ何を出してよいかの方針が未固定
+
+次アクション（要決定）:
+
+* dev console 出力対象
+  * フロントが受信した `terminal.error` / stream例外 / reducer適用失敗 / 想定外eventを、表示可能な情報は dev console へ出す
+* 出力粒度
+  * `trace_id`, `request_id`, `stage`, `retryable`, `message`, raw event payload のうち、秘匿情報を除いてどこまで常時出すかを固定
+* 環境境界
+  * development 限定にするか、staging/preview でも有効にするかを固定
+* PII/secret マスキング
+  * token, cookie, authorization header, 個人情報を console 出力から除外するルールを固定
+
+## 17. Frontend 実装前に詰めるべき仕様境界（未解決）
+
+現状:
+
+* 共有仕様の大枠は固定されているが、文書間で解釈差が残る箇所と、UI実装時に判断が分かれやすい境界がある
+
+次アクション（要決定）:
+
+* terminal 挙動の整合
+  * `done/error` をサーバ契約として厳密排他にする一方、フロントは二重終端受信時に無害化する実装を許容するかを固定
+* Deep Research fallback の UI 通知
+  * fallback 発生をユーザーに表示するか、dev console/log のみで追跡するかを固定
+* thought 表示 UX
+  * thought 表示の初期値、実行中のみ表示するか、完了後も保持するか、再実行時のクリア条件を固定
+* grounding / tool metadata の UI 投影
+  * 参照リンク、根拠、diagnostics をどの UI 領域に出すか、未対応時は store 保持のみにするかを固定

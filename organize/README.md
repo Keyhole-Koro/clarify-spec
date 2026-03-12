@@ -12,6 +12,8 @@
   * `model/`（topic正本は `context/model/topic-model.md` を参照）
   * `pipeline/`（`summary/spec/core/agents/ops`）
 * `organize/agents/`
-  * Agentごとの個別仕様（`a0/`, `a1/` などの下位specを含む）
+  * Agentごとの個別仕様
+  * 各 Agent は `a0/`, `a1/`, `a2/` のようなディレクトリ単位で管理
+  * 各 Agent の入口は `README.md`
 * `firestore/`
   * Firestoreスキーマ仕様（ルート共有）

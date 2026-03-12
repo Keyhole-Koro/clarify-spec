@@ -745,9 +745,9 @@ sequenceDiagram
 * Agent 契約:
   * `organize/specs/pipeline/agents.md`
 * 個別 Agent:
-  * `organize/agents/a3-cleaner.md`
-  * `organize/agents/a7-node-rollup.md`
-  * `organize/agents/a5-balancer.md`
+  * `organize/agents/a3/README.md`
+  * `organize/agents/a7/README.md`
+  * `organize/agents/a5/README.md`
 
 ## ひとことでまとめる
 
