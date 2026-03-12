@@ -23,6 +23,11 @@
 * `error` と `done` は排他
 * `trace_id` は全イベントに付与する
 * 途中失敗でも既送信イベントは有効（巻き戻ししない）
+* 初回の本文系 `append_md` より先に、対象blockの `upsert` を送る
+* 同一 event 内の基本順序は `thought -> answer -> upsert -> append_md -> metadata -> terminal` とする
+* `append_md` は対象 block の `upsert` より先行しない
+* metadata は本文生成を block せず、answer より先に必須化しない
+* `done/error` 後に追撃 event を送らない
 
 ## Case 1: 通常回答ストリーミング（thinkingなし）
 
@@ -38,6 +43,7 @@ flowchart LR
 
 * frontend は answer buffer のみ更新
 * `done=true` で loading を解除
+* `ACT_ROOT upsert` が answer本文反映より先行する
 
 ## Case 2: Thinking + Answer 分離ストリーミング
 
@@ -54,6 +60,7 @@ flowchart LR
 
 * thought と answer を別stateで保持
 * thought を Markdown本文へ直接混ぜない
+* 同一 event 内では thought が answer より先に並ぶ
 
 ## Case 3: Grounding付き回答
 
@@ -69,6 +76,7 @@ flowchart LR
 
 * 根拠メタはイベントとして保持し、UIは参照リンク表示に使える
 * 本文生成が先に来ても許容する
+* metadata は answer / append_md を妨げない
 
 ## Case 4: Deep Research 成功
 
@@ -150,7 +158,11 @@ flowchart LR
 
 期待:
 
-* worker 側もキャンセル伝播で停止
+* `act-api` は client disconnect または server deadline 検知時に worker context を即時 cancel する
+* worker 側は同一 context を `GenerateWithModel` / grounding / 外部tool / polling / normalize へ伝播する
+* cancel 後は新規 `RunActEvent` を生成しない
+* 既送信イベントは有効のまま巻き戻さない
+* cancel 起因では追加の `terminal.error` を送らない
 * 再接続は再実行のみ（resumeなし）
 
 ## Case 10: 同一 request_id の再送

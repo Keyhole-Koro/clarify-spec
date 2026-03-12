@@ -67,12 +67,44 @@
 * `context_node_ids_max=120`
 * `thought_flush_interval_ms=500`
 
+## cancel 伝播仕様
+
+* `act-api` は client disconnect または server deadline 検知時に、worker 呼び出し context を即時 cancel する
+* worker 呼び出しには request 単位の親 context を使い、下流の model/tool/polling に同一 cancellation tree を伝播する
+* cancel 後は新規 `RunActEvent` を生成しない
+* 既送信イベントは有効のまま巻き戻さない
+* client disconnect 起因では追加の `terminal.error` を返さない
+* server 側ログには `trace_id`, `request_id`, `cancel_source` を残す
+* `cancel_source` は最低でも `client_disconnect`, `server_deadline`, `upstream_cancel` を扱う
+* 下流 SDK が cooperative cancel 非対応の場合は、最短 timeout と best-effort cleanup で停止を補助する
+
+## stream 順序保証
+
+* 初回の本文系 `append_md` より先に、対象 block の `upsert` を送る
+* 同一 `RunActEvent` 内の基本順序は `thought -> answer -> upsert -> append_md -> metadata -> terminal` とする
+* `append_md` は対象 block の `upsert` より先行しない
+* `append_md` は空文字を送らない
+* metadata は本文送出を block せず、answer より先に必須化しない
+* `done/error` は最後の event にのみ現れ、終端後に追加 event を送らない
+* node 本文 state の正本は `append_md` として扱えるよう、patch 生成順を安定化する
+
+## model profile 切替表
+
+* 既定 profile は `Flash` とする
+* `research_config.use_deep_research=true` の場合のみ `Deep Research` を選択する
+* `grounding_config` は profile と独立に付与し、`enabled=true` の場合は grounding を有効化する
+* `research_config.use_deep_research!=true` の場合は `Flash` を使う
+* `Deep Research` 実行が timeout / `UNAVAILABLE` / 連続 5xx で継続不能になった場合は、同一 request 内で `Flash` へ fallback する
+* profile の最終決定は worker 側で行う
+
 ## 受け入れ条件（DoD）
 
 * `topic_id` なし request は必ず拒否
 * `RunAct` 契約を変えず ADK経由で実行できる
 * `ErrorInfo.stage` が assembly/生成段階まで一貫
 * `done/error` 排他が守られる
+* client disconnect / deadline 時に cancel が worker 下流まで伝播する
+* `append_md` が対応 block の `upsert` より先行しない
 
 ## 実装メモ（最小）
 

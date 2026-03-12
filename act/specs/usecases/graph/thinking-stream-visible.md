@@ -12,6 +12,7 @@
 
 * Backendが `stream_parts[].thought` を送出可能
 * Frontendが thought/answer バッファを分離管理
+* thought 表示の既定は OFF とする
 
 参照:
 
@@ -25,11 +26,13 @@
 2. streamで `stream_parts[].thought=true/false` を受信
 3. フロントが thought と answer を別表示
 4. `done=true` で終端
+5. 終端後は thought セクションを既定で折りたたむ
 
 ## 異常フロー
 
 * thoughtが空でも answer stream は継続
 * stream失敗時は部分表示を保持して `error` を表示
+* 再実行時に前回 request の thought と混ざらない
 
 ## ストリーム期待値（RunActEvent）
 
@@ -42,6 +45,8 @@
 * thought表示ON/OFFが切替可能
 * thoughtとanswerが視覚的に混ざらない
 * thought無効時に `stream_parts[].thought=true` が返らない
+* thought は node 本文へ混ざらない
+* 終端後は既定で折りたたまれるが、request 単位で保持される
 
 ## テスト対応（E2EケースID）
 

@@ -12,6 +12,7 @@
 
 詳細なLLM API試験は `act/specs/quality/llm-api-test-spec.md` を参照。
 ユースケース導線は `act/specs/usecases/README.md` を参照。
+worker 単体の最小仕様は `act/act-adk-worker/specs/adk-worker-test-spec.md` を参照。
 
 ## 必須シナリオ
 

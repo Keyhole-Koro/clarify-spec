@@ -31,6 +31,11 @@ Deep Research実行中の遅延・失敗時に、UIを壊さず通常Flashプロ
 2. サーバ側で Flashプロファイルへ切替
 3. 切替後streamを継続し、最終的に `done` または `error` で終端
 
+補足:
+
+* `Deep Research` は `research_config.use_deep_research=true` の request でのみ選択される
+* grounding は profile と独立に有効化できる
+
 ## ストリーム期待値（RunActEvent）
 
 * 失敗時も `done/error` 排他を維持
@@ -42,6 +47,8 @@ Deep Research実行中の遅延・失敗時に、UIを壊さず通常Flashプロ
 * UIはタイムアウト時に処理中断と誤認しない
 * フォールバック時も同一リクエストとして扱える
 * Backendログで `traceId` 単位に切替経路が追える
+* UI は fallback をエラー通知ではなく、軽いインライン状態表示として出せる
+* fallback 通知文言は fallback 後も処理継続中であることを示す
 
 ## テスト対応（E2EケースID）
 

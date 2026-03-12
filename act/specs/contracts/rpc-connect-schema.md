@@ -51,6 +51,7 @@ Act の Connect RPC 契約を `topic_id` 中心で定義し、コード断片な
 | `text_delta` | 通常テキストの増分 |
 | `patch_ops` | `upsert` / `append_md` の配列 |
 | `stream_parts` | thought/answer の分離ストリーム |
+| `metadata` | grounding/tool/diagnostics の正規化済みメタ |
 | `terminal.done` | 正常終端 |
 | `terminal.error` | 異常終端（ErrorInfo） |
 
@@ -109,7 +110,14 @@ flowchart LR
 * `RunAct` は read-only（Firestore/GCS write禁止）
 * Context Assembly は `context/assembly/core.md` に従う
 * `patch_ops` は `upsert` / `append_md` のみ
+* 初回の本文系 `append_md` より先に、対象blockの `upsert` を送る
+* 同一 `RunActEvent` 内の基本順序は `thought -> answer -> upsert -> append_md -> metadata -> terminal` とする
+* `append_md` は対応する block の `upsert` より先行してはならない
+* `append_md` は空文字を送らない
+* `done` と `error` は最後の event にのみ現れる
 * `done` と `error` は排他
+* 終端後に追加 event を送らない
+* `metadata` は frontend 表示に必要な最小 shape へ正規化し、SDK 依存の raw payload 全量を含めない
 * 冪等キーは `(token_uid, workspace_id, request_id)`
 * `sid` は補助識別子であり認証正本ではない
 * `request.uid` は互換用であり、実処理は token claim の `uid` を使う
@@ -121,6 +129,9 @@ flowchart LR
 * `append_md`: `contentMd` 追記
 * `stream_parts.thought=true`: thinkthrough表示
 * `stream_parts.thought=false`: 通常回答表示
+* node 本文 state の正本は `append_md`
+* `stream_parts` / `text_delta` は逐次表示用バッファとして扱える
+* `metadata.grounding` は `References`、`metadata.tools` は `Diagnostics` に投影できる
 * `error`: stage/retryableでUI分岐
 
 ## References

@@ -136,6 +136,45 @@ flowchart TD
 * モデル障害: `UNAVAILABLE|DEADLINE_EXCEEDED`, `stage=GENERATE_WITH_MODEL`
 * 形式不正: `INTERNAL`, `stage=NORMALIZE_PATCH_OPS`
 
+## cancel 伝播（MUST）
+
+* worker は `act-api` から受けた request context を最上位の cancellation source として扱う
+* `GenerateWithModel`, grounding, 外部 tool 呼び出し, polling, normalize は同一 context またはその子 context を受け取る
+* cancel 検知後は新しい chunk / patch / thought / answer を生成しない
+* 既に emit 済みの event は巻き戻さない
+* client disconnect 起因では error frame を追加生成しない
+* cleanup は best-effort とし、cancel 伝播の完了を block しない
+* cooperative cancel 非対応の SDK/外部 tool には短い timeout を併用して停止を補助する
+
+## stream 順序保証（MUST）
+
+* 初回の本文系 `append_md` より先に、対象 block の `upsert` を生成する
+* 同一 `RunActEvent` 内の基本順序は `thought -> answer -> upsert -> append_md -> metadata -> terminal` とする
+* `append_md` は対象 block の `upsert` より先行してはならない
+* `append_md` は空文字を生成しない
+* metadata は本文生成を block せず、answer より先に必須化しない
+* `thought` は Markdown 本文 patch と混ぜない
+* `done/error` は最後の frame にのみ現れ、終端後の追加 frame を生成しない
+
+## model profile 切替（MUST）
+
+* 既定 profile は `Flash` とする
+* `request.research_config.use_deep_research=true` の場合のみ `Deep Research` を選択する
+* `request.grounding_config.enabled=true` の場合は grounding を独立に有効化する
+* `Deep Research` 実行が timeout / `UNAVAILABLE` / 連続 5xx で継続不能になった場合は、同一 request 内で `Flash` へ fallback する
+* profile の最終決定は worker が行い、frontend の UI 表示値をそのまま内部 profile 名に直結させない
+
+## metadata 正規化（MUST）
+
+* `grounding metadata` は frontend 表示に必要な最小 shape に正規化する
+  * `references[] { title, url, host, snippet? }`
+* `tool metadata` は要約 shape に正規化する
+  * `tools[] { tool_name, status, summary, started_at?, finished_at? }`
+* `diagnostics` には `model_profile`, `grounding_used`, `fallback_used`, `fallback_reason`, `trace_id` を載せられる
+* SDK 依存の raw payload 全量は `RunActEvent.metadata` に載せない
+* 大きな JSON payload, 内部 token/debug 情報, chain-of-thought 相当の内部詳細は外部契約へ出さない
+* raw 詳細は server log / internal trace に保持する
+
 ## 数値パラメータ
 
 * run timeout: 90s
@@ -148,6 +187,8 @@ flowchart TD
 * ADK workflow で `RunAct` を end-to-end 説明できる
 * `RunActEvent` 契約（done/error排他）を守る
 * read-only境界（Assembly/ADK）を守る
+* cancel が worker 下流処理まで伝播し、切断後に event を追加生成しない
+* stream 順序が安定し、frontend reducer が順不同前提を強いられない
 
 ## 実装メモ（最小）
 
