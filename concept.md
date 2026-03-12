@@ -62,6 +62,17 @@
 * frontend state は操作面のインターフェースであり、知識正本や実行契約の正本にはしない
 * 新しいUI機能は、可能なら agent 専用分岐より先に再利用可能な tool として追加する
 
+## Tool と Context Assembly の分離原則
+
+* tool は raw input provider として、UI で観測された事実とユーザー選択を渡す
+* Context Assembly は normalized model-context builder として、retrieval / ranking / budgeting / bundle 化を担当する
+* tool は材料を渡し、assembly は材料を料理する
+* tool は relevance score, token budget, prompt text を確定しない
+* assembly は UI 表示都合ではなく、モデル入力最適化の責務を持つ
+* `RunActRequest` は transport 契約に徹し、assembly 専用の内部 DTO は worker 側で生成する
+* model prompt builder は tool の生データではなく assembly 後の bundle だけを見る
+* MCP は tool の discovery / invocation / transport を担う公開方式であり、assembly の責務には入らない
+
 ## Organize の位置づけ
 
 * Agent分割（A0〜A7）で入力解釈→分解→統合→索引化
@@ -78,6 +89,9 @@
 ## 仕様の正本
 
 * Act索引: `act/specs/README.md`
+* Frontend tool contract: `act/specs/contracts/frontend-agent-tools.md`
+* Frontend MCP contract: `act/specs/contracts/frontend-agent-tools-mcp.md`
+* Frontend tools guide: `act/readable/frontend-tools-guide.md`
 * Organize索引: `organize/README.md`, `organize/specs/pipeline/summary.md`, `context/model/topic-model.md`
 * Context索引: `context/README.md`
 * Frontend正本: `frontend/frontend-spec.md`

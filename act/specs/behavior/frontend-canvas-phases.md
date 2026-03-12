@@ -1,4 +1,4 @@
-# キャンバス実装フェーズ（Phase 1〜3）
+# キャンバス実装フェーズ（Phase 1〜4）
 
 本資料は、ReactFlowベースの単一画面SPAで「思考の生成・接続・深掘り」を段階実装するための要件定義である。
 前提仕様は `frontend/frontend-spec.md` と `act/specs/behavior/act-flow.md` を正本とする。
@@ -73,11 +73,27 @@
 * run_actボタンで新たなストリーム生成が始まる
 * 派生関係がキャンバス上の線で追える
 
+## Phase 4: Agent Tool Interaction UI
+
+目的:
+
+* frontend agent tools に対応する selection group UI と agent interaction を実装する
+
+必須実装:
+
+* selection group UI の詳細は `act/specs/behavior/frontend-agent-tool-interactions.md` に従う
+* `create_selectable_nodes` / `get_selection_group_result` / `report_stream_error` に対応する state と UI を追加する
+
+受け入れ条件:
+
+* `act/specs/quality/frontend-agent-tools-acceptance.md` を満たす
+
 ## 実装順序（推奨）
 
 1. Phase 1を完了し、ストリーム描画を安定化
 2. Phase 2で選択コンテキストと依存エッジを追加
 3. Phase 3で詳細表示とアクション分岐を追加
+4. Phase 4で agent 選択ノードとユーザー選択UIを追加
 
 ## 仕様整合メモ
 
@@ -88,3 +104,4 @@
 ## 実装チェック参照
 
 * `act/specs/quality/frontend-stream-acceptance.md`
+* `act/specs/quality/frontend-agent-tools-acceptance.md`

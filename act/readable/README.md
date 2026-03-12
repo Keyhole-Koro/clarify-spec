@@ -8,7 +8,8 @@
 1. `act/readable/system-map.md`
 2. `act/readable/context-guide.md`
 3. `act/readable/streaming-guide.md`
-4. `act/readable/runtime-guide.md`
+4. `act/readable/frontend-tools-guide.md`
+5. `act/readable/runtime-guide.md`
 
 ## ルール
 

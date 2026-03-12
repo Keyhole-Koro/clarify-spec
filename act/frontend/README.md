@@ -11,9 +11,14 @@
 ## Source Of Truth
 
 * RPC contract: `act/specs/contracts/rpc-connect-schema.md`
+* Agent tools: `act/specs/contracts/frontend-agent-tools.md`
+* Agent tools MCP: `act/specs/contracts/frontend-agent-tools-mcp.md`
 * Stream integration: `act/specs/behavior/frontend-stream-integration.md`
 * Canvas phases: `act/specs/behavior/frontend-canvas-phases.md`
+* Agent tool interactions: `act/specs/behavior/frontend-agent-tool-interactions.md`
+* Agent tool MCP lifecycle: `act/specs/behavior/frontend-agent-tool-mcp-lifecycle.md`
 * Acceptance: `act/specs/quality/frontend-stream-acceptance.md`
+* Agent tool acceptance: `act/specs/quality/frontend-agent-tools-acceptance.md`
 
 ## Implementation Scope
 
