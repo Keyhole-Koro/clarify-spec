@@ -19,6 +19,7 @@
   * 本文、raw observation、生成物、versioned snapshot
 * Act memory:
   * 実行中の ephemeral node、未確定候補、途中推論
+  * UI 上に見えていても commit 前なら unsaved draft のまま
 
 ## 実装責務の境界
 
@@ -37,6 +38,7 @@
 
 * Act memory は正本ではない
 * 確定データは Organize を通して Firestore/GCS に昇格する
+* frontend は draft と persisted を見分けられる表示を持つ
 
 ## 正本参照
 

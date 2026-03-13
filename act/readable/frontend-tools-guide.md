@@ -190,6 +190,9 @@ tool が返してよいもの:
 * `title`
 * `content_md`
 * `parent_id`
+* `source`
+* `draft_revision`
+* `persisted_revision`
 * `selected_option_ids`
 * `selected_node_ids`
 
@@ -214,6 +217,24 @@ Context Assembly は、tool や request から来た材料を model に渡せる
 6. model 用 bundle を作る
 
 ここで初めて、`selected nodes` や `anchor` が「モデル入力にどう効くか」を決める。
+
+### Draft と Persisted が衝突したとき
+
+frontend tool から来る文脈は、persisted knowledge と別系統で扱う。
+
+* `frontend_draft` は UI 上でいま見えている未保存入力
+* `persisted` は Firestore / GCS の確定知識
+
+衝突時の原則:
+
+* 明示 UI 入力を優先する
+* ただし persisted context を捨てず、別枠で bundle に残す
+* prompt では `user_selected_draft_context` と `retrieved_persisted_context` を分ける
+
+つまり:
+
+* tool は draft を渡してよい
+* assembly は draft と persisted の provenance を保ったまま料理する
 
 ### 実装フロー
 

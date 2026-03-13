@@ -63,6 +63,10 @@ Act の agent が frontend の UI 能力を安全かつ再利用可能な `tool`
 | `content_md` | 任意 | 現在表示中の markdown |
 | `parent_id` | 任意 | 構造親ノードID |
 | `selected` | 必須 | 現在選択中か |
+| `source` | 必須 | `frontend_draft` | `persisted` |
+| `draft_revision` | 任意 | frontend draft revision |
+| `persisted_revision` | 任意 | 永続化済み revision |
+| `save_state` | 任意 | `streaming` | `completed_unsaved` | `persisted` | `failed` |
 | `x` | 任意 | 描画上のX座標 |
 | `y` | 任意 | 描画上のY座標 |
 
@@ -538,7 +542,7 @@ output_schema:
 
 * ADK 側には MCP 互換または同等の tool registry として公開できる形を推奨する
 * frontend 実装では schema validation を入れ、未知フィールドは拒否する
-* dev console 用の error 出力は development 優先とし、staging/preview での扱いは別途固定する
+* dev console 用の error 出力は `local` 優先とし、`prod` での扱いは別途固定する
 
 ## 完了条件（DoD）
 

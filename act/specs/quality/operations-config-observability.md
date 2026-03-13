@@ -38,7 +38,7 @@
 ## 異常フロー（エラーコード・retryable）
 
 * `stage=AUTHN/AUTHZ/CSRF_VALIDATE`: `retryable=false` を基本とする
-* `stage=SID_VALIDATE` で Redis 不達（soft）: 処理継続し degrade メトリクスを記録する
+* `stage=SID_VALIDATE` で Redis 不達: fail-closed で `UNAVAILABLE` を返し、復旧手順へ入る
 * `stage=GENERATE_WITH_MODEL` の外部障害: `retryable=true` で返す
 * `stage=LOAD_CONTEXT` の Firestore 障害: `retryable=true` を基本とする
 
@@ -77,8 +77,7 @@
 * `actType`
 * `stage`
 * `latencyMs`
-* `sidMode`（`soft|strict`）
-* `redisDegrade`（`true|false`）
+* `redisAvailable`（`true|false`）
 * `error.code`（失敗時）
 
 ## メトリクス要件（MUST）
@@ -97,7 +96,7 @@
 * `csrf_validate_fail_total`
 * `redis_cmd_latency_ms`
 * `redis_unavailable_total`
-* `sid_degrade_mode_total`
+* `sid_recovery_attempt_total`
 
 ## 数値パラメータ
 
@@ -106,11 +105,11 @@
 * `cloudrun_memory=2Gi`
 * `cloudrun_min_instances=0`
 * `cloudrun_max_instances=20`
-* `sid_enforce_mode=soft`
+* sid 検証は全環境で strict
 
 ## 受け入れ条件（DoD）
 
-* Redis停止時でも soft モードで RunAct が継続する
+* Redis停止時は fail-closed で `UNAVAILABLE` になり、復旧フローへ入る
 * `ErrorInfo.stage/retryable/trace_id` がログと一致する
 * sid/csrf 系メトリクスがダッシュボードで確認できる
 * 数値正本 `act/specs/quality/backend-parameter-index.md` と整合している
@@ -119,3 +118,11 @@
 
 * alertは `run_act_error_total` と `redis_unavailable_total` の急増を優先
 * rollback条件を「5分連続で成功率閾値未達」に固定しておく
+
+## 復旧フロー（Redis / sid）
+
+1. `redis_unavailable_total` の急増または `stage=SID_VALIDATE` の `UNAVAILABLE` を検知する
+2. Redis / VPC / Cloud Run 接続を復旧する
+3. sid read/write ヘルスチェックが成功することを確認する
+4. 必要ならユーザーに再ログインまたはセッション再発行を促す
+5. frontend は再試行導線を出し、ユーザー操作で `RunAct` を再送する

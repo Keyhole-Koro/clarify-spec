@@ -37,6 +37,7 @@
 * Firestore に高頻度で揺れる stream 中状態を保存しない
 * GCS の本文系オブジェクトは `gcsUri/generation/sha256` で参照可能にする
 * Act memory は知識正本ではなく、確定データは Organize 経由でのみ Firestore/GCS へ昇格する
+* stream 中に UI へ見えている draft は、commit 完了まで unsaved として扱う
 
 ## 3層アーキテクチャ
 

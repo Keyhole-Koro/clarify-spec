@@ -35,6 +35,8 @@
 * thought 表示の既定は OFF とする
 * thought は request 単位の専用 buffer で保持し、node 本文へ混ぜない
 * `append_md` の適用前に対象 block の `upsert` が存在する前提で reducer を実装する
+* `append_md` は `request_id + block_id + seq` で重複排除できる設計にする
+* `append_md.expected_offset` が一致しない場合は破壊的追記を行わず、再同期または reject とする
 * 同一 event 内では `thought -> answer -> upsert -> append_md -> metadata -> terminal` の順序を前提にできる
 
 ## 状態管理
@@ -48,6 +50,7 @@
 * reducerは純粋関数として実装し、副作用を持たない
 * graph projectionは読み取り専用でstate更新を行わない
 * metadata は本文 state 更新と別Stateで保持できる設計にする
+* draft node には `streaming | completed_unsaved | persisted | failed` の保存状態を持てる設計にする
 
 ## UX要件
 
@@ -63,6 +66,8 @@
 * grounding metadata は本文下の `References` セクションへ投影する
 * tool metadata は既定で `Diagnostics` 側へ寄せ、本文主表示へ混ぜない
 * metadata は未対応項目を含めて store と dev console では追跡可能にする
+* `done` までは draft node を `Unsaved` として視認できるようにする
+* Organize / commit 完了までは persisted 扱いにしない
 * duplicate terminal 検知時は dev console に warning を残せるようにする
 
 ## 完了条件（DoD）

@@ -11,6 +11,9 @@
 * `upsert` で block が追加/更新される
 * `append_md` で `contentMd` に追記される（置換しない）
 * 未作成blockへの `append_md` を受けても破綻しない
+* `append_md.seq` の重複適用で本文が二重化しない
+* `append_md.expected_offset` 不一致時に破壊的追記をしない
+* 同一 `request_id` での再接続/再受信時は、既存の thought/markdown バッファを一度クリアしてから適用する（重複 append 防止）
 
 ## 2. Stream終端
 
@@ -36,6 +39,7 @@
 * 再送してもストアが壊れない
 * 同一ID `upsert` は上書き動作になる
 * 再実行時に前回 request の thought buffer と混ざらない
+* 再実行時に `append_md` の再送で本文が二重・三重に増殖しない
 
 ## 5. ログ/デバッグ
 
@@ -64,3 +68,9 @@
 * tool metadata は既定で `Diagnostics` に寄せられ、本文主表示に混ざらない
 * metadata は本文 state と分離保持される
 * 未対応 metadata も store と dev console では追跡できる
+
+## 9. Draft Persistence UX
+
+* `done` までは生成中ノードが `Unsaved` として視認できる
+* `done` 後も commit 完了までは persisted 扱いにならない
+* リロードで消えうる draft を、保存済みノードと見分けられる

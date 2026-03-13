@@ -36,7 +36,7 @@ Firebase Auth（認証正本）と Redis sid（補助セッション）の責務
 
 1. Firebase token を検証し `uid` を確定
 2. request `uid` が存在する場合のみ claim `uid` と照合（互換モード）
-3. `sid` Cookie を Redis で検証（softモードでは欠落許容）
+3. `sid` Cookie を Redis で検証
 4. CSRF（Double Submit）を照合
 5. access-control middleware で `workspace/tree` 認可
 6. handler へ委譲して `RunAct` 実行
@@ -45,24 +45,26 @@ Firebase Auth（認証正本）と Redis sid（補助セッション）の責務
 
 * token不正 / provider不一致: `UNAUTHENTICATED`, `retryable=false`, `stage=AUTHN`
 * request uid 不一致: `UNAUTHENTICATED`, `retryable=false`, `stage=AUTHN`
-* sid不正（strict）: `UNAUTHENTICATED`, `retryable=true`, `stage=SID_VALIDATE`
+* sid不正 / sid欠落: `UNAUTHENTICATED`, `retryable=true`, `stage=SID_VALIDATE`
 * csrf不一致: `PERMISSION_DENIED`, `retryable=false`, `stage=CSRF_VALIDATE`
 * workspace未所属 / tree越境: `PERMISSION_DENIED`, `retryable=false`, `stage=AUTHZ`
-* Redis不達（soft）: 処理継続 + 警告ログ（degrade）
+* Redis不達: `UNAVAILABLE`, `retryable=true`, `stage=SID_VALIDATE`
 
 ## 数値パラメータ
 
 * `SID_TTL_SECONDS=86400`
 * `CSRF_TTL_SECONDS=86400`
-* `SID_ENFORCE_MODE=soft`（当日開始）
+* sid 検証は全環境で strict
 
 ## 受け入れ条件（DoD）
 
 * 認証正本が Firebase token であることを全仕様が共有
 * sid が認証代替ではなく補助セッションであることが明記されている
 * CSRF手順（Double Submit）が明記されている
+* Redis不達時に fail-closed で `UNAVAILABLE` になる
 
 ## 実装メモ（最小）
 
 * sid は JS で読み書きしない（HttpOnly）
 * フロントは `credentials: include` と `Authorization` を併用する
+* Redis / sid 障害の復旧後は必要に応じて sid を再発行する

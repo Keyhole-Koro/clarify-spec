@@ -34,8 +34,7 @@
 | workspace/topic access denied | `PERMISSION_DENIED` | `AUTHZ` | false | - |
 | request validation error | `INVALID_ARGUMENT` | `VALIDATE_REQUEST` | false | - |
 | csrf mismatch | `PERMISSION_DENIED` | `CSRF_VALIDATE` | false | - |
-| redis unavailable (soft) | none (degrade) | `SID_VALIDATE` | - | - |
-| redis unavailable (strict) | `UNAVAILABLE` | `SID_VALIDATE` | true | 3000 |
+| redis unavailable | `UNAVAILABLE` | `SID_VALIDATE` | true | 3000 |
 | in-flight duplicate | `ALREADY_EXISTS` | `IDEMPOTENCY_CHECK` | true | 3000 |
 | rate limited | `RESOURCE_EXHAUSTED` | `VALIDATE_REQUEST` | true | 3000 |
 | assembly retrieval failed | `UNAVAILABLE` | `ASSEMBLY_RETRIEVE` | true | 1000 |

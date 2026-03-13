@@ -38,8 +38,7 @@
 
 * in-flight重複: `ALREADY_EXISTS`, `retryable=true`, `stage=IDEMPOTENCY_CHECK`
 * snapshot破損: `INTERNAL`, `retryable=true`, `stage=IDEMPOTENCY_CHECK`
-* Redis不達（soft）: degrade継続 + 警告ログ
-* Redis不達（strict）: `UNAVAILABLE`, `retryable=true`, `stage=IDEMPOTENCY_CHECK`
+* Redis不達: `UNAVAILABLE`, `retryable=true`, `stage=IDEMPOTENCY_CHECK`
 
 ## 数値パラメータ
 

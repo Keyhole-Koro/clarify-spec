@@ -146,7 +146,7 @@ Redisは認証の正本ではなく、実行安定化の補助に限定する。
 ## リクエスト処理順（MUST）
 
 1. Authn（Firebase token verify）
-2. SID（Redis、`soft|strict`）
+2. SID（Redis）
 3. CSRF検証
 4. AccessControl（`user -> membership -> topic`）
 5. Idempotency（`uid + workspace_id + request_id`）
@@ -155,8 +155,7 @@ Redisは認証の正本ではなく、実行安定化の補助に限定する。
 
 ## 障害時挙動（要点）
 
-* Redis不達 + `SID_ENFORCE_MODE=soft`: RunAct継続（degradeログ）
-* Redis不達 + `strict`: `UNAUTHENTICATED` または `UNAVAILABLE`
+* Redis不達: `UNAUTHENTICATED` または `UNAVAILABLE`
 * ADK worker不達: `UNAVAILABLE`（retryable）
 * ADK worker timeout: `DEADLINE_EXCEEDED`（retryable）
 * 正規化失敗: `INTERNAL`（non-retryable）

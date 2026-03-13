@@ -100,7 +100,7 @@ flowchart LR
 2. Frontend が `RunActRequest` を送信  
 3. `act-api` が Connect middleware で以下を順に検証
 4. Authn: ID Token 検証、`provider=google.com` を確認
-5. SID: Redis で sid 補助状態を評価（`soft|strict`）
+5. SID: Redis で sid 補助状態を評価
 6. CSRF: Double Submit（cookie + header）照合
 7. Authz: `user -> workspace membership -> topic access` 検証
 8. Idempotency: `(uid, workspace_id, request_id)` で重複排除
@@ -118,8 +118,7 @@ flowchart LR
 * Authn失敗: `UNAUTHENTICATED`, `retryable=false`, `stage=AUTHENTICATE`
 * Authz失敗: `PERMISSION_DENIED`, `retryable=false`, `stage=AUTHORIZE`
 * CSRF不一致: `PERMISSION_DENIED`, `retryable=false`, `stage=VALIDATE_REQUEST`
-* Redis不達 (`soft`): 継続 + degradeログ, `stage=SID_VALIDATE`
-* Redis不達 (`strict`): `UNAVAILABLE` または `UNAUTHENTICATED`
+* Redis不達: `UNAVAILABLE` または `UNAUTHENTICATED`
 * 冪等重複: 既存結果返却または重複抑止終端, `stage=IDEMPOTENCY_CHECK`
 * Assembly参照失敗: `UNAVAILABLE`, `retryable=true`, `stage=ASSEMBLY_RETRIEVE`
 * Assembly予算超過: degrade継続, diagnosticsに `truncation_reason` を残す
@@ -146,7 +145,6 @@ flowchart LR
   * `SID_TTL_SECONDS=86400`
   * `SID_REQ_TTL_SECONDS=900`
   * `SID_LOCK_TTL_SECONDS=10`
-  * `SID_ENFORCE_MODE=soft`（当日デフォルト）
 * 追加詳細は `act/specs/quality/backend-parameter-index.md` を正本とする
 
 ## 9. 受け入れ条件（DoD）

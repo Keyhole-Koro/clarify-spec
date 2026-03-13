@@ -42,6 +42,7 @@
 * `sid` は認可判定の正本に使わない
 * 認可正本は常に `token user -> workspace membership -> tree access`
 * request `uid` は互換用で、実処理の主体IDは token `uid` を使う
+* sid 障害時でも authz bypass をしてはならない
 
 ## データモデル前提（最小）
 

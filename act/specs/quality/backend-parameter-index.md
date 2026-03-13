@@ -17,6 +17,7 @@
 * `text_delta_total_max_chars`: 50000
 * `patch_batch_max`: 40
 * `text_batch_max_chars`: 800
+* `stream_recovery_mode`: `reset_buffer` # reconnect時はappendではなく全量置換またはバッファクリアを指示する
 * `thought_flush_interval_ms`: 500
 
 ## Session / CSRF / Redis
@@ -25,7 +26,6 @@
 * `sid_req_ttl_seconds`: 900
 * `sid_lock_ttl_seconds`: 10
 * `csrf_ttl_seconds`: 86400
-* `sid_enforce_mode`: `soft`（hackathon default）
 * `redis_connect_timeout_ms`: 200
 * `redis_read_timeout_ms`: 200
 * `redis_write_timeout_ms`: 200
@@ -51,6 +51,8 @@
 * `deep_research_poll_interval_ms`: 3000
 * `deep_research_max_wait_ms`: 45000
 * `deep_research_fallback_5xx_threshold`: 2
+* `deep_research_auto_retry`: 0
+* `deep_research_fallback_only_once`: true
 
 ## Rate Limits
 
@@ -71,3 +73,4 @@
 * 変更時は `act/act-api/specs/runtime/runact-implementation.md` と `act/act-adk-worker/specs/act-adk-runtime.md` を同時更新する
 * セッション境界を変える場合は `act/act-api/specs/security/session-and-auth-boundary.md` も同時更新する
 * 仕様値と実装値が乖離した場合、この文書を先に修正する
+* sid 検証は全環境で strict に行う

@@ -91,6 +91,12 @@ Act の Connect RPC 契約を `topic_id` 中心で定義し、コード断片な
 | `upsert` | blockの追加/更新 |
 | `append_md` | 指定blockへのmarkdown追記 |
 
+補足:
+
+* `append_md` には request 内で単調増加する `seq` を持たせる
+* `append_md` には適用前本文長を示す `expected_offset` を持たせる
+* frontend は `request_id + block_id + seq` を重複排除キーとして扱えるようにする
+
 ## フロー図
 
 ```mermaid
@@ -114,6 +120,8 @@ flowchart LR
 * 同一 `RunActEvent` 内の基本順序は `thought -> answer -> upsert -> append_md -> metadata -> terminal` とする
 * `append_md` は対応する block の `upsert` より先行してはならない
 * `append_md` は空文字を送らない
+* `append_md.seq` は request 内で単調増加し、再送時も同一値を再利用する
+* `append_md.expected_offset` が合わない場合、frontend は適用を拒否するか再同期扱いにできる
 * `done` と `error` は最後の event にのみ現れる
 * `done` と `error` は排他
 * 終端後に追加 event を送らない

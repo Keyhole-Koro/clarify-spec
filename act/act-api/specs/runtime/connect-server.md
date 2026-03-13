@@ -40,7 +40,7 @@
 * `VERTEX_PROJECT_ID` / `VERTEX_LOCATION` を環境ごとに固定
 * `GOOGLE_APPLICATION_CREDENTIALS` もしくは Workload Identity を使用
 * `REDIS_HOST` / `REDIS_PORT` / `REDIS_DB` を設定
-* `SID_ENFORCE_MODE` は当日 `soft` を既定とする
+* sid 検証は全環境で strict とする
 
 ## セキュリティ
 
@@ -57,7 +57,7 @@
 * upstream障害時は `UNAVAILABLE` / `DEADLINE_EXCEEDED`
 * 内部例外は `INTERNAL`
 * `ErrorInfo.stage` と `ErrorInfo.retryable` を付与して返す
-* Redis不達時は機能別切替（RunAct継続、sid依存機能はdegrade）
+* Redis不達時は fail-closed で `UNAVAILABLE` を返し、セッション復旧後の再試行を前提とする
 * 失敗ログに `traceId` を必須出力
 
 ## 完了条件（DoD）

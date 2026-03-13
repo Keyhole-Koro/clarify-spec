@@ -21,6 +21,7 @@
 入力:
 
 * `RunActRequest`（`topic_id`, `user_message`, `context_node_ids`, `act_type`）
+* frontend tool 由来の explicit UI context（任意）
 
 出力:
 
@@ -32,6 +33,14 @@
 2. `RetrieveContext`
 3. `RankAndBudget`
 4. `bundle + diagnostics` を返し、同一 worker 実行内で `GenerateWithModel` へ渡す
+
+## Draft / Persisted 競合ルール
+
+* frontend tool 由来の context は `explicit_ui_context` として persisted retrieval と別系統で扱う
+* `explicit_ui_context` は `source`, `draft_revision`, `persisted_revision` を保持できる
+* conflict 時は明示 UI 入力を優先する
+* persisted retrieval は補助文脈として残し、bundle 内で `user_selected_draft_context` と `retrieved_persisted_context` を分離する
+* worker は provenance を失ったまま draft と persisted をマージしてはならない
 
 ## ResolveIntent 固定ルール
 
