@@ -54,9 +54,9 @@ Agentごとの詳細仕様。
 | A0 | `media.received` | `inputs/{inputId}`, `mind/inputs/...` | `input.received` | ingest / extract |
 | A1 | `input.received` | `atoms/{atomId}`, `mind/atoms/...` | `atom.created` | atomize |
 | A2 | `atom.created` | draft version, `mind/drafts/...` | `draft.updated` | route to draft |
-| A3b | `draft.updated` | `pipelineBundles/{bundleId}`, optional schema update | `bundle.created`, optional `topic.schema_updated` | distill / schema proposal |
+| A3b | `draft.updated` | `workspaces/{workspaceId}/topics/{topicId}/pipelineBundles/{bundleId}`, optional schema update | `bundle.created`, optional `topic.schema_updated` | distill / schema proposal |
 | A3 | `bundle.created` | outline, nodes, edges | `outline.updated`, `topic.node_changed`, `atom.reissued` | clean / merge / commit |
 | A4 | `outline.updated` | `index_items/*`, `mind/maps/...` | optional | index / map |
 | A5 | `topic.metrics.updated` | `organizeOps/{opId}` | `topic.node_changed`, `topic.metrics.updated` | rebalance |
-| A6 | `bundle.created` | `mind/bundle_desc/...`, `bundles/{bundleId}.descRef` | optional `bundle.described` | explain bundle |
+| A6 | `bundle.created` | `mind/bundle_desc/...`, `workspaces/{workspaceId}/topics/{topicId}/pipelineBundles/{bundleId}.descRef` | optional `bundle.described` | explain bundle |
 | A7 | `topic.node_changed` | `mind/node_rollup/...`, `rollupRef` | optional `node.rollup.updated` | node summary |

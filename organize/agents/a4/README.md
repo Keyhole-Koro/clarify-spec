@@ -8,7 +8,7 @@
 ## 2. I/O
 
 * Input: `outline.updated`
-* Output: `index_items/*`, `mind/maps/{topicId}/v{n}.md`, `topics/{topicId}.latestMap`
+* Output: `workspaces/{wid}/topics/{tid}/indexItems/*`, `mind/maps/{topicId}/v{n}.md` (GCS), `workspaces/{wid}/topics/{tid}` (latestMapVersion更新)
 * Emit: なし（任意）
 
 ## 3. LLM モデル
@@ -44,8 +44,8 @@ erDiagram
   }
 
   RANKING_FEATURES {
-    float importance "0.0-1.0"
-    float freshness "0.0-1.0"
+    float relation_importance "0.0-1.0"
+    float recency "0.0-1.0"
     float confidence "元claimの確信度平均"
     int evidenceCount
     int edgeCount
@@ -55,7 +55,7 @@ erDiagram
 
 ## 5. 特徴量の算出式
 
-### importance（重要度）
+### relation_importance（重要度）
 
 | 要素 | 重み | 算出方法 |
 | --- | --- | --- |
@@ -64,7 +64,7 @@ erDiagram
 | 深さの逆数 | 20% | `1 / (depth + 1)` |
 | 確信度 | 20% | claim の confidence 平均 |
 
-### freshness（鮮度）
+### recency（鮮度）
 
 指数減衰関数を適用する: `exp(-0.05 × 最終更新からの日数)`
 
@@ -72,9 +72,9 @@ erDiagram
 
 | 要素 | 重み |
 | --- | --- |
-| importance | 40% |
+| relation_importance | 40% |
 | relevance（クエリとの関連度） | 30% |
-| freshness | 20% |
+| recency | 20% |
 | confidence | 10% |
 
 ## 6. 更新戦略: 差分更新

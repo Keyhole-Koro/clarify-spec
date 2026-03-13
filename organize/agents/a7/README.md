@@ -8,7 +8,7 @@
 ## 2. I/O
 
 * Input: `topic.node_changed` or `node.rollup_requested`
-* Output: `mind/node_rollup/{nodeId}/v{n}.html`, `topics/{topicId}/nodes/{nodeId}.rollupRef`, `rollupWatermark`
+* Output: `mind/node_rollup/{nodeId}/v{n}.html`, `workspaces/{workspaceId}/topics/{topicId}/nodes/{nodeId}.rollupRef`, `rollupWatermark`
 * Emit: `node.rollup_updated`（任意）
 
 ## 3. LLM モデル

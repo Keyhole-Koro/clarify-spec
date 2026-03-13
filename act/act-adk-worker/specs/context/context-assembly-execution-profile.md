@@ -71,6 +71,8 @@
 
 `contradicts > supports > depends_on > related_to`
 
+未知の relation type（schema 進化で追加されたもの）は `related_to` と同等に扱う。
+
 ### Firestore query（固定）
 
 1. focus nodes
@@ -80,8 +82,8 @@
 
 2. neighbors
 * collection: `.../edges`
-* where: `from_node_id in focus_ids`
-* orderBy: `weight desc, updated_at desc`
+* where: `source_id in focus_ids`
+* orderBy: `order_key desc, updated_at desc`
 * limit: 30（後段で 8 へ圧縮）
 
 3. evidence refs
@@ -98,7 +100,7 @@
 ### 必要 index
 
 * `nodes(topic_id, updated_at desc)`
-* `edges(from_node_id, weight desc, updated_at desc)`
+* `edges(source_id, order_key desc, updated_at desc)`
 * `evidences(node_id, confidence desc, updated_at desc)`
 * `actRuns(topic_id, created_at desc)`
 

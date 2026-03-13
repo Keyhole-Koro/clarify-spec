@@ -97,6 +97,7 @@ flowchart LR
 
 * 基本は 1-hop、最大8件
 * relation優先度: `contradicts > supports > depends_on > related_to`
+* 未知の relation type（Organize の schema 進化で追加されたもの）は `related_to` と同等の優先度で扱う
 
 #### evidence取得ルール
 
@@ -163,6 +164,7 @@ intentごとに展開を固定する。
 * `objective` は intentに応じた短文テンプレから生成
 * `currentUserQuery` は入力をそのまま保持
 * `focus`, `related`, `relations`, `evidence`, `unresolved`, `constraints`, `responseInstructions` を埋める
+* `context_summary_ref` が空（GCS 参照なし）の node は `node.title` + `node.kind` をフォールバック summary として利用し、`diagnostics` に `fallback_summary_used: true` を記録する
 
 ### 8. Attach Diagnostics
 

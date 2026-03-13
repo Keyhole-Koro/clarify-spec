@@ -24,7 +24,7 @@ LLM呼び出し直前の一時文脈フォーマットを固定し、Act/Organiz
 | `topicId` | 必須 | 知識正本キー |
 | `userQuery` | 必須 | ユーザー要求文 |
 | `selectedNodeIds` | 必須 | UIで選択されたノードID群 |
-| `mode` | 必須 | `act` または `organize` |
+| `mode` | 必須 | `act` または `organize`（MVP では `act` のみ使用。`organize` は将来 A3/A7 が Assembly を再利用する場合のために予約） |
 | `tokenBudget` | 必須 | 今回ターンの予算 |
 | `includeThoughtStream` | 任意 | thought出力の要求 |
 

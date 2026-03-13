@@ -37,7 +37,7 @@
 
 1. `AUTHN`: Firebase token 検証
 2. token claim から `token_uid` を確定（request `uid` は互換用）
-3. `SID_VALIDATE`: sid検証（soft許容）
+3. `SID_VALIDATE`: sid検証
 4. `CSRF_VALIDATE`: Double Submit 照合
 5. `AUTHZ`: token_uid -> workspace membership -> topic access
 6. `VALIDATE_REQUEST`: `topic_id`, `request_id`, 上限検証

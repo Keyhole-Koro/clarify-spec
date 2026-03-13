@@ -8,7 +8,7 @@
 ## 2. I/O
 
 * Input: `input.received`
-* Output: `atoms/{atomId}`, `mind/atoms/{atomId}.md`
+* Output: `workspaces/{workspaceId}/topics/{topicId}/atoms/{atomId}`, `mind/atoms/{atomId}.md`
 * Emit: `atom.created`
 
 ## 3. LLM モデル
@@ -27,7 +27,7 @@ Atom は「**単一の出典から導出できる、1つの主張・事実・定
 | 分割基準 | 異なる事実・異なるエンティティへの言及は別 Atom にする |
 | 結合禁止 | 複数の独立した事実を1 Atom にまとめない |
 
-## 5. 出力スキーマ: `atoms/{atomId}`
+## 5. 出力スキーマ: `workspaces/{workspaceId}/topics/{topicId}/atoms/{atomId}`
 
 ```mermaid
 erDiagram
@@ -104,3 +104,10 @@ erDiagram
 
 * ledger: `type:input.received/inputId:{inputId}`
 * 同一 input の二重生成防止（`sourceInputId` + deterministic `atomId`）
+
+## 10. `atom.reissued` 受信時の処理
+
+* `atom.reissued` を受信した場合は、元の atom のテキストを再抽出する
+* payload の `reissueCount` をインクリメントして引き継ぐ
+* `reissueCount >= 3` の場合は再抽出せず、強制 REJECT としてログ記録のみ行う
+* `previousReason` を LLM の追加コンテキストとして注入し、前回の判定理由を考慮した抽出を試みる

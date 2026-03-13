@@ -8,7 +8,7 @@
 ## 2. I/O
 
 * Input: `bundle.created`
-* Output: `mind/bundle_desc/{bundleId}/v{n}.html`, `bundles/{bundleId}.descRef`
+* Output: `mind/bundle_desc/{bundleId}/v{n}.html`, `workspaces/{workspaceId}/topics/{topicId}/pipelineBundles/{bundleId}.descRef`
 * Emit: `bundle.described`（任意）
 
 ## 3. LLM モデル
@@ -17,7 +17,7 @@
 
 ## 4. 処理フロー
 
-1. `pipelineBundles/{bundleId}` を Firestore から読む
+1. `workspaces/{workspaceId}/topics/{topicId}/pipelineBundles/{bundleId}` を Firestore から読む
 2. claims を種類ごとにグループ化する
 3. LLM で自然言語の説明文を生成する
 4. テンプレート HTML に埋め込む

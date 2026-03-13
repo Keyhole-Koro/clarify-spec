@@ -21,6 +21,10 @@ erDiagram
   TOPIC ||--o{ EDGE : has
   NODE ||--o{ EVIDENCE : cites
   TOPIC ||--o{ ACT_RUN : has
+  TOPIC ||--o{ INPUT : has
+  TOPIC ||--o{ ATOM : has
+  TOPIC ||--o{ PIPELINE_BUNDLE : has
+  NODE ||--o{ INDEX_ITEM : indexed_by
 
   WORKSPACE {
     string workspace_id PK
@@ -97,6 +101,56 @@ erDiagram
     string gcs_uri
     string generation
     string sha256
+    float confidence
+  }
+
+  INPUT {
+    string input_id PK
+    string topic_id FK
+    string status "received | stored | extracted | error"
+    string content_type
+    ref raw_ref
+    ref extracted_ref
+    timestamp created_at
+    timestamp updated_at
+  }
+
+  ATOM {
+    string atom_id PK "sha256(topicId + inputId + claimIndex)"
+    string topic_id FK
+    string source_input_id FK
+    int claim_index
+    string title
+    string claim
+    string kind "fact | definition | relation | opinion | temporal"
+    float confidence
+    int reissue_count "default 0"
+    timestamp created_at
+  }
+
+  PIPELINE_BUNDLE {
+    string bundle_id PK
+    string topic_id FK
+    int source_draft_version
+    int schema_version
+    int atom_count
+    timestamp created_at
+    timestamp applied_at "null until A3 applies"
+  }
+
+  INDEX_ITEM {
+    string index_item_id PK
+    string topic_id FK
+    string node_id FK
+    int schema_version
+    int outline_version
+    float relation_importance
+    float recency
+    float confidence
+    int evidence_count
+    int edge_count
+    int depth
+    timestamp updated_at
   }
 
   ACT_RUN {
@@ -155,8 +209,13 @@ erDiagram
 * `workspaces/{workspaceId}/topics/{topicId}/nodes/{nodeId}`
 * `workspaces/{workspaceId}/topics/{topicId}/edges/{edgeId}`
 * `workspaces/{workspaceId}/topics/{topicId}/nodes/{nodeId}/evidence/{evidenceId}`
+* `workspaces/{workspaceId}/topics/{topicId}/inputs/{inputId}`
+* `workspaces/{workspaceId}/topics/{topicId}/atoms/{atomId}`
+* `workspaces/{workspaceId}/topics/{topicId}/pipelineBundles/{bundleId}`
+* `workspaces/{workspaceId}/topics/{topicId}/indexItems/{indexItemId}`
 * `workspaces/{workspaceId}/topics/{topicId}/actRuns/{runId}`
 * `workspaces/{workspaceId}/topics/{topicId}/actRuns/{runId}/events/{seq}`
+* `workspaces/{workspaceId}/topics/{topicId}/organizeOps/{opId}`
 * `workspaces/{workspaceId}/eventLedger/{hash}`
 * `workspaces/{workspaceId}/leases/{resourceKey}`
 * `workspaces/{workspaceId}/versions/{resourceKey}`

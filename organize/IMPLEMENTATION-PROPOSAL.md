@@ -14,7 +14,7 @@
 * **Messaging:** Cloud Pub/Sub (Topic: `mind-events`, Push型 Subscription: `sub-a0` ~ `sub-a7`)
 * **Database:** Firestore (Native Mode, Admin SDK 利用)
 * **Storage:** Cloud Storage (GCS, `@google-cloud/storage` 利用)
-* **LLM:** Vertex AI (Gemini 3 Pro / Flash)
+* **LLM:** Vertex AI (Gemini Pro / Flash)
   * 単純な抽出/要約(A1, A7等)は Flash、複雑な Entity Resolution (A3) には Pro を併用。
 
 ## 2. リポジトリ・ディレクトリ構成案
@@ -94,7 +94,7 @@ sequenceDiagram
 A2 による `latestDraftVersion` や A3 による `latestOutlineVersion` の更新などで利用します。
 
 **CAS 更新フロー:**
-1. トランザクション内で Firestore のターゲットドキュメント（例: `topics/{topicId}`）を読み込む
+1. トランザクション内で Firestore のターゲットドキュメント（例: `workspaces/{workspaceId}/topics/{topicId}`）を読み込む
 2. ドキュメント上の現在のバージョン番号を取得する
 3. 想定していた **期待するバージョン番号 (expectedVersion)** と現在のバージョン番号が一致するか検証する
 4. 一致しない場合、他のプロセスが先に更新してしまったことを意味するため `StaleVersionError` を投げて処理を中断する（このエラーは Push Handler によって HTTP 200 ACK として吸収される）

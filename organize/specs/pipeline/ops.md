@@ -47,7 +47,7 @@
 
 ## 状態フィールド（推奨）
 
-`bundles/{bundleId}`:
+`workspaces/{workspaceId}/topics/{topicId}/pipelineBundles/{bundleId}`:
 
 * `bundleStatus`: `created|applied|error`
 * `descStatus`: `pending|described|error`

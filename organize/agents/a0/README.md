@@ -10,7 +10,7 @@
 ## 2. I/O
 
 * Input: `media.received`
-* Output: `inputs/{inputId}`, `mind/inputs/{inputId}.md`
+* Output: `workspaces/{workspaceId}/topics/{topicId}/inputs/{inputId}`, `mind/inputs/{inputId}.md`
 * Emit: `input.received`
 
 ## 3. LLM モデル
@@ -29,7 +29,7 @@
      * `image/*` → Gemini Flash Vision で OCR / 描写
      * `audio/*` → Cloud Speech-to-Text（将来対応）
 3. 抽出結果を GCS に保存する: `mind/inputs/{inputId}.md`
-4. Firestore `inputs/{inputId}` を `status: extracted` に更新する
+4. Firestore `workspaces/{workspaceId}/topics/{topicId}/inputs/{inputId}` を `status: extracted` に更新する
 5. `input.received` を emit する
 
 ## 5. 軽量 / 重量抽出の判定基準
@@ -41,7 +41,7 @@
 | PDF 10ページ超、画像、音声 | 重量（`extract.requested` で非同期） |
 | ファイルサイズ 50MB 超 | 拒否（`INVALID_ARGUMENT`） |
 
-## 6. 出力スキーマ: `inputs/{inputId}`
+## 6. 出力スキーマ: `workspaces/{workspaceId}/topics/{topicId}/inputs/{inputId}`
 
 ```mermaid
 erDiagram

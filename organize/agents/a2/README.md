@@ -7,7 +7,7 @@
 ## 2. I/O
 
 * Input: `atom.created`
-* Output: `topics/{topicId}/drafts/{draftVersion}`, `mind/drafts/{topicId}/v{n}.md`
+* Output: `workspaces/{workspaceId}/topics/{topicId}`（`latestDraftVersion` 更新）, `mind/drafts/{topicId}/v{n}.md`
 * Emit: `draft.updated`
 
 ## 3. LLM モデル

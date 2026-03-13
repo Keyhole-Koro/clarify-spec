@@ -63,7 +63,7 @@
 * Cloud Storage（evidence本文、versionedオブジェクト）
 * Memorystore for Redis（sid補助）
 * Serverless VPC Access（Cloud Run -> Redis private接続）
-* Vertex AI（Gemini 3 Flash / Web Grounding / Deep Research）
+* Vertex AI（Gemini Flash / Web Grounding / Deep Research）
 * Cloud Logging
 * Cloud Monitoring
 * Secret Manager（APIキー/設定の秘匿）

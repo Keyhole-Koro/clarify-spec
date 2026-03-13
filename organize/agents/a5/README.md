@@ -7,7 +7,7 @@
 ## 2. I/O
 
 * Input: `topic.metrics.updated`（または定期実行）
-* Output: `organizeOps/{opId}`
+* Output: `workspaces/{wid}/topics/{tid}/organizeOps/{opId}`
 * Emit: `topic.node_changed`, `topic.metrics.updated`
 
 ## 3. LLM モデル

@@ -35,9 +35,11 @@ A0〜A7/A5 を `topic_id` 中心で再配線し、Act Context Assembly との責
 * Organize は Act の `PromptBundle` を生成/永続化しない
 * Organize の `Bundle` は `PipelineBundle`（draft差分の中間成果物）を指す
 * Act は canonical summary/evidence/index を更新しない
+* Organize は `actRuns` に読み書きしない（`actRuns` の CREATE/UPDATE は Go Act API の責務）
 * `mind/` は GCS オブジェクト接頭辞として扱い、知識モデル名には使わない
 * `mindtree` は legacy 用語とし、新規イベント名/実体名には使わない
 * topic ごとに knowledge schema は進化可能だが、workspace/authz/path/id など platform schema は固定する
+* Firestore 物理パスは `firestore/schema.md` に従い、`workspaces/{workspaceId}/...` を正本とする
 
 ## Prompt Assembly 供給マップ（MVP）
 
@@ -106,7 +108,7 @@ flowchart LR
 * `type=atom.created` payload: `{ topicId, inputId, atomIds }`
 
 ### Output
-* Firestore: `topics/{topicId}.latestDraftVersion` 更新
+* Firestore: `workspaces/{workspaceId}/topics/{topicId}.latestDraftVersion` 更新
 * GCS: `mind/drafts/{topicId}/v{n}.md`
 
 ### Emit
@@ -125,8 +127,8 @@ flowchart LR
 * `type=draft.updated` payload: `{ topicId, draftVersion, appendedAtomIds }`
 
 ### Output
-* Firestore: `pipelineBundles/{bundleId}`
-* Firestore: `topics/{topicId}/schemas/{version}`（必要時）
+* Firestore: `workspaces/{workspaceId}/topics/{topicId}/pipelineBundles/{bundleId}`
+* Firestore: `workspaces/{workspaceId}/topics/{topicId}/schemas/{version}`（必要時）
 
 ### Emit
 * `type=bundle.created` payload: `{ topicId, bundleId, sourceDraftVersion }`
@@ -135,7 +137,7 @@ flowchart LR
 ### 競合対策
 * ledger key: `type:draft.updated/topicId:{topicId}/draftVersion:{draftVersion}`
 * 同一 `(topicId, draftVersion)` の bundle 二重生成禁止
-* schema 更新時は `topics/{topicId}.schema_version` を CAS で進める
+* schema 更新時は `workspaces/{workspaceId}/topics/{topicId}.schema_version` を CAS で進める
 
 ### Schema進化責務
 * 現行 schema で表現不能な node kind / relation type / attribute set / index feature を検出する
@@ -151,7 +153,7 @@ flowchart LR
 
 ### Output
 * GCS: `mind/bundle_desc/{bundleId}/v{n}.html`
-* Firestore: `bundles/{bundleId}.descRef`
+* Firestore: `workspaces/{workspaceId}/topics/{topicId}/pipelineBundles/{bundleId}.descRef`
 
 ### Emit（任意）
 * `type=bundle.described` payload: `{ topicId, bundleId }`
@@ -171,8 +173,8 @@ flowchart LR
 ### Output
 * GCS: `mind/outlines/{topicId}/v{n}.md`
 * Firestore:
-  * `topics/{topicId}.latestOutlineVersion` 更新
-  * `topics/{topicId}/nodes/*`, `topics/{topicId}/edges/*` upsert
+  * `workspaces/{workspaceId}/topics/{topicId}.latestOutlineVersion` 更新
+  * `workspaces/{workspaceId}/topics/{topicId}/nodes/*`, `workspaces/{workspaceId}/topics/{topicId}/edges/*` upsert
 
 ### Emit
 * `type=outline.updated` payload: `{ topicId, outlineVersion }`
@@ -210,7 +212,7 @@ flowchart LR
 ### Output
 * Firestore: `index_items/*` upsert
 * GCS: `mind/maps/{topicId}/v{n}.md`
-* Firestore: `topics/{topicId}.latestMapVersion` 更新
+* Firestore: `workspaces/{workspaceId}/topics/{topicId}.latestMapVersion` 更新
 
 ### 競合対策
 * lease: `topic:{topicId}`
@@ -226,7 +228,7 @@ flowchart LR
 
 ### Output
 * GCS: `mind/node_rollup/{nodeId}/v{n}.html`
-* Firestore: `topics/{topicId}/nodes/{nodeId}.rollupRef` + watermark
+* Firestore: `workspaces/{workspaceId}/topics/{topicId}/nodes/{nodeId}.rollupRef` + watermark
 
 ### Emit（任意）
 * `type=node.rollup.updated` payload: `{ topicId, nodeId }`

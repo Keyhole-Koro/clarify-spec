@@ -8,7 +8,7 @@
 ## 2. I/O
 
 * Input: `draft.updated`
-* Output: `pipelineBundles/{bundleId}`, `topics/{topicId}/schemas/{version}`（必要時）
+* Output: `workspaces/{workspaceId}/topics/{topicId}/pipelineBundles/{bundleId}`, `workspaces/{workspaceId}/topics/{topicId}/schemas/{version}`（必要時）
 * Emit: `bundle.created`, `topic.schema_updated`（必要時）
 
 ## 3. LLM モデル
@@ -103,4 +103,4 @@ erDiagram
 * ledger: `type:draft.updated/topicId:{topicId}/draftVersion:{draftVersion}`
 * 推奨 lease: `topic:{topicId}`
 * 同一 `(topicId, draftVersion)` の重複 bundle を禁止
-* schema 更新時は `topics/{topicId}.schema_version` を CAS で進める
+* schema 更新時は `workspaces/{workspaceId}/topics/{topicId}.schema_version` を CAS で進める
