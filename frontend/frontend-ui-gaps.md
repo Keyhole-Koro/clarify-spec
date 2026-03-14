@@ -250,21 +250,37 @@
 * Firestore/GCS/event preview の並列表現を定義する
 * A3 の node/edge diff と `atom.reissued` 候補を可視化する
 
+## 20. Upload処理進捗表示不足
+
+不足:
+
+* フロントから upload した input が今どの phase にいるか見えない
+* `media.received -> input.received -> atom.created -> topic.resolved -> draft.updated -> bundle.created -> outline.updated` をユーザー向け段階にどう写像するか未定義
+* retry 中と失敗確定の UI 出し分けが未定義
+
+決めること:
+
+* upload status を `uploaded / extracting / atomizing / resolving_topic / updating_draft / completed / failed` のような段階へ固定する
+* header の簡易 progress と activity panel の詳細 progress の役割分担を決める
+* `completed` 時に attach/create_new 結果と反映先 topic をどう出すか決める
+* 長時間停滞時の `processing delayed` 表示と `failed` への遷移条件を決める
+
 ## 優先度（MVP実装前に決める順）
 
 1. レイアウト確定（1）
 2. Askフォーム状態（2）
-3. TopicResolver 判定可視化（15）
-4. Organize 更新タイムライン（16）
-5. エラー復帰導線（6）
-6. 認証UI（7）
-7. Node Detail 二層表示（17）
-8. Thinkthrough表示（3）
-9. ノード操作詳細（4, 5）
-10. `organizeOps` Review Inbox（18）
-11. Mock表示（8）
-12. MarkdownPane境界（9）
-13. Inspector Local Web UI（19）
-14. A11y/ローディング/計測（10, 11, 12）
-15. アイコン運用（13）
-16. Patch責務分離（14）
+3. Upload処理進捗表示（20）
+4. TopicResolver 判定可視化（15）
+5. Organize 更新タイムライン（16）
+6. エラー復帰導線（6）
+7. 認証UI（7）
+8. Node Detail 二層表示（17）
+9. Thinkthrough表示（3）
+10. ノード操作詳細（4, 5）
+11. `organizeOps` Review Inbox（18）
+12. Mock表示（8）
+13. MarkdownPane境界（9）
+14. Inspector Local Web UI（19）
+15. A11y/ローディング/計測（10, 11, 12）
+16. アイコン運用（13）
+17. Patch責務分離（14）

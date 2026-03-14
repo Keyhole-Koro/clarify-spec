@@ -22,6 +22,7 @@ erDiagram
   NODE ||--o{ EVIDENCE : cites
   TOPIC ||--o{ ACT_RUN : has
   TOPIC ||--o{ INPUT : has
+  TOPIC ||--o{ INPUT_PROGRESS : has
   TOPIC ||--o{ ATOM : has
   TOPIC ||--o{ PIPELINE_BUNDLE : has
   NODE ||--o{ INDEX_ITEM : indexed_by
@@ -112,6 +113,23 @@ erDiagram
     ref raw_ref
     ref extracted_ref
     timestamp created_at
+    timestamp updated_at
+  }
+
+  INPUT_PROGRESS {
+    string input_id PK
+    string topic_id FK
+    string workspace_id FK
+    string status "uploaded | extracting | atomizing | resolving_topic | updating_draft | completed | failed"
+    string current_phase
+    string last_event_type
+    string trace_id
+    string resolution_mode
+    string resolved_topic_id
+    string error_code
+    string error_message
+    timestamp phase_updated_at
+    timestamp completed_at
     timestamp updated_at
   }
 
@@ -210,6 +228,7 @@ erDiagram
 * `workspaces/{workspaceId}/topics/{topicId}/edges/{edgeId}`
 * `workspaces/{workspaceId}/topics/{topicId}/nodes/{nodeId}/evidence/{evidenceId}`
 * `workspaces/{workspaceId}/topics/{topicId}/inputs/{inputId}`
+* `workspaces/{workspaceId}/topics/{topicId}/inputProgress/{inputId}`
 * `workspaces/{workspaceId}/topics/{topicId}/atoms/{atomId}`
 * `workspaces/{workspaceId}/topics/{topicId}/pipelineBundles/{bundleId}`
 * `workspaces/{workspaceId}/topics/{topicId}/indexItems/{indexItemId}`
@@ -230,9 +249,34 @@ erDiagram
 * `latest_draft_version`, `latest_outline_version` は単調増加
 * 本文はGCS versioned ref（`gcsUri/generation/sha256`）を保持
 * Firestore は確定済みメタ/関係/権限境界/検索キーの正本とし、stream中の高頻度一時状態は保持しない
+* ただし upload 処理進捗は UI 露出に必要なため `inputProgress/{inputId}` を正本として保持してよい
 * `actRuns/events` は監査と短期再送補助のための記録に限定し、Act memory の代替にしない
 * topic ごとに進化できるのは knowledge schema のみとし、workspace/authz/path/id など platform schema は topic ごとに変化させない
 * node/edge/index は適用に使った `schema_version` を参照可能にする
+
+## 6.1 Upload Progress 正本
+
+フロントの upload 進捗表示は Pub/Sub を直接参照せず、Firestore の `inputProgress/{inputId}` を正本とする。
+
+MUST:
+
+* 各 phase 完了時に `inputProgress/{inputId}` を単調更新する
+* retry 中は status を巻き戻さない
+* `failed` は永続失敗または長時間停滞が確定したときのみ設定する
+* `completed` では `resolvedTopicId` と `resolutionMode` を保持できるようにする
+
+推奨フィールド:
+
+* `status`
+* `currentPhase`
+* `lastEventType`
+* `traceId`
+* `resolvedTopicId`
+* `resolutionMode`
+* `phaseUpdatedAt`
+* `completedAt`
+* `errorCode`
+* `errorMessage`
 
 ## 6. トランザクション境界
 

@@ -52,6 +52,41 @@ A0〜A7/A5 を `topic_id` 中心で再配線し、Act Context Assembly との責
 | `recent_delta` | A2/A3 | topic draft/outline 差分 | recent changes |
 | `confidence/quality` | A4/A5 | index/metrics | ranking |
 
+## Upload Progress 正本（MUST）
+
+フロントの upload 進捗表示は Pub/Sub を直接読まず、Firestore
+`workspaces/{workspaceId}/topics/{topicId}/inputProgress/{inputId}` を正本とする。
+
+共通原則:
+
+* 各 agent は自分の phase が前進したときのみ `inputProgress` を更新してよい
+* status は巻き戻さない
+* retry 中は同一 status のまま `phaseUpdatedAt` のみ更新してよい
+* `failed` は永続失敗または運用上の timeout 確定時のみ設定する
+* UI 用 progress は event ledger の代替ではない。監査の正本は引き続き ledger / trace / Firestore 個別 doc とする
+
+status マッピング:
+
+* A0 開始後: `uploaded` または `extracting`
+* A0 完了 / `input.received`: `atomizing`
+* A1 完了 / `atom.created`: `resolving_topic`
+* TopicResolver 完了 / `topic.resolved`: `updating_draft`
+* A2 / A3b / A6 / A3 実行中: `updating_draft`
+* A3 完了 / `outline.updated`: `completed`
+
+保持推奨:
+
+* `status`
+* `currentPhase`
+* `lastEventType`
+* `traceId`
+* `resolutionMode`
+* `resolvedTopicId`
+* `phaseUpdatedAt`
+* `completedAt`
+* `errorCode`
+* `errorMessage`
+
 ### Agent配線図（Mermaid）
 
 ```mermaid
@@ -77,6 +112,7 @@ flowchart LR
 ### Output
 * GCS: `mind/inputs/{inputId}.md`
 * Firestore: `inputs/{inputId}`
+* Firestore: `inputProgress/{inputId}` を `uploaded | extracting | atomizing` へ更新
 
 ### Emit
 * `type=input.received` payload: `{ topicId, inputId }`
@@ -94,6 +130,7 @@ flowchart LR
 ### Output
 * GCS: `mind/atoms/{atomId}.md`
 * Firestore: `atoms/{atomId}`
+* Firestore: `inputProgress/{inputId}` を `resolving_topic` へ更新
 
 ### Emit
 * `type=atom.created` payload: `{ topicId, inputId, atomIds }`
@@ -116,6 +153,7 @@ flowchart LR
 ### Output
 * Firestore: `workspaces/{workspaceId}/topics/{resolvedTopicId}.latestDraftVersion` 更新
 * GCS: `mind/drafts/{resolvedTopicId}/v{n}.md`
+* Firestore: `inputProgress/{inputId}` を `updating_draft` に更新し、`resolvedTopicId`, `resolutionMode` を保存
 
 ### Emit
 * `type=draft.updated` payload: `{ topicId: resolvedTopicId, draftVersion, appendedAtomIds }`
@@ -181,6 +219,7 @@ flowchart LR
 * Firestore:
   * `workspaces/{workspaceId}/topics/{topicId}.latestOutlineVersion` 更新
   * `workspaces/{workspaceId}/topics/{topicId}/nodes/*`, `workspaces/{workspaceId}/topics/{topicId}/edges/*` upsert
+  * `inputProgress/{inputId}` を `completed` に更新してよい（source input を特定できる場合）
 
 ### Emit
 * `type=outline.updated` payload: `{ topicId, outlineVersion }`
