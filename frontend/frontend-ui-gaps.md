@@ -46,25 +46,26 @@
 
 不足:
 
-* single click / double click / drag の優先順位が未定義
+* `graph-node-design.md` で single click / background click / drag の基本は定義したが、double click の扱いと複数選択は未定義
 * 複数選択中のコンテキストメニュー仕様がない
 * 選択解除のルール（空白クリック/Esc）が未定義
 
 決めること:
 
-* `onNodeClick` と `onNodeDoubleClick` の役割分担
-* 選択中バッジ・件数表示の有無
+* `onNodeDoubleClick` を使うか、MVP では無効化するか決める
+* 複数選択を MVP に含めるか決める
+* 選択中バッジ・件数表示の有無を決める
 
 ## 5. アクションボタンUI仕様不足
 
 不足:
 
-* `actions[]` の表示上限、折り返し、overflow時の扱いが未定義
+* `graph-node-design.md` で「node上の action は最小、主要 action は右ペイン寄せ」としたが、右ペイン上の `actions[]` 表示上限は未定義
 * `run_act` 実行中に同一ノードアクションを再押下できるか未定義
 
 決めること:
 
-* ボタン表示個数上限（例: 3件 + More）
+* ボタン表示個数上限（例: 3件 + More）を決める
 * 実行中のローディング表示と再押下防止
 
 ## 6. エラー表示・復帰導線不足
