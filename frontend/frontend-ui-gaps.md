@@ -1,7 +1,7 @@
 # Frontend UI Spec Gaps (MVP)
 
 この文書は、既存仕様から見て「UI記述が不足している点」を列挙する。
-対象は `frontend/frontend-spec.md` と `act/specs/behavior/*`、`act/specs/usecases/*`。
+対象は `frontend/frontend-spec.md`、`act/specs/behavior/*`、`act/specs/usecases/*`、`organize/specs/*`。
 
 ## 1. 画面レイアウトの確定値不足
 
@@ -180,16 +180,91 @@
 * Stream Adapter / Patch Reducer / Graph Projection / UI Store の4分割を固定
 * 各層の入出力境界（副作用可否）を明文化
 
+## 15. TopicResolver 判定可視化不足
+
+不足:
+
+* `resolvedTopicId`, `resolutionMode`, `resolutionConfidence`, `resolutionReason` を UI のどこに出すか未定義
+* 既存 topic attach と新規 topic 作成の差がユーザーに見えない
+* 誤 attach の監査導線がない
+
+決めること:
+
+* input 詳細または activity panel に routing result を表示する
+* `attach_existing | create_new` をバッジで区別する
+* confidence と reason の表示粒度を固定する
+
+## 16. Organize 更新タイムライン不足
+
+不足:
+
+* `draft.updated -> bundle.created -> outline.updated` を1本の更新フローとして見せる画面がない
+* A2/A3b/A3/A6 の成果物が別々に存在し、今回の入力が何を変えたか追いにくい
+* bundle description をどの画面で使うか未定義
+
+決めること:
+
+* topic 単位の activity timeline を追加する
+* 1入力ごとに draft diff, bundle preview, outline反映結果を束ねて表示する
+* A6 の `descRef` を timeline 内 preview として使う
+
+## 17. Node Detail 二層表示不足
+
+不足:
+
+* A7 の `contextSummary` と `detailHtml` を UI でどう使い分けるか未定義
+* Graph 上の簡潔表示と右ペイン詳細表示の境界が曖昧
+* MarkdownPane 中心構成と A7 HTML 出力の接続が未定義
+
+決めること:
+
+* 右ペイン上部に短要約カード、下部に根拠付き詳細を置く
+* Graph/mini panel では `contextSummary`、詳細閲覧では `detailHtml` を使う
+* Markdown 本文との優先順位を固定する
+
+## 18. `organizeOps` Review Inbox 不足
+
+不足:
+
+* `organizeOps/{opId}` の消費者が UI 上で未定義
+* `planned / approved / applied / dismissed` の操作面がない
+* 通常の閲覧 UI と運用判断 UI が分離されていない
+
+決めること:
+
+* review inbox を topic 詳細とは別導線で持つ
+* op state ごとの表示列とフィルタを定義する
+* approve/dismiss/apply の権限と操作確認 UI を定義する
+
+## 19. Inspector Local Web UI 不足
+
+不足:
+
+* phase runner / inspector は CLI 前提で、A3 diff や emit preview の視認性が低い
+* preview object をブラウザで比較する仕様がない
+* 開発者向け UI と本番 UI の境界が未定義
+
+決めること:
+
+* `/inspector` のような local-only web UI を持つか決める
+* Firestore/GCS/event preview の並列表現を定義する
+* A3 の node/edge diff と `atom.reissued` 候補を可視化する
+
 ## 優先度（MVP実装前に決める順）
 
 1. レイアウト確定（1）
 2. Askフォーム状態（2）
-3. エラー復帰導線（6）
-4. 認証UI（7）
-5. Thinkthrough表示（3）
-6. ノード操作詳細（4, 5）
-7. Mock表示（8）
-8. MarkdownPane境界（9）
-9. A11y/ローディング/計測（10, 11, 12）
-10. アイコン運用（13）
-11. Patch責務分離（14）
+3. TopicResolver 判定可視化（15）
+4. Organize 更新タイムライン（16）
+5. エラー復帰導線（6）
+6. 認証UI（7）
+7. Node Detail 二層表示（17）
+8. Thinkthrough表示（3）
+9. ノード操作詳細（4, 5）
+10. `organizeOps` Review Inbox（18）
+11. Mock表示（8）
+12. MarkdownPane境界（9）
+13. Inspector Local Web UI（19）
+14. A11y/ローディング/計測（10, 11, 12）
+15. アイコン運用（13）
+16. Patch責務分離（14）
