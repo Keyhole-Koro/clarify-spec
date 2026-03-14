@@ -74,6 +74,17 @@
 * model prompt builder は tool の生データではなく assembly 後の bundle だけを見る
 * MCP は tool の discovery / invocation / transport を担う公開方式であり、assembly の責務には入らない
 
+## 論理境界の設計原則
+
+* 物理 repo 分割より先に、`Contract` / `Act Runtime` / `Frontend Runtime` / `Organize Runtime` / `Shared Knowledge Model` の 5 境界を固定する
+* `Contract` は RPC、stream、frontend tools、MCP、organize event などのサービス間契約を持ち、下位 runtime に依存しない
+* `Act Runtime` はその場の実行と stream 配信を担当し、knowledge の write path を持たない
+* `Frontend Runtime` は UI 表示、選択、agent-facing capability を担当し、Organize の内部処理には依存しない
+* `Organize Runtime` は非同期 write path を担当し、topic/draft/bundle/graph/index の確定更新を担う
+* `Shared Knowledge Model` は topic、node、edge、evidence、version、lease などの意味論の正本であり、runtime に依存しない
+* 依存方向は `Frontend/Act/Organize -> Contract/Shared Knowledge Model` に限定し、runtime 同士を直接結合しない
+* `frontend` が `organize` の内部仕様へ、`organize` が `frontend` の内部 state へ直接依存しない
+
 ## Organize の位置づけ
 
 * Agent分割（A0〜A7）で入力解釈→分解→統合→索引化

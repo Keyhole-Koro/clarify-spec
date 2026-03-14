@@ -14,6 +14,7 @@ A0〜A7/A5 を `topic_id` 中心で再配線し、Act Context Assembly との責
 * `context/model/topic-model.md`
 * `context/assembly/core.md`
 * `context/assembly/bundle-schema.md`
+* `organize/specs/pipeline/topic-resolution.md`
 * `organize/specs/pipeline/core.md`
 
 ## 契約（I/O）
@@ -56,7 +57,8 @@ A0〜A7/A5 を `topic_id` 中心で再配線し、Act Context Assembly との責
 ```mermaid
 flowchart LR
   A0[A0 MediaInterpreter] --> A1[A1 Atomizer]
-  A1 --> A2[A2 Router]
+  A1 --> TR[TopicResolver]
+  TR --> A2[A2 DraftAppender]
   A2 --> A3b[A3b Bundler]
   A3b --> A6[A6 BundleDescription]
   A3b --> A3[A3 Cleaner]
@@ -100,24 +102,28 @@ flowchart LR
 * ledger key: `type:input.received/topicId:{topicId}/inputId:{inputId}`
 * 再処理時の二重 atom 生成を禁止（deterministic id推奨）
 
+### 精度安定化
+* `organize/specs/pipeline/a1-atom-stability.md` を正本とする
+* claim boundary は決定論的に切り、Gemini は正規化と `kind/confidence` 付与のみに使う
+
 ---
 
-## A2 RouterAgent（Atom -> Draft）
+## A2 DraftAppenderAgent（Resolved Topic -> Draft）
 
 ### Input
-* `type=atom.created` payload: `{ topicId, inputId, atomIds }`
+* `type=topic.resolved` payload: `{ resolvedTopicId, inputId, atomIds, resolutionMode, resolutionConfidence }`
 
 ### Output
-* Firestore: `workspaces/{workspaceId}/topics/{topicId}.latestDraftVersion` 更新
-* GCS: `mind/drafts/{topicId}/v{n}.md`
+* Firestore: `workspaces/{workspaceId}/topics/{resolvedTopicId}.latestDraftVersion` 更新
+* GCS: `mind/drafts/{resolvedTopicId}/v{n}.md`
 
 ### Emit
-* `type=draft.updated` payload: `{ topicId, draftVersion, appendedAtomIds }`
+* `type=draft.updated` payload: `{ topicId: resolvedTopicId, draftVersion, appendedAtomIds }`
 
 ### 競合対策
-* lease: `topic:{topicId}`
+* lease: `topic:{resolvedTopicId}`
 * CAS: `latestDraftVersion`
-* ledger key: `type:atom.created/topicId:{topicId}/inputId:{inputId}`
+* ledger key: `type:topic.resolved/topicId:{resolvedTopicId}/inputId:{inputId}`
 
 ---
 

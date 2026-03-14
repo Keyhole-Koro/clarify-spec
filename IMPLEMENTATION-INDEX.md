@@ -10,6 +10,7 @@
 4. `context/README.md`
 5. `organize/README.md`
 6. `frontend/frontend-spec.md`
+7. `docker-compose.local-design.md`
 
 ## 2. Act 仕様索引（Source of Truth）
 

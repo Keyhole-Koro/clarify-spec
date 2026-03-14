@@ -9,13 +9,15 @@ Version: 1.1 / schemaVersion: v1
 1. `context/model/topic-model.md`
 2. `context/assembly/bundle-schema.md`
 3. `context/assembly/core.md`
-4. `organize/specs/pipeline/core.md`
-5. `organize/specs/pipeline/agents.md`
-6. `organize/specs/pipeline/ops.md`
+4. `organize/specs/pipeline/topic-resolution.md`
+5. `organize/specs/pipeline/core.md`
+6. `organize/specs/pipeline/agents.md`
+7. `organize/specs/pipeline/ops.md`
 
 ## 2. 分割方針
 
 * `context/model/topic-model.md` + `context/assembly/bundle-schema.md` + `context/assembly/core.md`: Act/Organize共通の topic / context assembly 正本
+* `topic-resolution.md`: topic 粒度、自動 topic 解決、Gemini を用いた最終判定の正本
 * `pipeline-core.md`: Topic/Subscription、Envelope/attributes、冪等・Lease・CAS、DLQ/Ackの共通ルール
 * `pipeline-agents.md`: A0〜A7/A5 の入出力・emit・必須競合対策
 * `pipeline-ops.md`: Firestore状態の衝突回避、監視運用、整合性チェックポイント

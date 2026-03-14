@@ -6,6 +6,7 @@ Version: 1.1 / schemaVersion: v1
 
 * `context/model/topic-model.md`
 * `context/assembly/core.md`
+* `organize/specs/pipeline/topic-resolution.md`
 * `organize/specs/pipeline/core.md`
 * `organize/specs/pipeline/agents.md`
 * `organize/specs/pipeline/ops.md`
@@ -18,6 +19,7 @@ Version: 1.1 / schemaVersion: v1
 * 重複・競合は `event_ledger + lease + version(CAS)` で無害化
 * fan-out は Subscription 複数化で実現
 * 知識正本キーは `topic_id`
+* topic 解決は `TopicResolver` が自動で行い、誤 attach より新規 topic 作成を安全側とする
 * Organize は write path 専任で、`act-adk-worker` は呼ばない
 * Bundle 用語は分離する（Act: `PromptBundle` / Organize: `PipelineBundle`）
 * `mind-events` はインフラ名として維持し、知識モデル名には `topic/node/edge` を使う
@@ -31,7 +33,8 @@ Version: 1.1 / schemaVersion: v1
 | --- | --- | --- | --- |
 | A0 MediaInterpreter | `sub-a0` | `attributes.type="media.received"` | OFF |
 | A1 Atomizer | `sub-a1` | `attributes.type="input.received"` | OFF |
-| A2 Router | `sub-a2` | `attributes.type="atom.created"` | ON（`topicId`） |
+| TopicResolver | `sub-topic-resolver` | `attributes.type="atom.created"` | OFF |
+| A2 DraftAppender | `sub-a2` | `attributes.type="topic.resolved"` | ON（`resolvedTopicId`） |
 | A3b Bundler | `sub-a3b` | `attributes.type="draft.updated"` | ON（`topicId`） |
 | A6 BundleDesc | `sub-a6` | `attributes.type="bundle.created"` | OFF |
 | A3 Cleaner | `sub-a3` | `attributes.type="bundle.created"` | ON（`topicId`） |

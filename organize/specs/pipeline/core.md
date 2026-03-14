@@ -58,7 +58,8 @@ A0〜A7/A5 のイベント駆動パイプラインを **Pub/Sub (at-least-once)*
 | --- | --- | --- | --- |
 | A0 MediaInterpreter | sub-a0 | `attributes.type="media.received"` | OFF |
 | A1 Atomizer | sub-a1 | `attributes.type="input.received"` | OFF |
-| A2 Router | sub-a2 | `attributes.type="atom.created"` | ON（topicId） |
+| TopicResolver | sub-topic-resolver | `attributes.type="atom.created"` | OFF |
+| A2 DraftAppender | sub-a2 | `attributes.type="topic.resolved"` | ON（resolvedTopicId） |
 | A3b Bundler | sub-a3b | `attributes.type="draft.updated"` | ON（topicId） |
 | A6 BundleDesc | sub-a6 | `attributes.type="bundle.created"` | OFF |
 | A3 Cleaner | sub-a3 | `attributes.type="bundle.created"` | ON（topicId） |
