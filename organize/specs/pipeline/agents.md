@@ -62,7 +62,8 @@ A0〜A7/A5 を `topic_id` 中心で再配線し、Act Context Assembly との責
 * 各 agent は自分の phase が前進したときのみ `inputProgress` を更新してよい
 * status は巻き戻さない
 * retry 中は同一 status のまま `phaseUpdatedAt` のみ更新してよい
-* `failed` は永続失敗または運用上の timeout 確定時のみ設定する
+* 長時間処理だけを理由に `failed` を設定しない
+* `failed` は backend が永続失敗を明示した場合のみ設定する
 * UI 用 progress は event ledger の代替ではない。監査の正本は引き続き ledger / trace / Firestore 個別 doc とする
 
 status マッピング:

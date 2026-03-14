@@ -263,7 +263,7 @@
 * upload status を `uploaded / extracting / atomizing / resolving_topic / updating_draft / completed / failed` のような段階へ固定する
 * header の簡易 progress と activity panel の詳細 progress の役割分担を決める
 * `completed` 時に attach/create_new 結果と反映先 topic をどう出すか決める
-* 長時間停滞時の `processing delayed` 表示と `failed` への遷移条件を決める
+* `failed` を backend 明示時だけにするか、時間経過でも失敗扱いするかを決める
 
 ## 優先度（MVP実装前に決める順）
 

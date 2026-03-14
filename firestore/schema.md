@@ -262,7 +262,8 @@ MUST:
 
 * 各 phase 完了時に `inputProgress/{inputId}` を単調更新する
 * retry 中は status を巻き戻さない
-* `failed` は永続失敗または長時間停滞が確定したときのみ設定する
+* 長時間処理だけを理由に `failed` を設定しない
+* `failed` は backend が永続失敗を明示するときのみ設定する
 * `completed` では `resolvedTopicId` と `resolutionMode` を保持できるようにする
 
 推奨フィールド:
